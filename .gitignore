@@ -1,0 +1,74 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Logs and telemetry
+*.log
+logs/
+raw-logs/
+telemetry/
+
+# Packet captures
+*.pcap
+*.pcapng
+
+# Virtual machines
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.qcow2
+*.img
+*.ova
+*.ovf
+*.iso
+
+# VirtualBox
+*.sav
+Snapshots/
+
+# Databases / indexes
+*.db
+*.sqlite
+*.sqlite3
+index-data/
+wazuh-data/
+
+# Dumps
+*.dmp
+*.dump
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
