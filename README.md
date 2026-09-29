@@ -38,31 +38,31 @@ BUILD → UNDERSTAND → TEST → BREAK → FIX → MEASURE → DOCUMENT → EXP
 
 ```
         ┌───────────────┐
-        │    SIMULATE   │
+        │    SIMULATE      │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │     DETECT    │
+        │     DETECT       │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │  INVESTIGATE  │
+        │  INVESTIGATE     │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │    RESPOND    │
+        │    RESPOND       │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │    MEASURE    │
+        │    MEASURE       │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │    IMPROVE    │
+        │    IMPROVE       │
         └───────┬───────┘
                 ↓
         ┌───────────────┐
-        │    RETEST     │
+        │    RETEST        │
         └───────┬───────┘
                 │
                 └──────────→ SIMULATE
