@@ -14,7 +14,7 @@ SENTINEL is a controlled cybersecurity laboratory designed to demonstrate practi
 
 ---
 
-## Why SENTINEL exists
+## Why SENTINEL exists 
 
 SENTINEL is deliberately **not** "Kali + Wazuh + a few screenshots." The project exists to demonstrate a complete defensive engineering feedback loop, ultimately answering:
 
