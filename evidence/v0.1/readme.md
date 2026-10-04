@@ -62,7 +62,7 @@ Only v0.1 currently contains real evidence. No future-version evidence is claime
 
 **Current project phase:** v0.1 — Foundation.
 
-The repository currently contains actual v0.1 infrastructure evidence, which may include the Wazuh Agent running, the Dashboard showing the agent as active, and final infrastructure verification artifacts. No attack, detection, investigation, response, or mutation evidence exists yet — none is claimed here.
+The repository currently contains actual v0.1 infrastructure evidence: the Wazuh Agent running, the Dashboard showing the agent as active, and a final infrastructure verification artifact. No attack, detection, investigation, response, or mutation evidence exists yet — none is claimed here.
 
 ---
 
@@ -94,7 +94,7 @@ Where practical, evidence should reference a Test ID, Detection ID, Scenario ID,
 
 ## 8. Evidence Naming
 
-Current examples: `dashboard-agent-active.png`, `wazuh-agent-running.png`, `final-verification.png`.
+Current v0.1 filenames: `dashboard-agent-active.png`, `wazuh-agent-running.png`, `fiinal-verification.png`.
 
 Future example conventions (illustrative only — none of these files exist yet): `DET-001-alert.png`, `DET-001-test-result.png`, `INV-001-timeline.png`, `IR-001-containment.png`, `MUT-001-original.png`, `MUT-001-variant.png`.
 
@@ -291,13 +291,13 @@ Scenario → Detection → Test → Evidence → Investigation → Metrics → L
 evidence/
 ├── README.md
 └── v0.1/
-    ├── README.md
+    ├── readme.md
     ├── dashboard-agent-active.png
-    ├── final-verification.png
+    ├── fiinal-verification.png
     └── wazuh-agent-running.png
 ```
 
-If the actual repository contains additional verified files beyond this list, they are preserved as-is rather than removed or reinterpreted here. This v0.1 evidence represents infrastructure verification only. Future version directories are populated as those versions are actually implemented.
+This reflects the actual current contents of `evidence/v0.1/` in the repository. This v0.1 evidence represents infrastructure verification only. Future version directories are populated as those versions are actually implemented.
 
 ---
 
@@ -358,7 +358,7 @@ None of the future capabilities in this list are claimed to currently exist — 
 
 **Current phase:** v0.1 — Foundation
 
-**Current evidence:** Infrastructure verification artifacts exist under `evidence/v0.1/`.
+**Current evidence:** Infrastructure verification artifacts exist under `evidence/v0.1/` (`dashboard-agent-active.png`, `wazuh-agent-running.png`, `fiinal-verification.png`).
 
 **Next evidence focus:** v0.2 — Linux telemetry and first detection validation.
 
