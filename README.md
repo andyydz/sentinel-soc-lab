@@ -148,7 +148,7 @@ SENTINEL is currently at **v0.1 — Foundation**.
 | Isolated lab network | Completed |
 | Wazuh agent (Linux01) | Completed |
 | Initial telemetry pipeline | Foundation established |
-| Detection engineering | Planned / v0.2 |
+| Detection engineering | current / v0.2 |
 | SOC investigation | Planned / v0.3 |
 | Incident response | Planned / v0.4 |
 | Purple-team measurement | Planned / v0.5 |
