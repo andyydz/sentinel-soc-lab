@@ -64,7 +64,7 @@ The project's guiding question is: *does your detection still work when the atta
 
 ### Evidence
 - Captured initial v0.1 infrastructure verification evidence, including the Wazuh Dashboard showing the active SENTINEL-LINUX01 endpoint and confirmation of a running Wazuh agent.
-- No detection, attack, investigation, response, mutation, or metrics evidence exists yet — this is expected at this stage and is planned for v0.2 and later.
+- No detection, attack, investigation, response, mutation, or metrics evidence existed at the time of the v0.1 Foundation phase; detection evidence is now being captured under v0.2 (see below).
 
 ### Engineering Principles
 - Adopted the development philosophy: **BUILD → UNDERSTAND → TEST → BREAK → FIX → MEASURE → DOCUMENT → EXPLAIN**.
@@ -73,17 +73,55 @@ The project's guiding question is: *does your detection still work when the atta
 - Lesson recorded from the Windows VM issue: SENTINEL should continue developing even when an optional environment component is unreliable, rather than allowing it to block progress.
 
 ### Roadmap
-Planned phases (not yet completed):
+Project phase status:
 
-- **v0.2 — Detection Engineering**: Linux telemetry validation, first controlled attack scenarios, initial detection rules, detection testing, false-positive analysis, missed detection analysis, MITRE ATT&CK mapping where technically verified, detection evidence.
-- **v0.3 — SOC Investigation**: Alert investigation, timeline reconstruction, IOC collection, threat hunting, incident case development, first complete incident case, formal investigation report.
-- **v0.4 — Incident Response**: Controlled response actions, containment workflow, eradication/recovery workflow, response validation, human-in-the-loop response, response performance measurement.
-- **v0.5 — Purple-Team Validation**: Detection coverage measurement, detection rate, detection time, response time, false-positive/false-negative analysis, regression testing, before/after comparison, purple-team feedback loop.
-- **v0.6 — Attack DNA & Mutation**: Attack-chain representation, Attack DNA, controlled attack variation, attack mutation, detection resilience testing, detection failure analysis, detection improvement, retesting against modified attacker behavior.
+- **v0.1 — Foundation**: Complete. See `[0.1.0]` below.
+- **v0.2 — Detection Engineering**: In progress. Linux telemetry validation and a first custom detection (File Integrity Monitoring) have been built and validated; further detection scenarios, additional telemetry sources, and false-positive/missed-detection analysis remain ongoing. See `[0.2.0]` below.
+- **v0.3 — SOC Investigation** *(Next, planned)*: Alert investigation, timeline reconstruction, IOC collection, threat hunting, incident case development, first complete incident case, formal investigation report.
+- **v0.4 — Incident Response** *(Planned)*: Controlled response actions, containment workflow, eradication/recovery workflow, response validation, human-in-the-loop response, response performance measurement.
+- **v0.5 — Purple-Team Validation** *(Planned)*: Detection coverage measurement, detection rate, detection time, response time, false-positive/false-negative analysis, regression testing, before/after comparison, purple-team feedback loop.
+- **v0.6 — Attack DNA & Mutation** *(Planned)*: Attack-chain representation, Attack DNA, controlled attack variation, attack mutation, detection resilience testing, detection failure analysis, detection improvement, retesting against modified attacker behavior.
 
 ### Future Expansion
 - Windows and Active Directory monitored endpoints (deferred from the core v0.1–v0.6 path).
 - A custom SENTINEL console, planned for a later stage after the core security engine is working. It is intended to sit on top of Wazuh rather than replace it, with potential future functionality including incident visualization, detection timelines, MITRE ATT&CK mapping, IOC visualization, detection metrics, Attack DNA visualization, mutation results, detection coverage, and response/case reporting. Not currently implemented.
+
+---
+
+## [0.2.0] - Unreleased
+
+**v0.2 — Detection Engineering phase.**
+
+Purpose: move beyond infrastructure foundation into building, testing, and validating an actual security detection on top of the Wazuh/Linux01 telemetry pipeline established in v0.1. This release documents the first validated detection; it does **not** represent complete detection coverage, investigation workflows, or response workflows.
+
+### Detection Engineering
+- Configured Wazuh Syscheck (File Integrity Monitoring) on SENTINEL-LINUX01.
+- Scoped FIM monitoring to the `/home` directory.
+- Authored a custom Wazuh detection rule, Rule ID `100002`, to flag file-integrity modification events within the monitored scope.
+- Detection flow: SENTINEL-LINUX01 → Wazuh Agent → Syscheck/FIM → telemetry event → custom Rule `100002` → Level 8 alert.
+
+### Validation / Testing
+- Performed a controlled file modification test against the monitored `/home` directory.
+- Confirmed Wazuh generated a `syscheck_integrity_changed` event in response to the test modification.
+- Confirmed the custom Rule `100002` correctly matched the event and produced a Level 8 alert.
+- Confirmed the alert text correctly identifies the event as a SENTINEL file-integrity modification detection.
+- The detection was validated end-to-end through this controlled test: telemetry generation → rule match → alert.
+
+### Evidence
+- Captured evidence of the configured FIM rule, the controlled test execution, the resulting `syscheck_integrity_changed` event, and the Level 8 alert generated by Rule `100002`.
+- This is the first detection-specific evidence in the project, building on the infrastructure evidence captured in v0.1.
+
+### Lessons Learned
+- A file modification alert is not automatically evidence of malicious activity. It must be correlated with the user, process, file path, timestamp, and surrounding events/context before being treated as suspicious — this distinction will inform how FIM-based alerts are triaged in later investigation work (v0.3).
+
+### Not yet included in v0.2 (planned for v0.3+)
+- Additional detection scenarios beyond File Integrity Monitoring
+- Expanded telemetry sources (authentication, process execution, command execution)
+- False-positive and missed-detection analysis beyond the single validated test above
+- MITRE ATT&CK technique mapping
+- Alert investigation and case workflows
+- Detection metrics, coverage measurement, and purple-team validation
+- Attack DNA / mutation testing
 
 ---
 
@@ -111,4 +149,3 @@ Not yet included in v0.1 (planned for v0.2+):
 - Metrics, coverage measurement, and purple-team validation
 - Attack DNA / mutation testing
 - SENTINEL console
--
