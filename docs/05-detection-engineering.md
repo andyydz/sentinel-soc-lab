@@ -2,7 +2,7 @@
 
 > Does your detection still work when the attacker changes tactics?
 
-This document defines how SENTINEL designs, implements, tests, tunes, measures, and improves security detections. It is a methodology and working specification, not a record of completed work — no detection described here has been validated yet, and no attack has been executed for detection-validation purposes. Where implementation status matters, it is marked explicitly as **CURRENT FOUNDATION**, **PLANNED**, **TESTED**, **VALIDATED**, or **FUTURE**.
+This document defines how SENTINEL designs, implements, tests, tunes, measures, and improves security detections. It is both a methodology and, as of v0.2, a growing record of actual detections built against it. One detection — File Integrity Monitoring via Wazuh Syscheck — has been built, tested, and validated; see Section 21. No attack has been executed against SENTINEL: all testing to date has used controlled, non-adversarial activity (a direct file modification) to validate the detection pipeline, not adversary emulation. Where implementation status matters, it is marked explicitly as **CURRENT FOUNDATION**, **PLANNED**, **TESTED**, **VALIDATED**, or **FUTURE**.
 
 SENTINEL does not treat a detection as successful merely because a rule exists. The validation model is:
 
@@ -51,7 +51,7 @@ flowchart TD
     N --> O[15. Document results]
 ```
 
-**Status: PLANNED.** This lifecycle is the intended process for v0.2 onward — it has not yet been run end to end for any detection.
+**Status: PARTIALLY EXECUTED.** This lifecycle has now been run, in reduced form, for SENTINEL's first detection (Section 21): identify behavior → telemetry → detection logic → controlled test → alert → validation → document. Steps 9–10 and 12–14 (full investigation, false-positive testing, tuning, retest, and mutation) have not yet been performed for this detection and remain open work for v0.2 continuation and later milestones.
 
 ---
 
@@ -76,7 +76,7 @@ Every detection should have a documented specification **before** implementation
 | Evidence | Supporting artifacts (screenshots, logs, alert output) |
 | Status | Draft / Tested / Validated / Retired |
 
-No detection ID, MITRE technique, or Wazuh rule ID is assigned in this document — those are created when a specific detection is actually designed.
+As of v0.2, one detection has been assigned a Wazuh rule ID — Rule `100002`, documented in Section 21 using this template. No MITRE ATT&CK technique has been mapped to it yet.
 
 ---
 
@@ -114,7 +114,7 @@ Understanding normal activity before tuning a detection reduces false positives 
 - Normal system behavior
 - Normal administrative activity
 
-**Status: PLANNED.** No baseline observations have been recorded yet. Actual baseline data will be gathered and documented during v0.2, once Linux telemetry configuration is underway.
+**Status: PLANNED.** No baseline observations have been formally recorded yet, including for the `/home` path monitored by the detection in Section 21. Baseline data collection remains open work for continued v0.2 activity.
 
 ---
 
@@ -136,7 +136,7 @@ The current target endpoint is **SENTINEL-LINUX01** (`10.10.10.40`). Planned tel
 ### File / System Changes
 - Important file modifications
 - Configuration changes
-- Integrity monitoring where appropriate
+- Integrity monitoring where appropriate — **implemented**: Wazuh Syscheck (File Integrity Monitoring) is now configured on `/home`; see Section 21.
 
 ### Network Activity
 - Relevant connection activity
@@ -148,7 +148,7 @@ The current target endpoint is **SENTINEL-LINUX01** (`10.10.10.40`). Planned tel
 - Account changes
 - Suspicious administrative behavior
 
-**These are telemetry goals, not current configuration.** None of the above sources are fully configured on SENTINEL-LINUX01 today; the Wazuh Agent (version 4.14.8, ID `001`, status Active) is connected and reporting, but detailed telemetry engineering has not been completed.
+**Current configuration status:** the Wazuh Agent (version 4.14.8, ID `001`, status Active) is connected and reporting, and Syscheck/FIM has been configured and validated on the `/home` path (Section 21). Authentication, process/command execution, network activity, and privilege/identity telemetry remain unconfigured and are still telemetry goals, not current configuration.
 
 ---
 
@@ -169,7 +169,7 @@ Detects suspicious behavior patterns rather than one fixed string or event.
 ### Sequence-Based
 Detects a meaningful chain of related events.
 
-SENTINEL prefers the simplest detection type that reliably captures the intended behavior — complexity is added only when a specific detection gap requires it, not by default.
+SENTINEL prefers the simplest detection type that reliably captures the intended behavior — complexity is added only when a specific detection gap requires it, not by default. The detection in Section 21 is signature/rule-based: a straightforward match against a Syscheck event type.
 
 ---
 
@@ -187,7 +187,7 @@ Relevant malicious activity that the detection missed.
 ### True Negative
 Normal activity correctly left unalerted.
 
-SENTINEL cares about both sides of this equation: catching malicious behavior and avoiding unnecessary alert noise. Neither goal is prioritized to the point of ignoring the other.
+SENTINEL cares about both sides of this equation: catching malicious behavior and avoiding unnecessary alert noise. Neither goal is prioritized to the point of ignoring the other. No formal true/false-positive analysis has been performed yet for the Section 21 detection — see Section 26 (Limitations).
 
 ---
 
@@ -208,7 +208,7 @@ Every detection should eventually go through a controlled test:
 11. Modify the detection.
 12. Retest.
 
-No destructive attack instructions are included here or anywhere in SENTINEL's documentation; testing is scoped to safe, reversible activity inside the isolated lab.
+No destructive attack instructions are included here or anywhere in SENTINEL's documentation; testing is scoped to safe, reversible activity inside the isolated lab. Note that the Section 21 test was executed directly on SENTINEL-LINUX01 as a controlled file modification, not from SENTINEL-KALI — this was a detection-pipeline validation test, not an adversary-emulation scenario.
 
 ---
 
@@ -244,7 +244,7 @@ Also possible at any stage: **FAILED** (the test scenario did not produce the ex
 | Failed | Did not detect as expected; under investigation |
 | Retired | No longer maintained or relevant |
 
-**A detection is not "Validated" simply because it was written.** No detection currently exists past the Draft stage.
+**A detection is not "Validated" simply because it was written.** SENTINEL's first detection — File Integrity Monitoring on `/home`, Rule `100002` (Section 21) — has reached **Validated** status via a controlled test that produced the expected telemetry and alert. No other detection currently exists past the Draft stage.
 
 ---
 
@@ -262,7 +262,7 @@ A detection is considered validated only when **all** of the following are true:
 - Results were documented.
 - The detection was retested after any tuning.
 
-No arbitrary pass percentage is defined at this stage; a project-specific numeric threshold (if any) will be introduced later if it proves useful, not invented here.
+No arbitrary pass percentage is defined at this stage; a project-specific numeric threshold (if any) will be introduced later if it proves useful, not invented here. The Section 21 detection meets the core criteria (telemetry available, test executed, expected behavior observed, detection fired, evidence captured, results documented); formal false-positive examination and retesting after tuning have not yet been performed — see Section 26.
 
 ---
 
@@ -285,7 +285,7 @@ Definition:
 Detection Rate = Successful Detections / Attack Executions
 ```
 
-No values are calculated here — there is no test data yet. From v0.2 onward, individual detection tests should capture the underlying evidence (timestamps, outcomes, telemetry) needed to compute these metrics later, even though aggregate metrics themselves belong to v0.5.
+No aggregate values are calculated here — there is not yet enough test data across multiple detections. From v0.2 onward, individual detection tests capture the underlying evidence (outcomes, telemetry, alert data) needed to compute these metrics later; the Section 21 test is the first such captured result, but it is a single data point, not a rate or trend, and is not presented as one.
 
 ---
 
@@ -300,7 +300,7 @@ False positives are treated as engineering evidence, not noise to suppress blind
 - What legitimate behavior must remain detectable after the fix?
 - Did the tuning introduce a new false negative?
 
-The goal is improved precision without silently losing coverage of real malicious behavior.
+The goal is improved precision without silently losing coverage of real malicious behavior. No false positives have been identified for the Section 21 detection yet, because systematic false-positive testing has not been performed against it — see Section 26.
 
 ---
 
@@ -318,7 +318,7 @@ Missed detections are especially valuable in SENTINEL, since they directly infor
 - What modification could improve coverage?
 - Can the original scenario be retested after the fix?
 
-This analysis feeds directly into the mutation/resilience work in Section 15.
+This analysis feeds directly into the mutation/resilience work in Section 15. No false negatives have been recorded; the single test performed against the Section 21 detection produced the expected result.
 
 ---
 
@@ -342,7 +342,7 @@ Analyze resilience
 
 Possible mutation dimensions: tool variation, command variation, encoding, execution method, timing, and sequence variation. The objective is to preserve the attacker's underlying goal while changing execution details, to see whether the detection generalizes or was overfit to one specific implementation.
 
-No mutation testing currently exists in SENTINEL.
+No mutation testing currently exists in SENTINEL, including for the Section 21 detection.
 
 ---
 
@@ -376,9 +376,9 @@ Not every scenario will necessarily include every stage of this chain. This conc
 
 | Scenario | Behavior | MITRE Technique | Telemetry | Detection | Status | Test Result |
 |---|---|---|---|---|---|---|
-| *(none defined yet)* | — | — | — | — | Not Tested | — |
+| File Integrity Monitoring — `/home` | Unauthorized or unexpected modification of a file under `/home` | Not mapped | Wazuh Syscheck (`syscheck_integrity_changed`) | Custom Rule `100002`, Level 8 | Validated | Pass — controlled file modification produced the expected alert |
 
-This matrix is a template and will grow as scenarios are designed and tested during v0.2 and beyond. No technique or result is invented in advance of actual testing.
+This matrix will grow as additional scenarios are designed and tested during continued v0.2 work and beyond. No technique or result beyond the row above is invented in advance of actual testing.
 
 ---
 
@@ -418,7 +418,7 @@ Every completed detection should eventually have:
 - Tuning history
 - Retest result
 
-None of these artifacts exist yet for any detection — this is the documentation standard detections will be held to once they are built.
+The Section 21 detection currently has: a specification (Section 21), telemetry source, detection logic (Section 22), test scenario and validation result (Sections 23–24), and evidence (Section 25). It does not yet have a MITRE ATT&CK mapping, investigation notes, false-positive analysis, tuning history, or a retest result — this is the documentation standard it, and future detections, will be held to as work continues.
 
 ---
 
@@ -437,31 +437,118 @@ The repository must **not** contain: credentials, API keys, tokens, private keys
 
 ---
 
-## 21. Current v0.1 Status
+## 21. Validated Detection — File Integrity Monitoring (v0.2)
+
+This is SENTINEL's first detection to complete the lifecycle from telemetry through a validated, controlled test.
+
+| Field | Value |
+|---|---|
+| Detection Name | File Integrity Monitoring — `/home` |
+| Detection Type | Signature/rule-based, built on Wazuh Syscheck (FIM) telemetry |
+| Endpoint | SENTINEL-LINUX01 — Ubuntu 24.04, Wazuh Agent 4.14.8, `10.10.10.40` |
+| Detection Platform | SENTINEL-WAZUH — Wazuh all-in-one 4.14.8, `10.10.10.10` |
+| Data Source | Wazuh Syscheck (File Integrity Monitoring) |
+| Monitored Path | `/home` |
+| Telemetry / Event | `syscheck_integrity_changed` |
+| Rule ID | Custom Wazuh Rule `100002` |
+| Alert Level | 8 |
+| Test Method | Controlled file modification performed directly on SENTINEL-LINUX01 within the monitored path |
+| Expected Result | File modification → Syscheck integrity-change telemetry → Rule `100002` match → Level 8 alert |
+| Actual Result | The expected chain was observed: a `syscheck_integrity_changed` event was generated, Rule `100002` matched it, and a Level 8 alert was produced |
+| Validation Status | **Validated** |
+
+---
+
+## 22. Detection Logic
+
+Rule `100002` is built on top of Wazuh's built-in Syscheck engine, which Wazuh uses to perform File Integrity Monitoring. The rule matches on the `syscheck_integrity_changed` event type generated for files under the monitored `/home` path, and triggers an alert at severity Level 8 whenever Syscheck reports that a monitored file's integrity state has changed.
+
+The logic is intentionally simple at this stage: it does not currently filter by specific file type, user, process, or time window, and it does not attempt to determine *who* or *what* made the change. It flags that a tracked file under `/home` changed — nothing more. Distinguishing a legitimate change from a suspicious one is left to analyst review (Section 24), not to the rule itself.
+
+---
+
+## 23. Validation Method
+
+A controlled, non-adversarial file modification was performed directly on SENTINEL-LINUX01 within the `/home` path, specifically to validate the detection pipeline end-to-end. This was not an attack and did not use SENTINEL-KALI or any adversary-emulation tooling — it was a direct test of whether the configured telemetry and rule actually produce the expected result.
+
+**Expected chain:**
+
+```
+File modification → Syscheck telemetry → Rule 100002 → Level 8 alert
+```
+
+**Observed result:** the expected chain was produced successfully. The file modification generated a `syscheck_integrity_changed` event, Rule `100002` matched that event, and Wazuh produced a Level 8 alert as intended. This confirms the detection pipeline — telemetry collection, rule logic, and alerting — works end to end for this scenario.
+
+---
+
+## 24. Analyst Interpretation
+
+A FIM integrity-change alert proves that a monitored file's integrity state changed. **It does not, by itself, prove malicious activity.** The alert alone does not identify the responsible user or process, does not establish intent, and does not distinguish between a legitimate administrative change, an accidental modification, and a malicious one.
+
+Determining which of those occurred requires further investigation — correlating the alert with user/account activity, process context, timestamps, and surrounding system events. That investigative work is explicitly out of scope for this detection-engineering document and belongs to SOC investigation methodology (Section 28, `docs/06-incident-response.md`).
+
+---
+
+## 25. Evidence
+
+Evidence for this detection — the Syscheck/FIM configuration, the controlled test, the resulting telemetry, and the Level 8 alert — is stored under `evidence/v0.2/`, consistent with SENTINEL's version-based evidence structure. This document does not restate or re-list the contents of that directory; `evidence/v0.2/` and its own README are the source of truth for the actual captured artifacts. No filenames or evidence are invented here beyond what exists there.
+
+---
+
+## 26. Limitations
+
+As of v0.2, this detection — and SENTINEL's detection engineering work more broadly — does **not** yet provide:
+
+- A complete SOC investigation of the alert
+- Root-cause determination for the tested file modification
+- Full process or user attribution for the change
+- Incident response (containment, eradication, recovery)
+- Quantitative detection-performance metrics (detection rate, detection time, false-positive rate)
+- Purple-team validation
+- Attack mutation testing against this or any other detection
+
+These capabilities belong to later milestones — primarily v0.3 (SOC Investigation) onward — and are not claimed here.
+
+---
+
+## 27. Current v0.2 Status
 
 ### Completed
 - [x] Wazuh infrastructure deployed
 - [x] Linux01 deployed
-- [x] Wazuh Agent installed
-- [x] Agent registered
-- [x] Agent Active
+- [x] Wazuh Agent installed, registered, and Active
 - [x] Agent/Wazuh connectivity verified
+- [x] Wazuh Syscheck (FIM) configured on SENTINEL-LINUX01, scoped to `/home`
+- [x] Custom Wazuh Rule `100002` created
+- [x] Controlled file-modification test executed
+- [x] `syscheck_integrity_changed` telemetry confirmed
+- [x] Rule `100002` confirmed to match and produce a Level 8 alert
+- [x] Detection validated end-to-end (Section 21)
 
 ### Not Yet Implemented
-- [ ] Detailed Linux telemetry engineering
-- [ ] First detection specification
-- [ ] First controlled detection scenario
-- [ ] Detection rule validation
-- [ ] False-positive analysis
-- [ ] Detection metrics
+- [ ] Additional telemetry sources (authentication, process/command execution, network, privilege/identity)
+- [ ] Baseline observations for normal activity
+- [ ] MITRE ATT&CK mapping for the validated detection
+- [ ] Formal false-positive testing
+- [ ] Formal false-negative / missed-detection testing beyond this one scenario
+- [ ] Detection tuning and retest
+- [ ] Additional detection specifications and scenarios
+- [ ] SOC investigation of any alert
+- [ ] Detection metrics (aggregate)
 - [ ] Attack mutation
 
 ### Next Phase
-**v0.2 — Detection Engineering & Linux Telemetry**
+**v0.3 — SOC Investigation**
 
 ---
 
-## 22. Maintenance
+## 28. Next Milestone
+
+With a validated detection now producing real alerts, the next objective is to take that alert and investigate it the way a SOC analyst would: triage, scope, evidence collection, timeline reconstruction, IOC extraction, root-cause analysis, impact assessment, and a documented conclusion. This is the focus of **v0.3 — SOC Investigation** and is covered in `docs/06-incident-response.md`, not in this document.
+
+---
+
+## 29. Maintenance
 
 This document should be updated when:
 
@@ -472,5 +559,6 @@ This document should be updated when:
 - A new metric is introduced.
 - A new attack-mutation strategy is developed.
 - A significant detection-engineering lesson changes the approach described here.
+- A new detection is built and validated (added as its own entry alongside Section 21, following the same format).
 
-Individual detection results belong in their own detection specifications and test records — this document defines the methodology and should not be rewritten every time a single detection is built or tested.
+Individual detection results belong in their own detection specifications and test records — this document defines the methodology and documents validated detections as they're built; it should not be rewritten wholesale every time a single detection is built or tested.
