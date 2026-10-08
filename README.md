@@ -113,8 +113,9 @@ Controlled attacker / adversary-emulation environment.
 ### SENTINEL-LINUX01
 Initial monitored endpoint / target.
 - Ubuntu 24.04
-- Wazuh agent installed, enabled, and actively running
+- Wazuh agent installed, enabled, and actively running (v4.14.8)
 - Visible as an active endpoint in the Wazuh Dashboard
+- Syscheck (File Integrity Monitoring) configured, monitoring `/home`
 - Lab IP: `10.10.10.40`
 
 ### SENTINEL-LAB
@@ -128,7 +129,7 @@ KALI → controlled activity → LINUX01 → endpoint telemetry → WAZUH
   → detection improvement → retest
 ```
 
-**Currently**, v0.1 establishes the foundation of this flow — Kali, Linux01, and Wazuh are connected and the Wazuh agent provides the initial telemetry pipeline. Detection, investigation, response, and measurement stages are not yet built out; they are the focus of v0.2 onward.
+**Currently**, v0.1 established the foundation of this flow — Kali, Linux01, and Wazuh are connected and the Wazuh agent provides the telemetry pipeline. v0.2 built and validated the first detection on top of that pipeline (Syscheck/FIM → custom Rule `100002`). Investigation, response, and measurement stages are not yet built out; they are the focus of v0.3 onward.
 
 ### A note on Windows / Active Directory
 
@@ -138,7 +139,7 @@ An earlier version of this project attempted a Windows endpoint (`SENTINEL-WIN01
 
 ## Current status
 
-SENTINEL is currently at **v0.1 — Foundation**.
+SENTINEL is currently at **v0.2 — Detection Engineering**.
 
 | Component | Status |
 |---|---|
@@ -147,18 +148,20 @@ SENTINEL is currently at **v0.1 — Foundation**.
 | Linux monitored endpoint | Completed |
 | Isolated lab network | Completed |
 | Wazuh agent (Linux01) | Completed |
-| Initial telemetry pipeline | Foundation established |
-| Detection engineering | current / v0.2 |
-| SOC investigation | Planned / v0.3 |
+| Initial telemetry pipeline | Completed |
+| Detection engineering | Completed (first detection validated) / v0.2 |
+| SOC investigation | Next / v0.3 |
 | Incident response | Planned / v0.4 |
 | Purple-team measurement | Planned / v0.5 |
 | Attack DNA | Planned / v0.6 |
 | Attack Mutation | Planned / v0.6 |
 | Custom SENTINEL Console | Future |
 
-Verified in v0.1: Wazuh deployment and dashboard, Kali and Linux01 deployment, the isolated lab network, Wazuh agent enrollment and connectivity (Wazuh↔Linux01, Kali↔Wazuh), the documentation set under `docs/`, the repository structure (`detections/`, `investigations/`, `metrics/`, `scenarios/`, `evidence/`, `failure-log/`), and initial infrastructure evidence (dashboard showing the active endpoint, agent running, v0.1 verification).
+**Verified in v0.1:** Wazuh deployment and dashboard, Kali and Linux01 deployment, the isolated lab network, Wazuh agent enrollment and connectivity (Wazuh↔Linux01, Kali↔Wazuh), the documentation set under `docs/`, the repository structure (`detections/`, `investigations/`, `metrics/`, `scenarios/`, `evidence/`, `failure-log/`), and initial infrastructure evidence (dashboard showing the active endpoint, agent running, v0.1 verification).
 
-**Not yet in place:** completed attack scenarios, validated detection rules, completed incident investigations, validated response workflows, measured detection rates or other performance metrics, purple-team results, Attack DNA, Attack Mutation, or a custom console. These belong to later roadmap stages.
+**Verified in v0.2:** Wazuh Syscheck (File Integrity Monitoring) configured on SENTINEL-LINUX01, scoped to `/home`; a controlled file-modification test performed against that path; the resulting `syscheck_integrity_changed` telemetry event observed; a custom Wazuh detection rule (Rule ID `100002`) created and validated against that event, producing a Level 8 alert. This is SENTINEL's first end-to-end validated detection: telemetry → rule → alert. Evidence for this work is under `evidence/v0.2/`.
+
+**Not yet in place:** additional detection scenarios beyond File Integrity Monitoring, broader telemetry sources (authentication, process execution, command execution), false-positive/missed-detection analysis beyond this single validated test, MITRE ATT&CK mapping, completed incident investigations, validated response workflows, measured detection rates or other performance metrics, purple-team results, Attack DNA, Attack Mutation, or a custom console. These belong to later roadmap stages.
 
 ---
 
@@ -169,16 +172,16 @@ v0.1                v0.2              v0.3                v0.4              v0.5
 FOUNDATION    →    DETECTION    →   INVESTIGATION   →   RESPONSE    →   MEASUREMENT       →   ATTACK DNA + MUTATION   →   SENTINEL CONSOLE
 ```
 
-**v0.1 — Foundation** *(current)*
-Virtual SOC infrastructure, isolated lab network, Wazuh deployment, Kali attacker environment, Linux monitored endpoint, Wazuh agent, initial telemetry pipeline, evidence and documentation structure, failure tracking. Foundation established.
+**v0.1 — Foundation** *(completed)*
+Virtual SOC infrastructure, isolated lab network, Wazuh deployment, Kali attacker environment, Linux monitored endpoint, Wazuh agent, initial telemetry pipeline, evidence and documentation structure, failure tracking.
 
-**v0.2 — Detection Engineering** *(planned)*
-Validate Linux telemetry, build first controlled attack scenarios, create and test initial detections, analyze false positives and missed detections, map validated behavior to MITRE ATT&CK, collect detection evidence.
+**v0.2 — Detection Engineering** *(completed)*
+Configured Syscheck/FIM telemetry on SENTINEL-LINUX01, built and validated a custom detection rule (Rule `100002`) against a controlled file-modification test, and confirmed the resulting Level 8 alert. Further detection scenarios, broader telemetry sources, false-positive/missed-detection analysis, and MITRE ATT&CK mapping remain open for continued v0.2 work and v0.3.
 ```
 ATTACK → TELEMETRY → DETECTION → TEST → MEASURE → IMPROVE
 ```
 
-**v0.3 — SOC Investigation** *(planned)*
+**v0.3 — SOC Investigation** *(next)*
 Alert triage, evidence collection, timeline reconstruction, IOC extraction, threat hunting, investigation case records, root-cause analysis, first complete incident case, formal investigation report. Core question: *what happened, how do we know, and what evidence supports the conclusion?*
 
 **v0.4 — Incident Response** *(planned)*
@@ -241,9 +244,9 @@ Planned scenario families:
 3. Endpoint Execution / Suspicious Process Activity
 4. Detection Resilience / Attack Variation
 
-These are documented as planned scenario families in `scenarios/README.md` — no scenario has been executed yet, and this README does not include offensive attack commands.
+These are documented as planned scenario families in `scenarios/README.md`. The one controlled test executed so far — a file modification against `/home` to validate the FIM detection — is documented under `evidence/v0.2/` rather than as a formal scenario; this README does not include offensive attack commands.
 
-## Detection engineering (methodology, not current output)
+## Detection engineering
 
 SENTINEL treats detection engineering as a validated process, not just writing rules:
 
@@ -252,7 +255,11 @@ TELEMETRY → DETECTION DESIGN → CONTROLLED TEST → VALIDATION
   → FALSE POSITIVE ANALYSIS → MISSED DETECTION ANALYSIS → TUNING → RETEST
 ```
 
-Detection lifecycle: `DRAFT → TELEMETRY VERIFIED → TESTED → TUNED → VALIDATED → MONITORED → RETESTED`, with possible end states `FAILED` or `RETIRED`. No detection rules are currently claimed as validated — see `docs/05-detection-engineering.md` and `detections/README.md` for the full methodology.
+Detection lifecycle: `DRAFT → TELEMETRY VERIFIED → TESTED → TUNED → VALIDATED → MONITORED → RETESTED`, with possible end states `FAILED` or `RETIRED`.
+
+**Current output:** one validated detection exists — Rule `100002`, built on Wazuh Syscheck/FIM telemetry from `/home` on SENTINEL-LINUX01, confirmed via a controlled file-modification test that produced a `syscheck_integrity_changed` event and a Level 8 alert. A key lesson from this work: a file-modification alert is not automatically malicious — it must be correlated with the user, process, path, timestamp, and surrounding context before being treated as suspicious, which will shape how FIM-based alerts are triaged in v0.3 investigation work.
+
+See `docs/05-detection-engineering.md` and `detections/README.md` for the full methodology.
 
 ## SOC investigation (methodology, not current output)
 
@@ -295,7 +302,7 @@ evidence/
 └── v0.6/
 ```
 
-Current v0.1 evidence covers infrastructure verification (dashboard, active agent). Future evidence — detection alerts, screenshots, test output, investigation timelines, IOCs, response evidence, metrics, before/after comparisons, mutation results — will be added as those stages are actually completed, never in advance. Sensitive information is never committed (see `SECURITY.md`).
+v0.1 evidence covers infrastructure verification (dashboard, active agent). v0.2 evidence covers the Syscheck/FIM configuration, the controlled file-modification test, the `syscheck_integrity_changed` event, and the Level 8 alert produced by Rule `100002` — SENTINEL's first detection-specific evidence. Future evidence — investigation timelines, IOCs, response evidence, metrics, before/after comparisons, mutation results — will be added as those stages are actually completed, never in advance. Sensitive information is never committed (see `SECURITY.md`).
 
 ---
 
@@ -358,7 +365,7 @@ See `SECURITY.md` for the full policy. This README does not contain offensive at
 
 | Current | Planned / Future |
 |---|---|
-| Wazuh | Sysmon (once Windows is introduced) |
+| Wazuh (incl. Syscheck/FIM) | Sysmon (once Windows is introduced) |
 | Ubuntu 24.04 | Windows / Active Directory |
 | Kali Linux | Attack-emulation frameworks, if adopted |
 | VirtualBox | Custom SENTINEL Console |
@@ -388,6 +395,6 @@ SENTINEL is meant to demonstrate practical, hands-on understanding of Linux, net
 
 The strongest story here isn't *"I installed Wazuh."* It's:
 
-> "I built a controlled environment, generated security activity, collected telemetry, engineered detections, investigated alerts, measured performance, found weaknesses, improved the defenses, and retested them."
+> "I built a controlled environment, generated security activity, collected telemetry, engineered a detection, validated it end to end, measured what it actually caught, and I'm now moving into investigating and responding to what it finds."
 
-That full lifecycle is not complete yet — this README reflects the current v0.1 foundation honestly while explaining where the project is headed.
+That full lifecycle is not complete yet — this README reflects the current v0.2 status honestly while explaining where the project is headed.
