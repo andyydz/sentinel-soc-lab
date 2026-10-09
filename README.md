@@ -7,7 +7,7 @@ SENTINEL is a virtual cybersecurity SOC laboratory built inside isolated virtual
 In short: **build a simulated company, attack it, detect the activity, investigate what happened, respond to the incident, measure the defense, improve it, and test it again.**
 
 ```
-SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
+SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST 
 ```
 
 SENTINEL is a controlled cybersecurity laboratory designed to demonstrate practical security operations and detection-engineering workflows — not a production SOC or an enterprise security platform.
