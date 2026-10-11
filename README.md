@@ -63,13 +63,13 @@ Investigation CASE-001 is underway. FIM events have been filtered and reviewed, 
 ## Roadmap
 
 Version	Focus	Status	
-v0.1	Foundation — infrastructure, network, Wazuh	✅ Complete	
-v0.2	Telemetry & detection engineering (FIM, Rule 100002)	🔧 In progress	
-v0.3	SOC investigation (CASE-001)	🔧 In progress	
-v0.4	Incident response	📋 Planned	
-v0.5	Purple-team measurement	📋 Planned	
-v0.6	Attack DNA & mutation testing	📋 Planned	
-Future	Custom SENTINEL console (visualization layer over Wazuh)	⬜ Not started	
+v0.1	Foundation — infrastructure, network, Wazuh	 Complete	
+v0.2	Telemetry & detection engineering (FIM, Rule 100002)	 In progress	
+v0.3	SOC investigation (CASE-001)	 In progress	
+v0.4	Incident response	 Planned	
+v0.5	Purple-team measurement	 Planned	
+v0.6	Attack DNA & mutation testing	 Planned	
+Future	Custom SENTINEL console (visualization layer over Wazuh)	 Not started	
 
 ---
 
@@ -85,11 +85,17 @@ The project's differentiator is the full loop — simulate, detect, investigate,
 
 Resource	Covers	
 [`docs/05-detection-engineering.md`](docs/05-detection-engineering.md)	Detection methodology and Rule 100002's current status	
+
 [`docs/06-incident-response.md`](docs/06-incident-response.md)	Incident response methodology (not yet executed)	
+
 [`docs/07-testing-and-matrices.md`](docs/07-testing-and-matrices.md)	Testing/validation methodology	
+
 [`evidence/v0.1/`](evidence/v0.1/) • [`v0.2/`](evidence/v0.2/) • [`v0.3/`](evidence/v0.3/)	Screenshots and artifacts backing each milestone above	
+
 [`detections/README.md`](detections/README.md) • [`investigations/README.md`](investigations/README.md)	How detections and investigations are organized	
+
 [`SECURITY.md`](SECURITY.md)	Safe-testing boundaries	
+
 [`CHANGELOG.md`](CHANGELOG.md)	Version history	
 
 ---
