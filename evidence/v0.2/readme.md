@@ -1,66 +1,127 @@
-# SENTINEL Evidence — v0.2 (Infrastructure & Telemetry Foundation)
+# SENTINEL Evidence — v0.2
 
-This folder contains the evidence collected while bringing up the Wazuh↔SENTINEL-LINUX01 telemetry pipeline: manager health, agent enrollment, and confirmed connectivity between the endpoint and the SOC platform.
+Evidence for v0.2: getting Wazuh and SENTINEL-LINUX01 actually talking to each other, and building out a first File Integrity Monitoring (FIM) setup on top of that pipeline.
 
-**What this evidence set proves:** the Wazuh Manager is running and healthy, the agent on SENTINEL-LINUX01 is installed and running, and the two are actually talking to each other — not just configured to.
+**Environment:** SENTINEL-WAZUH (`10.10.10.10`, Wazuh `4.14.8`) ↔ SENTINEL-LINUX01 (`10.10.10.40`, Wazuh Agent `4.14.8`, Agent ID `002`)
 
 ---
 
-## What was verified
+## Infrastructure & connectivity
 
-| Component | What it shows |
+
+
+![Wazuh Manager health check](v0.2-wazuh-hc-startup-01.png)
+
+
+
+
+![Wazuh Manager health check](v0.2-wazuh-hc-startup-02.png)
+
+
+
+Manager starts up clean, health check passes.
+
+
+
+![Wazuh Manager running](v0.2-wazuh-manager-running-01.png)
+
+
+
+Manager process is up on SENTINEL-WAZUH.
+
+
+
+![Agent running on Linux01](v0.2-linux01-agent-running.png)
+
+
+
+Agent service is installed and running on SENTINEL-LINUX01.
+
+
+
+![Connectivity check](v0.2-linux01-to-wazuh-connectivity.png)
+
+
+
+Linux01 can actually reach the manager over the network.
+
+
+
+![Agent active in dashboard](v0.2-agent-active.png)
+
+
+
+Agent `002` shows up in the dashboard as Active — so the whole chain (agent → network → manager → dashboard) works end to end.
+
+
+
+![Dashboard lab status](wazuh-dashboard-lab-status.png)
+
+
+
+Overall dashboard view at the time, matching everything above.
+
+---
+
+## FIM on `/home`
+
+
+
+![FIM realtime config on /home](v0.2-fim-home-realtime-cong.png)
+
+
+
+Set up real-time FIM on `/home` via Syscheck.
+
+
+
+![Test file created](v0.2-fim-test-file-created.png)
+
+
+
+
+![Test file modified](v0.2-fim-test-file-modified.png)
+
+
+
+Created and then modified a test file in `/home` to actually trigger something.
+
+
+
+![FIM result](v0.2-fim-controlled-modification.png)
+
+
+
+The modification got picked up — Wazuh's built-in **Rule 550** (Level 7, "Integrity checksum changed") fired. So the telemetry pipeline from file change → Wazuh Manager works.
+
+---
+
+## Custom rule — still open
+
+Wrote a custom rule, ID `100002`, in `local_rules.xml` to catch this same event specifically. It passed Wazuh's syntax check (`analysisd`), but I haven't gotten it to actually fire a Level 8 alert yet. Rule 550 firing proves the telemetry works — it doesn't prove my custom rule works. That's unfinished.
+
+---
+
+## Full write-up
+
+More detail on the infrastructure/telemetry setup and the Linux01 integration work lives in:
+- `infrastructure-and-telemetry-foundation.md`
+- `wazuh-linux01-integration.md`
+
+---
+
+## Full file list
+
+| File | What it shows |
 |---|---|
-| Wazuh Manager health check & startup | The Wazuh Manager service started cleanly and passed its health checks |
-| Wazuh Manager running | The manager process is up and operational on SENTINEL-WAZUH |
-| Agent running on SENTINEL-LINUX01 | The Wazuh Agent service is installed, enabled, and running on the endpoint |
-| Linux01 ↔ Wazuh connectivity | The endpoint and the manager can actually reach each other over the network |
-| Agent active in dashboard | The Wazuh Dashboard shows the agent enrolled and reporting status **Active** |
+| `v0.2-wazuh-hc-startup-01.png` / `-02.png` | Manager health check / startup |
+| `v0.2-wazuh-manager-running-01.png` | Manager running |
+| `v0.2-linux01-agent-running.png` / `wazuh-agent-running.png` | Agent running on Linux01 |
+| `v0.2-linux01-to-wazuh-connectivity.png` | Linux01 ↔ Wazuh connectivity |
+| `v0.2-agent-active.png` | Agent active in dashboard |
+| `wazuh-dashboard-lab-status.png` | Dashboard overview |
+| `v0.2-fim-home-realtime-cong.png` | `/home` FIM config |
+| `v0.2-fim-test-file-created.png` / `-modified.png` | Test file create/modify |
+| `v0.2-fim-controlled-modification.png` | Rule 550 result |
 
-See `infrastructure-and-telemetry-foundation.md` and `wazuh-linux01-integration.md` in this folder for the full write-up behind this evidence.
-
----
-
-## Evidence
-
-### 1. Wazuh Manager — Health Check & Startup
-
-![Wazuh Manager health check, step 1](v0.2-wazuh-hc-startup-01.png)
-![Wazuh Manager health check, step 2](v0.2-wazuh-hc-startup-02.png)
-
-The Wazuh Manager's startup sequence and health check, confirming the manager service came up without errors.
-
-### 2. Wazuh Manager — Running
-
-![Wazuh Manager process running](v0.2-wazuh-manager-running-01.png)
-
-Confirmation that the Wazuh Manager process is active and running on SENTINEL-WAZUH.
-
-### 3. Wazuh Agent — Running on SENTINEL-LINUX01
-
-![Wazuh Agent service running on SENTINEL-LINUX01](v0.2-linux01-agent-running.png)
-![Wazuh Agent running](wazuh-agent-running.png)
-
-The Wazuh Agent service running on the SENTINEL-LINUX01 endpoint itself, confirming it's installed and operating correctly from the agent side.
-
-### 4. SENTINEL-LINUX01 ↔ Wazuh Connectivity
-
-![Connectivity between SENTINEL-LINUX01 and Wazuh](v0.2-linux01-to-wazuh-connectivity.png)
-
-Confirms that SENTINEL-LINUX01 can reach SENTINEL-WAZUH over the `SENTINEL-LAB` network — the actual communication path the agent depends on.
-
-### 5. Agent — Active in the Wazuh Dashboard
-
-![Wazuh Dashboard showing the agent active](v0.2-agent-active.png)
-
-The Wazuh Dashboard showing the agent enrolled and reporting a status of **Active**, confirming the full pipeline — agent → network → manager → dashboard — is working end to end.
-
----
-
-## What this evidence does *not* claim
-
-This evidence confirms infrastructure and telemetry connectivity only. It does **not** demonstrate a detection firing, an investigation, an incident response action, or any measured security outcome — that work is still ahead and will get its own evidence once it exists.
-
----
-
-**Status:** v0.2 — Infrastructure & Telemetry Foundation, verified
-**Related write-ups:** `infrastructure-and-telemetry-foundation.md`, `wazuh-linux01-integration.md`
+`v0.3-case001-fim-filtered-events.png` and `v0.3-case001-rule-550-event-details.png` are in this folder too but belong to v0.3 — not covered here.
