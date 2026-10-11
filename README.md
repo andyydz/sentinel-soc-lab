@@ -51,7 +51,9 @@ SENTINEL-LAB (`10.10.10.0/24`)	Isolated internal network; NAT used only for legi
 Wazuh deployed and operational, Kali and Linux01 deployed, isolated lab network established, Wazuh agent enrolled and communicating with the manager.
 
 ## v0.2 — Telemetry & Initial Detection Engineering (in progress)
-Real-time FIM configured on `/home`; controlled file creation/modification tests performed; real FIM telemetry observed, including built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed"). A custom rule, Rule 100002, was written and passed Wazuh's configuration syntax check — its end-to-end validation (a confirmed Level 8 alert) is not yet established. Rule 550 firing confirms the telemetry pipeline works; it does not confirm the custom rule does.
+Real-time File Integrity Monitoring (FIM) is configured on "/home". Controlled file-integrity testing confirmed that the custom Wazuh Rule "100002" generated the expected Level 8 alert for a tested file modification. Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") was also observed during FIM testing.
+
+The custom rule's modification-detection path is validated for this specific controlled scenario. File-creation and deletion behavior, broader false-positive/false-negative testing, and detection-rule tuning remain outstanding. Validation of this test does not establish complete FIM coverage or prove malicious activity.
 
 ## v0.3 — SOC Investigation (started)
 Investigation CASE-001 is underway. FIM events have been filtered and reviewed, including the Rule 550 event details, as a first investigation exercise. Timeline, root cause, attribution, and final conclusions are not yet complete.
