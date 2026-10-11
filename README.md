@@ -64,14 +64,21 @@ Investigation CASE-001 is underway. FIM events have been filtered and reviewed, 
 
 ## Roadmap
 
-Version	Focus	Status	
-v0.1	Foundation — infrastructure, network, Wazuh	 Complete	
-v0.2	Telemetry & detection engineering (FIM, Rule 100002)	 In progress	
-v0.3	SOC investigation (CASE-001)	 In progress	
-v0.4	Incident response	 Planned	
-v0.5	Purple-team measurement	 Planned	
-v0.6	Attack DNA & mutation testing	 Planned	
-Future	Custom SENTINEL console (visualization layer over Wazuh)	 Not started	
+Version| Focus                                                             | Status
+
+v0.1   | Foundation — infrastructure, network, and Wazuh deployment        | Complete
+
+v0.2   | Telemetry and detection engineering — FIM and custom Rule "100002"| In progress — controlled modification detection validated; broader testing and tuning remain
+
+v0.3   | SOC investigation — CASE-001 and evidence-backed FIM investigation| In progress — CASE-001's controlled validation objective is closed; broader investigation work remains
+
+v0.4   | Incident response                                                 | Planned
+
+v0.5   | Purple-team measurement                                           | Planned
+
+v0.6   | Attack DNA and mutation testing                                   | Planned
+
+Future | Custom SENTINEL console — visualization layer over Wazuh          | Planned	
 
 ---
 
