@@ -70,13 +70,11 @@ RESPONSE / IMPROVEMENT
 
 ## Investigation States
 
-- New
-- Triage
-- Investigating
-- Contained / Awaiting Response
-- Resolved
-- Closed
-- Inconclusive
+v0.3 — SOC Investigation (in progress)
+
+CASE-001 is documented and closed for its controlled file-modification validation objective. The investigation records the custom Rule "100002" Level 8 alert, supporting FIM evidence, and a review of related endpoint events. Background configuration and cache changes were observed, but process-level attribution for every event and a definitive root cause for those unrelated changes were not established.
+
+The investigation documents its findings, limitations, and follow-up work. Broader investigation capabilities and additional cases remain future work.
 
 > "Inconclusive" is a valid, legitimate outcome when the available evidence is insufficient to reach a confirmed conclusion. Investigations are not forced to produce a definitive finding they cannot support.
 
