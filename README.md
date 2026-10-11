@@ -1,16 +1,16 @@
-SENTINEL — SOC Lab
+## SENTINEL — SOC Lab
 
-«Does your detection still work when the attacker changes tactics?»
+## Does your detection still work when the attacker changes tactics?
 
 SENTINEL is a controlled virtual Security Operations Center (SOC) lab built with VirtualBox, Wazuh, Kali Linux, and an Ubuntu endpoint. It is designed to practice and document a defensive engineering workflow—not simply install security tools.
 
-Objective
+## Objective
 
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
 
 Each stage should be supported by evidence before its results are trusted. A detection is not considered fully validated just because a rule exists: it must be tested, its outcome recorded, and its limitations understood.
 
-Architecture
+## Architecture
 
                 INTERNET
                    |
@@ -38,16 +38,16 @@ Architecture
 
 An earlier Windows endpoint ("SENTINEL-WIN01") was dropped after repeated boot and deployment failures. Windows and Active Directory integration remain future work rather than dependencies for the current milestones.
 
-Current status
+## Current status
 
-v0.1 — Foundation: Complete
+## v0.1 — Foundation: Complete
 
 - Wazuh deployed and operational.
 - Kali and the Ubuntu Linux endpoint deployed.
 - Lab networking established.
 - Wazuh agent enrolled and communicating with the manager.
 
-v0.2 — Telemetry and detection engineering: In progress
+## v0.2 — Telemetry and detection engineering: In progress
 
 - Real-time FIM configured for "/home".
 - Built-in Wazuh Rule 550 observed during file-integrity testing.
@@ -57,7 +57,7 @@ v0.2 — Telemetry and detection engineering: In progress
 
 The controlled modification test validates this specific detection path. Broader validation remains outstanding, including file-creation and deletion behavior, detection-noise tuning, and systematic false-positive/false-negative testing.
 
-v0.3 — SOC investigation: In progress
+## v0.3 — SOC investigation: In progress
 
 The CASE-001 checkpoint has been documented using controlled FIM activity and supporting alert evidence.
 
@@ -75,7 +75,7 @@ Not yet fully implemented or validated
 - Purple-team validation and attack-mutation testing.
 - A custom SENTINEL console.
 
-Roadmap
+## Roadmap
 
 Version| Focus| Status
 v0.1| Foundation — infrastructure, networking, Wazuh| Complete
@@ -98,7 +98,7 @@ Simulate → Detect → Investigate → Respond → Measure → Improve → Rete
 
 The validated Rule 100002 modification test demonstrates one working detection path. It does not imply complete FIM coverage or a fully operational end-to-end SOC workflow.
 
-Documentation and evidence
+## Documentation and evidence
 
 Resource| Purpose
 "Detection engineering" (docs/05-detection-engineering.md)| Detection methodology, custom Rule 100002, validation results, and remaining work
@@ -113,7 +113,7 @@ Resource| Purpose
 "Security policy" (SECURITY.md)| Authorized testing boundaries
 "Changelog" (CHANGELOG.md)| Version history and project changes
 
-Security and safety
+## Security and safety
 
 SENTINEL is an authorized, controlled lab.
 
