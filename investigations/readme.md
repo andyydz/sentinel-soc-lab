@@ -193,28 +193,50 @@ Supporting evidence for a case belongs in the appropriate version directory unde
 
 ## Relationship to other SENTINEL documentation
 
-- **`investigations/README.md`** (this file) — directory-level guide for how investigation records are organized.
-- **`docs/06-incident-response.md`** — the broader incident-response methodology and response workflow.
-- **`docs/05-detection-engineering.md`** — how detections are designed and validated.
-- **`docs/07-testing-and-matrices.md`** — testing and validation methodology.
-- **`docs/08-lessons-and-failures.md`** — the broader failure-driven engineering approach.
-- **`failure-log/`** — meaningful failures encountered during development and testing.
-- **`evidence/`** — supporting investigation and testing evidence.
-- **`detections/`** — detection implementations.
-- **`metrics/`** — measured performance and validation results.
-- **`CHANGELOG.md`** — major project-level milestones and architecture changes.
+- "investigations/readme.md" (this file) — directory-level guide for how investigation records are organized.
+- "investigations/CASE-001.md" — CASE-001, documenting controlled validation of custom Wazuh FIM rule 100002 and the review of related file-integrity events.
+- "docs/06-incident-response.md" — the broader incident-response methodology and response workflow.
+- "docs/05-detection-engineering.md" — how detections are designed and validated.
+- "docs/07-testing-and-metrics.md" — testing, validation, and measurement methodology.
+- "docs/08-lessons-and-failures.md" — the broader failure-driven engineering approach.
+- "failure-log/" — meaningful failures encountered during development and testing.
+- "evidence/" — supporting investigation and testing evidence.
+- "detections/" — detection implementations.
+- "metrics/" — measured performance and validation results.
+- "CHANGELOG.md" — major project-level milestones and architecture changes.
+
+## Investigation index
+
+Case ID| Investigation| Status| Primary Detection
+"CASE-001" (CASE-001.md)| File Integrity Monitoring Investigation| Closed — controlled validation completed| Wazuh FIM, custom Rule 100002
+
+## CASE-001 summary
+
+CASE-001 documents a controlled modification of "/home/sentinel-admin/sentinel-fim-validation.txt" on "SENTINEL-LINUX01". The modification generated a Wazuh Level 8 alert under custom Rule 100002.
+
+The investigation also reviewed additional file-integrity events involving desktop configuration, application state, and cache files. These events were documented as observed background activity within the reviewed dataset; individual process attribution was not conclusively established.
+
+The case is closed for its controlled validation objective. Creation and deletion testing, broader false-positive/false-negative testing, and detection-rule tuning remain follow-up tasks.
+
+Supporting evidence is stored in ""evidence/v0.3/"" (../evidence/v0.3/).
 
 ## Investigation → Response
 
-Detection → Investigation → Findings → Response → Measurement → Improvement → Retest. An investigation should not automatically trigger destructive response actions; in the controlled SENTINEL environment, response actions are deliberate and documented separately. The investigation's job is to determine what happened and provide the evidence base that supports response decisions.
+Detection → Investigation → Findings → Response → Measurement → Improvement → Retest.
+
+An investigation should not automatically trigger destructive response actions. In the controlled SENTINEL environment, response actions are deliberate and documented separately. The investigation's job is to determine what happened and provide the evidence base that supports response decisions.
 
 ## Investigation → Detection improvement
 
-Investigations are expected to feed back into detection engineering: an investigation may surface a detection gap, which leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario.
+Investigations are expected to feed back into detection engineering. An investigation may surface a detection gap, which leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario.
+
+CASE-001 confirmed the tested modification-detection behavior of custom Rule 100002 and identified broad home-directory matching as an area for further evaluation. Proposed tuning must be tested before its effectiveness is claimed.
 
 ## Investigation → Attack DNA / Mutation (future)
 
-A future use of this directory is to record how attacker behavior and detection performance change under Attack Mutation — which behaviors remained observable, which changed, which detections survived, which failed, and what improvements are required. **Attack DNA and Attack Mutation are not currently implemented in SENTINEL**; this section describes intended future use only.
+A future use of this directory is to record how attacker behavior and detection performance change under Attack Mutation — which behaviors remained observable, which changed, which detections survived, which failed, and what improvements are required.
+
+Attack DNA and Attack Mutation are not currently implemented in SENTINEL. This section describes intended future use only.
 
 ## Investigation quality
 
@@ -222,7 +244,10 @@ A useful investigation is evidence-backed, chronological, reproducible, explicit
 
 ## Current status
 
-- Investigation methodology and directory structure are documented and established.
-- SENTINEL-WAZUH and SENTINEL-LINUX01 provide the telemetry foundation that future investigations will draw on.
-- No formal investigation case currently exists in this directory. The first investigation is planned for a future controlled scenario as part of v0.3 SOC Investigation work, not the current v0.1 Foundation phase.
--
+- Investigation methodology and directory structure are documented.
+- "SENTINEL-WAZUH" and "SENTINEL-LINUX01" provide the telemetry foundation for the current investigation workflow.
+- CASE-001 has been documented in "investigations/CASE-001.md", with supporting evidence under "evidence/v0.3/".
+- Custom Rule 100002 successfully detected the controlled file modification tested in CASE-001.
+- Additional home-directory FIM events were reviewed, and potential noise from routine desktop activity was documented with appropriate attribution limitations.
+- Creation and deletion validation, detection tuning, and broader false-positive/false-negative testing remain outstanding.
+- Future investigations should receive unique case IDs and follow the evidence-first principles described in this guide.
