@@ -1,123 +1,93 @@
-# SENTINEL Testing & Metrics
+SENTINEL Detection Library
 
-> Does your detection still work when the attacker changes tactics?
+This directory documents the detection content implemented in the SENTINEL lab:
+what each detection is, where it lives, how it was tested, and what remains
+untested. A rule that exists is not a rule that works — every detection
+listed here is labeled by its actual validation status, scoped to the specific
+scenario that was tested.
 
-This document defines how SENTINEL proves its detections actually work — not just that a rule exists — and tracks what has genuinely been tested so far. **"Configured" does not mean "validated."** A control only counts as validated once it has been tested against controlled activity in the lab and the result has been documented, whether that result is a pass, a fail, or an inconclusive outcome. Validation is always scoped to the specific scenario tested.
-
-This is a testing and measurement document. Detection design and implementation are covered separately in `docs/05-detection-engineering.md`; this document focuses on how results are tested, compared, and measured.
+Design methodology is covered in `../docs/05-detection-engineering.md`; test
+results and metrics are tracked in `../docs/07-testing-and-metrics.md`. This
+README is the index between the two — it does not duplicate either document.
 
 ---
 
-## 1. Testing Methodology
+1. Current Detections
 
-Every test in SENTINEL follows the same workflow:
+ID	Detection	Status	Validated scenario	
+—	Wazuh custom Rule 100002 (Level 8) — FIM file-modification alert on monitored paths	Validated (one scenario)	Controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt`; expected Level 8 alert observed	
+
+Implementation details (Rule 100002):
+
+- Configured on the Wazuh Manager at `/var/ossec/etc/rules/local_rules.xml`
+- Triggered during a controlled file-modification test on SENTINEL-LINUX01
+- Full test record, screenshots, and alert output: `../investigations/CASE-001.md`
+- Raw evidence: `../evidence/v0.3/` (earlier pipeline evidence: `../evidence/v0.2/`)
+
+What "validated" does not mean here:
+
+- File creation and deletion events — not yet tested
+- False-positive behavior against legitimate `/home` activity — not yet tested
+- Systematic false-negative testing — not yet performed (only the single
+  positive scenario above has been exercised; the absence of recorded misses
+  reflects untested coverage, not confirmed coverage)
+- MITRE ATT&CK mapping — planned, none exists yet
+
+No portable rule artifact has been committed to this directory, and no
+per-detection subdirectory (e.g., `DET-001/`) exists yet. Both are planned
+once the detection content matures past single-scenario validation.
+
+---
+
+2. Detection Lifecycle
+
+Every detection in this library moves through the same stages:
 
 ```
-Define the test → Establish expected results → Execute a controlled test →
-Observe actual results → Compare outcomes → Record evidence → Fix and retest
+Design → Implement → Test (controlled scenario) → Evaluate → Tune → Retest → Document
 ```
 
-| Stage | What happens |
-|---|---|
-| Define the test | State what's being tested and why |
-| Establish expected results | Write down the expected outcome *before* running the test |
-| Execute | Run the controlled activity in the isolated lab |
-| Observe | Capture what actually happened |
-| Compare | Check actual results against the expected results |
-| Record evidence | Save proof — screenshots, logs, alert output — regardless of outcome |
-| Fix and retest | If it failed or was incomplete, address the cause and run it again |
+- Design — define the detection logic and the expected alert behavior before implementing.
+- Implement — configure the rule on the Wazuh Manager and verify it loads without errors.
+- Test — run a controlled activity in the lab and capture actual results. Syntax validation alone does not advance a detection past "implemented."
+- Evaluate — compare actual vs. expected outcomes; a result is recorded as successful, failed, or inconclusive.
+- Tune / Retest — adjust the rule based on results; any change resets the validation status until retested.
+- Document — the test record lands in `../docs/07-testing-and-metrics.md` (or a case file for investigations), and this README's status table is updated.
 
-**Successful, failed, and inconclusive tests are different things:**
-
-- **Successful** — the expected telemetry and alert were both observed, matching what was defined up front.
-- **Failed** — the expected behavior did not occur. This is recorded and investigated, not hidden.
-- **Inconclusive** — part of the expected chain was confirmed, but the specific thing under test was not. This label exists so a partial result is never overstated as a pass.
+Validation is always scoped to the scenario tested. Status labels in this
+README mean: implemented (configured and syntax-validated, but not
+yet validated through a controlled test), validated (confirmed firing on at
+least one controlled scenario), planned (designed or intended, not yet
+implemented), untested (implemented but never exercised).
 
 ---
 
-## 2. Current Testing Evidence
+3. Testing Evidence
 
-**Environment:**
+Per-detection test results are not restated here — the source of truth is:
 
-| Component | Details |
-|---|---|
-| SENTINEL-WAZUH | Wazuh 4.14.8, `10.10.10.10` |
-| SENTINEL-LINUX01 | Wazuh Agent 4.14.8, `10.10.10.40`, Agent ID `002` |
-| Lab network | `SENTINEL-LAB`, `10.10.10.0/24` |
+- `../docs/07-testing-and-metrics.md` — methodology, metrics framework, and validation records
+- `../investigations/CASE-001.md` — the controlled Rule 100002 validation and initial investigation
+- `../evidence/v0.3/`, `../evidence/v0.2/` — screenshots, log excerpts, and alert output
 
-**What's actually been verified:**
-
-| Item | Status |
-|---|---|
-| Wazuh Manager ↔ SENTINEL-LINUX01 communication | Verified |
-| Real-time File Integrity Monitoring configured for `/home` | Configured and confirmed working |
-| Controlled file **modification** test on `/home/sentinel-admin/sentinel-fim-validation.txt` | Executed; produced observable FIM telemetry at `2026-10-11T20:25:14.746+0530` |
-| Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") | Observed during the controlled test |
-| Custom Rule 100002 (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested file-modification scenario |
-
-Full detail and screenshots are documented in `investigations/CASE-001.md` and under `evidence/v0.3/`, with the initial telemetry-pipeline evidence under `evidence/v0.2/`.
-
-**Scope of this result:** the test above confirms Rule 100002 works for file *modification* specifically. It does **not** confirm:
-
-- Coverage for file *creation* or *deletion* events — not yet tested
-- Behavior under false-positive conditions (legitimate `/home` activity) — not yet tested
-- Behavior under false-negative conditions beyond this one scenario
-- Anything about complete FIM coverage of `/home`, or malicious activity — this was a controlled lab test
-
-No controlled attack scenario, investigation conclusion, response action, or regression/mutation test has been executed yet. Those remain future work (Section 6).
+Note: the Testing & Metrics document currently records the Rule 100002
+validation in its general evidence section. A dedicated per-detection
+inventory entry (e.g., `DET-001`) has not been established there yet.
 
 ---
 
-## 3. Metrics Framework
+4. Limitations
 
-| Metric | What it measures | Status |
-|---|---|---|
-| Detection Rate / Coverage | Successful detections ÷ applicable test executions | Not measured — one scenario tested, insufficient for a rate |
-| Missed Detections | Malicious test activity that should have triggered a detection but didn't | Not measured |
-| False-Positive Rate | Legitimate activity incorrectly flagged ÷ applicable benign events tested | Not measured — no false-positive testing performed yet |
-| Mean Time to Detect (MTTD) | Time between activity occurring and a detection firing | Not measured |
-| Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured — response capability not yet implemented |
-| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **validated for the file-modification scenario**; creation/deletion and broader FP/FN testing not yet performed |
-| MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Planned — no mappings exist yet |
-
-No aggregate numerical values are reported above beyond the single confirmed test result, because there isn't yet enough test data to support a rate or trend. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
+- Coverage today is a single custom rule validated on a single scenario, on a single agent.
+- Built-in Wazuh rules (e.g., Rule 550) generate telemetry but are not counted as SENTINEL detections until a scenario has been tested against them.
+- No detection has been tuned yet, so no before/after comparison exists.
+- All limitations above are documented rather than hidden; an honest gap list is more useful to reviewers than implied completeness.
 
 ---
 
-## 4. Evidence and Reproducibility
+5. Maintenance
 
-Every test should leave behind enough to reproduce it later: the exact procedure, the expected outcome (written before execution), the actual outcome, a timestamp, and supporting artifacts — a screenshot, a relevant log excerpt, or alert output.
-
-Evidence for the Rule 100002 validation and CASE-001 is stored under `evidence/v0.3/`; earlier infrastructure/telemetry-pipeline evidence is under `evidence/v0.2/`. This document references those paths without restating their contents — the evidence directories themselves are the source of truth for what was actually captured.
-
-Evidence is never edited to make a failed or inconclusive test look like a pass. If a result changes on retest, both the original and the retest are kept on record.
-
----
-
-## 5. Lessons and Limitations
-
-A few distinctions matter enough to call out directly:
-
-- **Tool availability is not agent connectivity.** Wazuh being installed and running doesn't mean an agent is enrolled and reporting.
-- **Agent connectivity is not telemetry validation.** An active agent doesn't guarantee the specific telemetry a detection needs is actually being generated or collected correctly.
-- **A rule passing syntax validation is not a validated detection — and one validated scenario is not complete coverage.** Rule 100002 moved from "syntax-valid only" to "confirmed firing on a controlled modification test" — a real step forward, but it validates one specific scenario, not file creation, deletion, or the rule's behavior against legitimate activity.
-- **One passing test is not production readiness.** A single successful result, on one asset, under one set of conditions, doesn't generalize to other environments, other event types, or attacker behavior.
-
-Documenting failed and inconclusive tests matters as much as documenting passes — a missing or incomplete result is information about where the lab's current coverage actually ends, and hiding it would make every other claim in this document less trustworthy.
-
----
-
-## 6. Future Plans
-
-The following are planned and **not yet completed**:
-
-- Extending Rule 100002 testing to file creation and deletion events
-- False-positive and false-negative testing for Rule 100002 against legitimate `/home` activity
-- Tuning Rule 100002 based on the above, and retesting after any change
-- Broader telemetry sources: authentication activity and process execution
-- Repeatable, documented detection test scenarios beyond the FIM tests performed so far
-- MITRE ATT&CK mapping for implemented detections
-- Purple-team testing (red/blue/purple loop) and attack mutation testing
-- Before-and-after comparisons following detection tuning, once a detection has actually been tuned
-
-These are labeled planned or unresolved because none of them have produced a documented result yet — this section exists so the roadmap stays visible without being mistaken for current capability.
+- Rule changes are made in `local_rules.xml` on the Wazuh Manager and mirrored here only once committed as artifacts.
+- Any rule change resets that detection's status to "implemented" until a controlled retest is documented.
+- This README is updated whenever a detection changes status; the Testing & Metrics document is updated in the same commit.
+- Evidence is never edited retroactively — a changed result is recorded as a new test.
