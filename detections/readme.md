@@ -1,4 +1,4 @@
-SENTINEL Detection Library
+# SENTINEL Detection Library.
 
 This directory documents the detection content implemented in the SENTINEL lab: what each detection is, where it lives, how it was tested, and what remains untested. A rule that exists is not a rule that works — every detection listed here is labeled by its actual validation status, scoped to the specific scenario that was tested.
 
