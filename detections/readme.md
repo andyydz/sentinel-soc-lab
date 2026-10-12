@@ -1,394 +1,123 @@
-# SENTINEL Detection Library
+# SENTINEL Testing & Metrics
 
-This directory contains the actual detection definitions, rules, configurations, test references, and supporting artifacts developed for SENTINEL. It is the **implementation layer** of SENTINEL's detection-engineering methodology.
+> Does your detection still work when the attacker changes tactics?
 
-**This file is not:**
-- The main project README
-- A replacement for `docs/05-detection-engineering.md`
+This document defines how SENTINEL proves its detections actually work — not just that a rule exists — and tracks what has genuinely been tested so far. **"Configured" does not mean "validated."** A control only counts as validated once it has been tested against controlled activity in the lab and the result has been documented, whether that result is a pass, a fail, or an inconclusive outcome. Validation is always scoped to the specific scenario tested.
 
-The distinction is deliberate:
+This is a testing and measurement document. Detection design and implementation are covered separately in `docs/05-detection-engineering.md`; this document focuses on how results are tested, compared, and measured.
 
-| Document | Explains |
+---
+
+## 1. Testing Methodology
+
+Every test in SENTINEL follows the same workflow:
+
+```
+Define the test → Establish expected results → Execute a controlled test →
+Observe actual results → Compare outcomes → Record evidence → Fix and retest
+```
+
+| Stage | What happens |
 |---|---|
-| `docs/05-detection-engineering.md` | **How** SENTINEL engineers detections (methodology) |
-| `detections/README.md` (this file) | **Where** actual detection implementations live and how they should be organized |
+| Define the test | State what's being tested and why |
+| Establish expected results | Write down the expected outcome *before* running the test |
+| Execute | Run the controlled activity in the isolated lab |
+| Observe | Capture what actually happened |
+| Compare | Check actual results against the expected results |
+| Record evidence | Save proof — screenshots, logs, alert output — regardless of outcome |
+| Fix and retest | If it failed or was incomplete, address the cause and run it again |
 
-The repository is currently at **v0.2 — Detection Engineering**, with one validated detection in place (Section 19). This document contains no invented detection IDs, Wazuh rule IDs, MITRE ATT&CK mappings, alert results, test results, or detection metrics beyond what is explicitly documented as real, plus clearly labeled templates and examples.
+**Successful, failed, and inconclusive tests are different things:**
 
----
-
-## 1. Purpose
-
-Detections are the operational implementation of the methodology described in `docs/05-detection-engineering.md`. A detection should eventually connect:
-
-```
-Threat → Behavior → Telemetry → Detection Logic → Alert →
-Investigation → Validation → Measurement → Tuning → Retest
-```
-
-This directory holds real detection artifacts as they're built — not theoretical descriptions of detections that don't exist yet.
+- **Successful** — the expected telemetry and alert were both observed, matching what was defined up front.
+- **Failed** — the expected behavior did not occur. This is recorded and investigated, not hidden.
+- **Inconclusive** — part of the expected chain was confirmed, but the specific thing under test was not. This label exists so a partial result is never overstated as a pass.
 
 ---
 
-## 2. Current Status
+## 2. Current Testing Evidence
 
-**Current version:** v0.2 — Detection Engineering
+**Environment:**
 
-### Current infrastructure
+| Component | Details |
+|---|---|
+| SENTINEL-WAZUH | Wazuh 4.14.8, `10.10.10.10` |
+| SENTINEL-LINUX01 | Wazuh Agent 4.14.8, `10.10.10.40`, Agent ID `002` |
+| Lab network | `SENTINEL-LAB`, `10.10.10.0/24` |
 
-| Host | Role | Details |
+**What's actually been verified:**
+
+| Item | Status |
+|---|---|
+| Wazuh Manager ↔ SENTINEL-LINUX01 communication | Verified |
+| Real-time File Integrity Monitoring configured for `/home` | Configured and confirmed working |
+| Controlled file **modification** test on `/home/sentinel-admin/sentinel-fim-validation.txt` | Executed; produced observable FIM telemetry at `2026-10-11T20:25:14.746+0530` |
+| Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") | Observed during the controlled test |
+| Custom Rule 100002 (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested file-modification scenario |
+
+Full detail and screenshots are documented in `investigations/CASE-001.md` and under `evidence/v0.3/`, with the initial telemetry-pipeline evidence under `evidence/v0.2/`.
+
+**Scope of this result:** the test above confirms Rule 100002 works for file *modification* specifically. It does **not** confirm:
+
+- Coverage for file *creation* or *deletion* events — not yet tested
+- Behavior under false-positive conditions (legitimate `/home` activity) — not yet tested
+- Behavior under false-negative conditions beyond this one scenario
+- Anything about complete FIM coverage of `/home`, or malicious activity — this was a controlled lab test
+
+No controlled attack scenario, investigation conclusion, response action, or regression/mutation test has been executed yet. Those remain future work (Section 6).
+
+---
+
+## 3. Metrics Framework
+
+| Metric | What it measures | Status |
 |---|---|---|
-| SENTINEL-WAZUH | SOC / monitoring platform | Wazuh 4.14.8, 10.10.10.10 |
-| SENTINEL-KALI | Controlled attacker environment | 10.10.10.20 |
-| SENTINEL-LINUX01 | Monitored Linux endpoint | Ubuntu 24.04, 10.10.10.40, Wazuh Agent 4.14.8, Agent ID 001, Active |
+| Detection Rate / Coverage | Successful detections ÷ applicable test executions | Not measured — one scenario tested, insufficient for a rate |
+| Missed Detections | Malicious test activity that should have triggered a detection but didn't | Not measured |
+| False-Positive Rate | Legitimate activity incorrectly flagged ÷ applicable benign events tested | Not measured — no false-positive testing performed yet |
+| Mean Time to Detect (MTTD) | Time between activity occurring and a detection firing | Not measured |
+| Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured — response capability not yet implemented |
+| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **validated for the file-modification scenario**; creation/deletion and broader FP/FN testing not yet performed |
+| MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Planned — no mappings exist yet |
 
-### Current state
-- Wazuh operational
-- Linux endpoint connected
-- Lab networking established
-- Detection library structure established (this directory)
-- First detection built and validated: File Integrity Monitoring via Wazuh Syscheck on `/home`, custom Rule `100002` (see Section 19)
-
-### Not yet completed
-- Additional detections beyond File Integrity Monitoring
-- Detection performance measurements (aggregate metrics)
-- False-positive / false-negative testing beyond the single validated test
-- Detection resilience testing
-- Attack mutation testing
-
-**No detection in this directory is described as validated unless real test evidence backs that claim.**
+No aggregate numerical values are reported above beyond the single confirmed test result, because there isn't yet enough test data to support a rate or trend. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
 
 ---
 
-## 3. Directory Role
+## 4. Evidence and Reproducibility
 
-This directory is intended to eventually hold:
+Every test should leave behind enough to reproduce it later: the exact procedure, the expected outcome (written before execution), the actual outcome, a timestamp, and supporting artifacts — a screenshot, a relevant log excerpt, or alert output.
 
-- Detection definitions
-- Detection rule files
-- Detection configuration
-- Detection metadata
-- Detection test references
-- Detection documentation
-- Supporting scripts, where appropriate
+Evidence for the Rule 100002 validation and CASE-001 is stored under `evidence/v0.3/`; earlier infrastructure/telemetry-pipeline evidence is under `evidence/v0.2/`. This document references those paths without restating their contents — the evidence directories themselves are the source of truth for what was actually captured.
 
-**Never placed here:** large raw logs, VM disks, passwords, API keys, private keys, secrets, large telemetry datasets, or unnecessary packet captures. Those belong outside the repository or in controlled evidence storage.
+Evidence is never edited to make a failed or inconclusive test look like a pass. If a result changes on retest, both the original and the retest are kept on record.
 
 ---
 
-## 4. Detection Lifecycle
+## 5. Lessons and Limitations
 
-```
-DRAFT → TELEMETRY VERIFIED → TESTED → TUNED → VALIDATED → MONITORED → RETESTED
-```
+A few distinctions matter enough to call out directly:
 
-Also possible at any stage: `FAILED`, `RETIRED`.
+- **Tool availability is not agent connectivity.** Wazuh being installed and running doesn't mean an agent is enrolled and reporting.
+- **Agent connectivity is not telemetry validation.** An active agent doesn't guarantee the specific telemetry a detection needs is actually being generated or collected correctly.
+- **A rule passing syntax validation is not a validated detection — and one validated scenario is not complete coverage.** Rule 100002 moved from "syntax-valid only" to "confirmed firing on a controlled modification test" — a real step forward, but it validates one specific scenario, not file creation, deletion, or the rule's behavior against legitimate activity.
+- **One passing test is not production readiness.** A single successful result, on one asset, under one set of conditions, doesn't generalize to other environments, other event types, or attacker behavior.
 
-| Status | Meaning |
-|---|---|
-| Draft | Specification written, not yet implemented |
-| Telemetry Verified | Required telemetry confirmed available and reliable |
-| Tested | A controlled test scenario has been executed at least once |
-| Tuned | Logic adjusted based on test results |
-| Validated | Meets the validation criteria in `docs/05-detection-engineering.md` |
-| Monitored | Running in the lab under ongoing observation |
-| Retested | Re-run after tuning or after a mutation attempt |
-| Failed | Did not detect as expected; under investigation |
-| Retired | No longer maintained or relevant |
-
-**A detection is not Validated merely because the rule exists.** Validation requires actual testing and documented evidence. SENTINEL's first detection (Section 19) has reached **Validated** status on this basis — it has not yet progressed to Monitored or Retested.
+Documenting failed and inconclusive tests matters as much as documenting passes — a missing or incomplete result is information about where the lab's current coverage actually ends, and hiding it would make every other claim in this document less trustworthy.
 
 ---
 
-## 5. Detection Naming Convention
-
-Format: `DET-001`, `DET-002`, `DET-003`, etc. `DET` stands for Detection. `DET-001` is now a real, assigned ID (Section 19) — not an illustrative example. If the project grows significantly, IDs may later incorporate categories, but unnecessary complexity is avoided for now.
-
----
-
-## 6. Individual Detection Structure
-
-Recommended structure once real detections exist:
-
-```
-detections/
-├── README.md
-├── DET-001/
-│   ├── README.md
-│   └── ...
-└── DET-002/
-    ├── README.md
-    └── ...
-```
-
-`DET-001` corresponds to the validated File Integrity Monitoring detection described in Section 19. Its own directory/file (rule configuration, test notes, evidence links) is created and maintained alongside this README as that artifact develops. `DET-002` above remains illustrative only — no second detection currently exists. Each detection gets its own directory once the artifact is complex enough; for simple detections, a single file may be sufficient — detections are not forced into a directory structure they don't need.
-
----
-
-## 7. Detection Metadata
-
-Every real detection should eventually document:
-
-- Detection ID
-- Detection Name
-- Version
-- Status
-- Objective
-- Threat
-- Affected Asset
-- Telemetry Source
-- Detection Logic
-- Expected Behavior
-- Severity
-- MITRE ATT&CK Mapping
-- False Positive Sources
-- Test Scenario
-- Evidence
-- Known Limitations
-- Related Investigation
-- Related Response
-- Last Tested
-- Retest Required
-
-No field above is filled with invented values anywhere in this repository — they're left blank or marked "not yet determined" until real information exists. See Section 19 for `DET-001`'s actual metadata as currently known.
-
----
-
-## 8. Detection Template
-
-> **⚠️ TEMPLATE — this is not a real detection. It illustrates the expected format only.**
-
-```markdown
-# DET-XXX — Detection Name
-
-## Status
-DRAFT
-
-## Objective
-What behavior is this detection intended to identify?
-
-## Threat
-What threat or suspicious behavior does it address?
-
-## Asset
-Which asset is monitored?
-
-## Telemetry Source
-What telemetry is required?
-
-## Detection Logic
-What conditions should cause the detection to trigger?
-
-## Expected Behavior
-What behavior should produce the detection?
-
-## Severity
-To be determined based on the actual scenario.
-
-## MITRE ATT&CK
-To be mapped after the behavior is defined and verified.
-
-## False Positive Sources
-What legitimate behavior may trigger this detection?
-
-## Test Scenario
-Which controlled scenario will validate the detection?
-
-## Evidence
-Link to actual evidence after testing.
-
-## Investigation
-What information should the analyst examine?
-
-## Response
-What response procedure may apply?
-
-## Known Limitations
-Document known blind spots.
-
-## Test History
-Record actual tests only.
-
-## Retest
-Document future or completed retesting.
-```
-
----
-
-## 9. Detection Design Principle
-
-**Telemetry comes before detection logic.**
-
-```
-Threat
-  ↓
-Required Behavior
-  ↓
-Required Telemetry
-  ↓
-Telemetry Verification
-  ↓
-Detection Logic
-  ↓
-Test
-  ↓
-Validation
-```
-
-A detection cannot reliably detect information that the endpoint never generates or the SOC never receives — no amount of clever rule logic compensates for missing telemetry. `DET-001` followed this principle: Syscheck/FIM telemetry on `/home` was configured and confirmed before Rule `100002` was written against it.
-
----
-
-## 10. Detection Types
-
-SENTINEL may eventually contain multiple detection approaches:
-
-- **Signature / Rule-Based** — matches known event characteristics. `DET-001` is this type: it matches directly on the `syscheck_integrity_changed` event.
-- **Threshold / Frequency** — detects repeated behavior within a defined period
-- **Correlation** — combines multiple related events into a stronger signal
-- **Sequence-Based** — detects a meaningful sequence of events
-- **Behavioral** — detects suspicious patterns rather than one fixed event
-
-Only the Signature/Rule-Based type is currently implemented (`DET-001`). The others describe the range of approaches available once further detections are built.
-
----
-
-## 11. False Positive Handling
-
-Every important detection should account for legitimate activity that might trigger it. Document potential false-positive sources for each detection.
-
-When a false positive is actually discovered:
-
-```
-Detection → Benign Activity → False Positive → Analyze → Tune → Test Again
-```
-
-Reference: `failure-log/false-positives.md`. No false positives have been recorded for `DET-001` or any other detection — systematic false-positive testing has not yet been performed.
-
----
-
-## 12. False Negative Handling
-
-If expected malicious test behavior occurs but the detection fails to fire, record it as a detection failure/false negative where the test design supports that classification.
-
-```
-Attack → Expected Detection → No Detection → Investigate Telemetry →
-Investigate Logic → Fix → Retest
-```
-
-Reference: `failure-log/detection-failures.md`. No false negatives have been recorded — the single controlled test run against `DET-001` produced the expected result. Failed detections, when they occur, are never hidden or omitted from the record.
-
----
-
-## 13. Detection Testing
-
-Every meaningful detection should eventually have a corresponding controlled test, defined in `docs/07-testing-and-matrices.md`. A test should specify:
-
-- Objective
-- Preconditions
-- Attack/activity
-- Expected telemetry
-- Expected detection
-- Evidence
-- Result
-- Failure analysis
-- Retest
-
-`DET-001` has one such test on record: a controlled file modification against `/home` on SENTINEL-LINUX01, which produced the expected `syscheck_integrity_changed` telemetry and Level 8 alert from Rule `100002`. No fake test IDs or results are created in advance of real testing.
-
----
-
-## 14. Evidence
-
-Detection evidence lives under `evidence/`, organized by version. For `DET-001`, the relevant evidence is under `evidence/v0.2/`, covering the Syscheck/FIM configuration, the controlled test, and the resulting telemetry and alert. This document does not restate or invent the specific contents of that directory — `evidence/v0.2/` and its own README are the source of truth.
-
-Actual evidence directories are created only when actual tests are performed. Possible evidence: Wazuh alerts, relevant logs, screenshots, terminal output, detection configuration, test results, investigation notes, before/after comparisons. Evidence is never fabricated.
-
----
-
-## 15. Detection → Investigation
-
-A detection should provide enough information to support investigation. A good detection should help answer:
-
-- What happened? When? Which asset? Which account?
-- Which process? Which command? Which file?
-- Which network connection?
-- What happened immediately before? Immediately after?
-
-The exact context actually available depends entirely on the telemetry configured — no context is claimed until it's been verified to exist.
-
-**Note on `DET-001`:** a FIM integrity-change alert from this detection confirms that a monitored file under `/home` changed — it does **not**, by itself, prove malicious activity. It does not identify the responsible user or process. Determining whether a given alert reflects legitimate, accidental, or malicious activity requires further investigation and contextual correlation, which is the focus of v0.3 (SOC Investigation) and `docs/06-incident-response.md`, not of this directory.
-
----
-
-## 16. Detection → Response
-
-Detections may eventually connect to incident-response workflows:
-
-```
-Detection → Triage → Investigation → Response
-```
-
-Potential future response actions: endpoint isolation, process termination, account disablement, indicator blocking, evidence collection. **No automated response currently exists**, and no response action has been taken against any `DET-001` alert.
-
----
-
-## 17. Detection Test Matrix Connection
-
-Every mature detection should eventually appear in `docs/07-testing-and-matrices.md`'s detection coverage matrix, with fields including:
-
-| Field | Description |
-|---|---|
-| Detection ID | Links back to the artifact in this directory |
-| Threat | Threat being addressed |
-| Technique | MITRE ATT&CK technique, where confidently applicable |
-| Telemetry | Source(s) the detection depends on |
-| Expected Result | What should happen when tested |
-| Actual Result | What actually happened |
-| Status | Current lifecycle status (Section 4) |
-| Evidence | Link to supporting evidence |
-
-This keeps the detection library (implementation) and the testing matrix (validation record) in sync — a detection's row in the matrix should never claim a status that this directory's own artifact doesn't support. `DET-001`'s matrix entry should show status **Validated**, matching Section 19 below.
-
----
-
-## 18. Repository Hygiene
-
-- No VM disks, credentials, API keys, tokens, or private keys are ever committed here.
-- No large raw telemetry, packet captures, or bulk logs are committed — sanitized excerpts used as evidence go under `evidence/` instead.
-- Detection files are documented with enough context (objective, telemetry source, reasoning) that someone unfamiliar with the project could understand why the detection exists, not just what it matches.
-- A detection's status label in its own file and its row in the testing matrix should always agree — if one changes, update the other in the same pass.
-
----
-
-## 19. Current Detection Inventory
-
-| Detection ID | Name | Status | Notes |
-|---|---|---|---|
-| `DET-001` | File Integrity Monitoring — `/home` | **Validated** | Wazuh Syscheck on SENTINEL-LINUX01 (`/home`); telemetry event `syscheck_integrity_changed`; custom Rule `100002`, Level 8 alert. Validated via a controlled file modification that produced the expected telemetry and alert. See `docs/05-detection-engineering.md` (Section 21) and `evidence/v0.2/` for full detail. No MITRE ATT&CK mapping, false-positive testing, or process/user attribution has been performed yet — an alert from this detection confirms a monitored file changed, not that the change was malicious. |
-
-This table will continue to grow as additional detections are drafted, tested, and validated in v0.2 and beyond.
-
----
-
-## 20. Maintenance
-
-Update this README when:
-
-- The directory structure or naming convention changes.
-- A new detection type is introduced.
-- The relationship between this directory and `docs/05-detection-engineering.md` or `docs/07-testing-and-matrices.md` changes.
-- The repository hygiene rules need revision.
-- A detection's status changes (e.g., `DET-001` moving from Validated to Monitored or Retested).
-
-Individual detection files are updated on their own schedule as they move through the lifecycle in Section 4 — this README describes the library's organization and current inventory, not the full working detail of any single detection.
-
----
-
-## 21. Final Status
-
-**Current phase:** v0.2 — Detection Engineering. This directory now contains one validated detection, `DET-001` (File Integrity Monitoring, Rule `100002`), documented in Section 19.
-
-**Next phase:** continued v0.2 work (additional detections, false-positive/false-negative testing, MITRE ATT&CK mapping) and v0.3 — SOC Investigation, which will take alerts like `DET-001`'s and investigate them with triage, evidence collection, timeline reconstruction, and root-cause analysis.
-
-This file describes where and how SENTINEL's detections are organized. It does not claim any detection is implemented, tested, or validated beyond what Section 19 actually lists.
+## 6. Future Plans
+
+The following are planned and **not yet completed**:
+
+- Extending Rule 100002 testing to file creation and deletion events
+- False-positive and false-negative testing for Rule 100002 against legitimate `/home` activity
+- Tuning Rule 100002 based on the above, and retesting after any change
+- Broader telemetry sources: authentication activity and process execution
+- Repeatable, documented detection test scenarios beyond the FIM tests performed so far
+- MITRE ATT&CK mapping for implemented detections
+- Purple-team testing (red/blue/purple loop) and attack mutation testing
+- Before-and-after comparisons following detection tuning, once a detection has actually been tuned
+
+These are labeled planned or unresolved because none of them have produced a documented result yet — this section exists so the roadmap stays visible without being mistaken for current capability.
