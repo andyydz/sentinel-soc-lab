@@ -1,12 +1,12 @@
-## investigations/
+investigations/
 
 This directory stores structured SOC investigation records for SENTINEL — the case files produced when a Wazuh alert, suspicious event, controlled attack, or threat-hunting observation is examined in detail.
 
-This README explains how the directory is organized and how investigations should be conducted and recorded. It does not restate SENTINEL's broader incident-response methodology ([`docs/06-incident-response.md`](../docs/06-incident-response.md)), detection-engineering approach ([`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md)), testing methodology ([`docs/07-testing-and-matrices.md`](../docs/07-testing-and-matrices.md)), or failure-driven engineering philosophy ([`docs/08-lessons-and-failures.md`](../docs/08-lessons-and-failures.md)) — see those documents for that material.
+This README explains how the directory is organized and how investigations should be conducted and recorded. It does not restate SENTINEL's broader incident-response methodology ([`docs/06-incident-response.md`](../docs/06-incident-response.md)), detection-engineering approach ([`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md)), testing methodology ([`docs/07-testing-and-metrics.md`](../docs/07-testing-and-metrics.md)), or failure-driven engineering philosophy ([`docs/08-lessons-and-failures.md`](../docs/08-lessons-and-failures.md)) — see those documents for that material.
 
 ---
 
-## Purpose
+Purpose
 
 An investigation begins when there is something worth examining: a Wazuh alert, unexpected endpoint activity, unusual authentication behavior, a controlled attack, a detection test, a threat-hunting finding, a detection anomaly, or any potentially malicious event. The purpose of this directory is to preserve that investigation from initial observation through conclusion, and to turn raw telemetry and alerts into a defensible, evidence-backed understanding of what happened.
 
@@ -18,7 +18,7 @@ It is responsible for answering: what happened, when, on which system, based on 
 
 ---
 
-## Investigation Principles
+Investigation Principles
 
 - Evidence first — conclusions are based on observable evidence, not assumption.
 - Timeline driven — events are placed into a chronological timeline whenever possible.
@@ -30,7 +30,7 @@ It is responsible for answering: what happened, when, on which system, based on 
 
 ---
 
-## Investigation Lifecycle
+Investigation Lifecycle
 
 ```text
 ALERT / EVENT
@@ -68,7 +68,7 @@ RESPONSE / IMPROVEMENT
 
 ---
 
-## Investigation States
+Investigation States
 
 v0.3 — SOC Investigation (in progress)
 
@@ -80,7 +80,7 @@ The investigation documents its findings, limitations, and follow-up work. Broad
 
 ---
 
-## Case Identifiers
+Case Identifiers
 
 Cases are named `case-001`, `case-002`, `case-003`, and so on.
 
@@ -92,7 +92,7 @@ Cases are named `case-001`, `case-002`, `case-003`, and so on.
 
 ---
 
-## Case Record Structure
+Case Record Structure
 
 Each case is a single Markdown file (e.g. `case-001-short-title.md`) using the following structure. Sections are filled in only with what is actually known; unresolved or not-yet-performed items are stated explicitly rather than left implying more progress than exists.
 
@@ -177,7 +177,7 @@ Passed | Failed | Partial | Not yet retested
 
 ---
 
-## Triage
+Triage
 
 Triage is the first stage of any investigation and should answer:
 
@@ -194,25 +194,25 @@ Triage is the first stage of any investigation and should answer:
 
 ---
 
-## Timeline Reconstruction
+Timeline Reconstruction
 
 A timeline connects related events across whatever telemetry is actually available — this may include Wazuh alerts, Linux logs, authentication events, process information, network observations, or file activity. Only sources genuinely available in the given scenario should be listed; timestamps are never invented. Where possible, a timeline should distinguish event time, detection time, investigation time, and response time.
 
 ---
 
-## IOC Handling
+IOC Handling
 
 Indicators of compromise are collected only from actual evidence, not inferred or assumed. Useful categories include IP, domain, URL, hash, filename, process, username, command, and file path. Where practical, each IOC records its type, value, source, first/last observed time, and context. Real-world sensitive data is not included unnecessarily.
 
 ---
 
-## MITRE ATT&CK Mapping
+MITRE ATT&CK Mapping
 
 ATT&CK mapping describes observed attacker behavior and should be evidence-driven, specific, justified, and traceable to what was actually observed — not applied to every investigation simply for presentation. The absence of a validated mapping is an acceptable, honest outcome.
 
 ---
 
-## Threat Hunting
+Threat Hunting
 
 Threat hunting is planned future investigation work, not a currently implemented capability. When introduced, it will follow a hypothesis-driven process:
 
@@ -223,22 +223,22 @@ Validate evidence → Investigate → Confirm / Reject hypothesis → Document r
 
 ---
 
-## Investigation Evidence
+Investigation Evidence
 
 Supporting evidence for a case belongs in the appropriate version directory under [`evidence/`](../evidence/) (e.g. Wazuh alerts, screenshots, logs, timeline evidence, command output, detection results, IOC evidence, network observations, before/after comparisons). Evidence should be relevant, sanitized, traceable, and reproducible where possible.
 
->  Never commit passwords, API keys, tokens, private keys, real credentials, personal information, production data, or unnecessary sensitive telemetry.
+> Never commit passwords, API keys, tokens, private keys, real credentials, personal information, production data, or unnecessary sensitive telemetry.
 
 ---
 
-## Relationship to Other SENTINEL Documentation
+Relationship to Other SENTINEL Documentation
 
 Document	Role	
 [`investigations/README.md`](README.md) (this file)	Directory-level guide for how investigation records are organized	
 [`investigations/CASE-001.md`](CASE-001.md)	CASE-001 — controlled validation of custom Wazuh FIM rule 100002 and review of related file-integrity events	
 [`docs/06-incident-response.md`](../docs/06-incident-response.md)	Broader incident-response methodology and response workflow	
 [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md)	How detections are designed and validated	
-[`docs/07-testing-and-matrices.md`](../docs/07-testing-and-matrices.md)	Testing, validation, and measurement methodology	
+[`docs/07-testing-and-metrics.md`](../docs/07-testing-and-metrics.md)	Testing, validation, and measurement methodology	
 [`docs/08-lessons-and-failures.md`](../docs/08-lessons-and-failures.md)	Broader failure-driven engineering approach	
 [`failure-log/`](../failure-log/)	Meaningful failures encountered during development and testing	
 [`evidence/`](../evidence/)	Supporting investigation and testing evidence	
@@ -248,14 +248,14 @@ Document	Role
 
 ---
 
-## Investigation Index
+Investigation Index
 
 Case ID	Investigation	Status	Primary Detection	
 [CASE-001](CASE-001.md)	File Integrity Monitoring Investigation	✅ Closed — controlled validation completed	Wazuh FIM, custom Rule 100002	
 
 ---
 
-## CASE-001 Summary
+CASE-001 Summary
 
 CASE-001 documents a controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` on SENTINEL-LINUX01. The modification generated a Wazuh Level 8 alert under custom Rule 100002.
 
@@ -263,11 +263,11 @@ The investigation also reviewed additional file-integrity events involving deskt
 
 > The case is closed for its controlled validation objective. Creation and deletion testing, broader false-positive/false-negative testing, and detection-rule tuning remain follow-up tasks.
 
-## Supporting evidence is stored in [`evidence/v0.3/`](../evidence/v0.3/).
+Supporting evidence: stored in [`evidence/v0.3/`](../evidence/v0.3/).
 
 ---
 
-## Investigation → Response
+Investigation → Response
 
 Detection → Investigation → Findings → Response → Measurement → Improvement → Retest
 
@@ -275,7 +275,7 @@ An investigation should not automatically trigger destructive response actions. 
 
 ---
 
-## Investigation → Detection Improvement
+Investigation → Detection Improvement
 
 Investigations are expected to feed back into detection engineering. An investigation may surface a detection gap, which leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario.
 
@@ -283,7 +283,7 @@ CASE-001 confirmed the tested modification-detection behavior of custom Rule 100
 
 ---
 
-## Investigation → Attack DNA / Mutation (future)
+Investigation → Attack DNA / Mutation (future)
 
 A future use of this directory is to record how attacker behavior and detection performance change under Attack Mutation — which behaviors remained observable, which changed, which detections survived, which failed, and what improvements are required.
 
@@ -291,13 +291,13 @@ A future use of this directory is to record how attacker behavior and detection 
 
 ---
 
-## Investigation Quality
+Investigation Quality
 
 A useful investigation is evidence-backed, chronological, reproducible, explicit about uncertainty, traceable to telemetry, clear about which statements are hypotheses versus conclusions, and linked to relevant detections, evidence, response actions, and lessons learned. Quality is not judged by report length.
 
 ---
 
-## Current Status
+Current Status
 
 - ✅ Investigation methodology and directory structure are documented.
 - ✅ SENTINEL-WAZUH and SENTINEL-LINUX01 provide the telemetry foundation for the current investigation workflow.
