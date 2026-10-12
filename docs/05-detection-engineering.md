@@ -54,12 +54,12 @@ Every detection should be documented against this template before and after impl
 |---|---|
 | Detection ID | Custom Wazuh Rule `100002` |
 | Threat / Technique | Unauthorized or unexpected file modification under `/home`; no MITRE ATT&CK mapping yet |
-| Telemetry Source | Wazuh Syscheck (File Integrity Monitoring), real-time, scoped to `/home` on SENTINEL-LINUX01 |
+| Telemetry Source | Wazuh Syscheck (File Integrity Monitoring), real-time, scoped to `/home` on SENTINEL-LINUX01 (`10.10.10.40`, Agent ID `002`) |
 | Detection Logic | Matches on Syscheck's file-integrity-changed event for the monitored path |
 | Expected Alert | Level 8 alert identifying the changed file |
 | Severity | Level 8 (custom rule), confirmed for the tested modification scenario. Wazuh's built-in Rule 550 (Level 7, "Integrity checksum changed") was also observed during the same test. |
-| Test Procedure | Controlled file **modification** performed directly on SENTINEL-LINUX01 within `/home` |
-| Evidence | `evidence/v0.2/` |
+| Test Procedure | Controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` on SENTINEL-LINUX01, confirmed event timestamp `2026-10-11T20:25:14.746+0530` |
+| Evidence | `evidence/v0.3/`; full investigation detail in `investigations/CASE-001.md` |
 
 ---
 
@@ -84,7 +84,7 @@ This is the standard every detection in this document is held to, including the 
 
 **Environment:**
 - SENTINEL-WAZUH — Ubuntu 24.04, Wazuh 4.14.8, `10.10.10.10`
-- SENTINEL-LINUX01 — Ubuntu 24.04, Wazuh Agent 4.14.8, `10.10.10.40`
+- SENTINEL-LINUX01 — Ubuntu 24.04, Wazuh Agent 4.14.8, `10.10.10.40`, Agent ID `002`
 
 **What's implemented:**
 
@@ -92,7 +92,7 @@ This is the standard every detection in this document is held to, including the 
 |---|---|
 | Real-time FIM on `/home` (Wazuh Syscheck) | Implemented and confirmed working |
 | Built-in Wazuh **Rule 550** (Level 7, "Integrity checksum changed") | **Observed** during a controlled file-modification test |
-| Custom **Rule 100002** (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested controlled file-modification scenario |
+| Custom **Rule 100002** (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested controlled file-modification scenario (`/home/sentinel-admin/sentinel-fim-validation.txt`, `2026-10-11T20:25:14.746+0530`) |
 
 **Scope of this result:** the controlled test confirmed that a file *modification* under `/home` is correctly detected by Rule 100002 and produces a Level 8 alert. This validates **only the tested modification scenario**. It does **not** establish:
 
@@ -100,6 +100,8 @@ This is the standard every detection in this document is held to, including the 
 - Broader false-positive or false-negative behavior (not yet tested)
 - That the rule has been tuned or hardened — no tuning has occurred
 - Complete FIM coverage of `/home`, or any claim about malicious activity — this was a controlled lab test, not an attack
+
+This result is further reviewed as part of investigation `CASE-001` (`investigations/CASE-001.md`), whose controlled-validation objective is closed while broader review, false-positive analysis, and tuning remain ongoing.
 
 ---
 
@@ -119,6 +121,7 @@ The following are planned and **not yet implemented**:
 - Extending Rule 100002 validation to file **creation** and **deletion** events under `/home`
 - False-positive / false-negative testing for Rule 100002 against legitimate `/home` activity
 - Tuning Rule 100002 based on the results of the above
+- Completing CASE-001's broader review, timeline, root-cause, and attribution work
 - Broader telemetry sources: authentication activity and process/command execution
 - MITRE ATT&CK technique mapping for implemented detections
 - Additional detection rules beyond File Integrity Monitoring
