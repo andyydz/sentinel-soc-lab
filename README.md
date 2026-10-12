@@ -1,4 +1,4 @@
-## SENTINEL — SOC Lab
+# SENTINEL — SOC Lab
 
 > Does your detection still work when the attacker changes tactics?
 
@@ -6,7 +6,9 @@ SENTINEL is a controlled virtual SOC lab (VirtualBox + Wazuh + Kali + an Ubuntu 
 
 ## Objective
 
+```
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
+```
 
 Each stage is meant to be demonstrated with real evidence before the next is trusted. A detection isn't "done" because a rule exists — it's done once it's been tested, the result recorded, and the result holds up.
 
@@ -35,56 +37,51 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
         +---------------+     +------------------+
 ```
 
-Host	Role	
-SENTINEL-WAZUH (`10.10.10.10`)	Ubuntu 24.04, Wazuh 4.14.8 — SOC/monitoring platform, dashboard operational.	
-SENTINEL-KALI (`10.10.10.20`)	Kali Linux — controlled attacker/adversary-emulation VM.	
-SENTINEL-LINUX01 (`10.10.10.40`)	Ubuntu 24.04, Wazuh Agent 4.14.8 — monitored endpoint; real-time File Integrity Monitoring (FIM) configured on `/home`.	
-SENTINEL-LAB (`10.10.10.0/24`)	Isolated internal network; NAT used only for legitimate package/update traffic.	
+| Host | Role |
+|---|---|
+| SENTINEL-WAZUH (`10.10.10.10`) | Ubuntu 24.04, Wazuh 4.14.8 — SOC/monitoring platform, dashboard operational. |
+| SENTINEL-KALI (`10.10.10.20`) | Kali Linux — controlled attacker/adversary-emulation VM. |
+| SENTINEL-LINUX01 (`10.10.10.40`, Agent ID `002`) | Ubuntu 24.04, Wazuh Agent 4.14.8 — monitored endpoint; real-time File Integrity Monitoring (FIM) configured on `/home`. |
+| SENTINEL-LAB (`10.10.10.0/24`) | Isolated internal network; NAT used only for legitimate package/update traffic. |
 
->  An earlier Windows endpoint (SENTINEL-WIN01) was dropped after repeated boot/deployment failures. Windows/AD is now future work, not a blocking dependency.
+> An earlier Windows endpoint (SENTINEL-WIN01) was dropped after repeated boot/deployment failures. Windows/AD is now future work, not a blocking dependency.
 
 ---
 
 ## Current Status
 
-## v0.1 — Foundation (complete)
+**v0.1 — Foundation (complete)**
 Wazuh deployed and operational, Kali and Linux01 deployed, isolated lab network established, Wazuh agent enrolled and communicating with the manager.
 
-## v0.2 — Telemetry & Initial Detection Engineering (in progress)
-Real-time File Integrity Monitoring (FIM) is configured on "/home". Controlled file-integrity testing confirmed that the custom Wazuh Rule "100002" generated the expected Level 8 alert for a tested file modification. Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") was also observed during FIM testing.
+**v0.2 — Telemetry & Initial Detection Engineering (in progress)**
+Real-time File Integrity Monitoring (FIM) is configured on `/home`. Controlled file-integrity testing confirmed that the custom Wazuh Rule `100002` generated the expected Level 8 alert for a tested modification of `/home/sentinel-admin/sentinel-fim-validation.txt`. Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") was also observed during FIM testing.
 
 The custom rule's modification-detection path is validated for this specific controlled scenario. File-creation and deletion behavior, broader false-positive/false-negative testing, and detection-rule tuning remain outstanding. Validation of this test does not establish complete FIM coverage or prove malicious activity.
 
-## v0.3 — SOC Investigation (started)
-Investigation CASE-001 is underway. FIM events have been filtered and reviewed, including the Rule 550 event details, as a first investigation exercise. Timeline, root cause, attribution, and final conclusions are not yet complete.
+**v0.3 — SOC Investigation (started)**
+Investigation `CASE-001` (`investigations/CASE-001.md`) is underway. FIM events have been filtered and reviewed, including the Rule 550 and Rule 100002 event details. **CASE-001's controlled-validation objective is closed** — it confirms the tested modification-detection scenario only. Timeline reconstruction, root-cause analysis, attribution, and broader event review remain ongoing and are not yet complete.
 
->  Not yet in place: a validated custom detection, broader telemetry (auth, process execution), MITRE ATT&CK mapping, a completed investigation, incident response, performance metrics, purple-team validation, attack mutation, or a custom console.
+> Not yet in place: complete FIM coverage (creation/deletion), broader telemetry (auth, process execution), MITRE ATT&CK mapping, a completed investigation, incident response, performance metrics, purple-team validation, attack mutation, or a custom console.
 
 ---
 
 ## Roadmap
 
-Version| Focus                                                             | Status
-
-v0.1   | Foundation — infrastructure, network, and Wazuh deployment        | Complete
-
-v0.2   | Telemetry and detection engineering — FIM and custom Rule "100002"| In progress — controlled modification detection validated; broader testing and tuning remain
-
-v0.3   | SOC investigation — CASE-001 and evidence-backed FIM investigation| In progress — CASE-001's controlled validation objective is closed; broader investigation work remains
-
-v0.4   | Incident response                                                 | Planned
-
-v0.5   | Purple-team measurement                                           | Planned
-
-v0.6   | Attack DNA and mutation testing                                   | Planned
-
-Future | Custom SENTINEL console — visualization layer over Wazuh          | Planned	
+| Version | Focus | Status |
+|---|---|---|
+| v0.1 | Foundation — infrastructure, network, and Wazuh deployment | Complete |
+| v0.2 | Telemetry and detection engineering — FIM and custom Rule `100002` | In progress — controlled modification detection validated; broader testing and tuning remain |
+| v0.3 | SOC investigation — CASE-001 and evidence-backed FIM investigation | In progress — CASE-001's controlled-validation objective is closed; broader investigation work remains |
+| v0.4 | Incident response | Planned |
+| v0.5 | Purple-team measurement | Planned |
+| v0.6 | Attack DNA and mutation testing | Planned |
+| Future | Custom SENTINEL console — visualization layer over Wazuh | Planned |
 
 ---
 
 ## What Makes It Valuable
 
-SENTINEL isn't judged by tool count — it's judged by whether each claim is backed by evidence. A detection is "working" only once it's been tested and the result documented, including when it fails: Rule 100002's unresolved status is treated as useful data, not something to hide.
+SENTINEL isn't judged by tool count — it's judged by whether each claim is backed by evidence. A detection is "working" only once it's been tested and the result documented. Rule `100002`'s confirmed Level 8 alert is scoped honestly to the one controlled modification scenario it was tested against — it is not presented as complete FIM coverage, and outstanding gaps (file creation/deletion behavior, false-positive/negative testing, tuning) are tracked openly rather than implied as solved.
 
 The project's differentiator is the full loop — simulate, detect, investigate, measure, improve, retest — not any single component in it.
 
@@ -92,20 +89,16 @@ The project's differentiator is the full loop — simulate, detect, investigate,
 
 ## Documentation & Evidence
 
-Resource	Covers	
-[`docs/05-detection-engineering.md`](docs/05-detection-engineering.md)	Detection methodology and Rule 100002's current status	
-
-[`docs/06-incident-response.md`](docs/06-incident-response.md)	Incident response methodology (not yet executed)	
-
-[`docs/07-testing-and-matrices.md`](docs/07-testing-and-matrices.md)	Testing/validation methodology	
-
-[`evidence/v0.1/`](evidence/v0.1/) • [`v0.2/`](evidence/v0.2/) • [`v0.3/`](evidence/v0.3/)	Screenshots and artifacts backing each milestone above	
-
-[`detections/README.md`](detections/README.md) • [`investigations/README.md`](investigations/README.md)	How detections and investigations are organized	
-
-[`SECURITY.md`](SECURITY.md)	Safe-testing boundaries	
-
-[`CHANGELOG.md`](CHANGELOG.md)	Version history	
+| Resource | Covers |
+|---|---|
+| [`docs/05-detection-engineering.md`](docs/05-detection-engineering.md) | Detection methodology and Rule `100002`'s current validation status |
+| [`docs/06-incident-response.md`](docs/06-incident-response.md) | Incident response methodology and CASE-001 status |
+| [`docs/07-testing-and-metrics.md`](docs/07-testing-and-metrics.md) | Testing/validation methodology and metrics framework |
+| [`evidence/v0.1/`](evidence/v0.1/) • [`v0.2/`](evidence/v0.2/) • [`v0.3/`](evidence/v0.3/) | Screenshots and artifacts backing each milestone above |
+| [`detections/readme.md`](detections/readme.md) • [`investigations/readme.md`](investigations/readme.md) | How detections and investigations are organized |
+| [`investigations/CASE-001.md`](investigations/CASE-001.md) | The current SOC investigation case record |
+| [`SECURITY.md`](SECURITY.md) | Safe-testing boundaries |
+| [`CHANGELOG.md`](CHANGELOG.md) | Version history |
 
 ---
 
