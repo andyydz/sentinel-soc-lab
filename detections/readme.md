@@ -6,7 +6,7 @@ Design methodology is covered in "../docs/05-detection-engineering.md"; test res
 
 ---
 
-1. Current Detections
+## 1. Current Detections
 
 ID| Detection| Status| Validated scenario
 —| Wazuh custom Rule 100002 (Level 8) — FIM file-modification alert on monitored paths| Validated (one scenario)| Controlled modification of "/home/sentinel-admin/sentinel-fim-validation.txt"; expected Level 8 alert observed
@@ -29,7 +29,7 @@ No portable rule artifact has been committed to this directory, and no per-detec
 
 ---
 
-2. Detection Lifecycle
+## 2. Detection Lifecycle
 
 Every detection in this library moves through the same stages:
 
@@ -51,7 +51,7 @@ Validation is always scoped to the scenario tested. Status labels in this README
 
 ---
 
-3. Testing Evidence
+## 3. Testing Evidence
 
 Per-detection test results are not restated here — the source of truth is:
 
@@ -63,7 +63,7 @@ Note: the Testing & Metrics document currently records the Rule 100002 validatio
 
 ---
 
-4. Limitations
+## 4. Limitations
 
 - Coverage today is a single custom rule validated on a single scenario, on a single agent.
 - Built-in Wazuh rules (e.g., Rule 550) generate telemetry but are not counted as SENTINEL detections until a scenario has been tested against them.
@@ -72,7 +72,7 @@ Note: the Testing & Metrics document currently records the Rule 100002 validatio
 
 ---
 
-5. Maintenance
+## 5. Maintenance
 
 - Rule changes are made in "local_rules.xml" on the Wazuh Manager and mirrored here only once committed as artifacts.
 - Any rule change resets that detection's status to "implemented" until a controlled retest is documented.
