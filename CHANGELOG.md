@@ -78,6 +78,24 @@ Attacker                Monitored Endpoint
 - Captured v0.3 investigation evidence, including custom-rule alert details, dashboard JSON, filtered FIM events, Rule 550 event details, and endpoint file metadata.
 - Evidence is organized under "evidence/v0.2/" and "evidence/v0.3/" as applicable.
 - CASE-001 documents the confirmed controlled modification test and the limitations of the reviewed dataset.
+- No evidence has been confirmed as saved in the repository for the 16 October 2026 reported observations below.
+
+## Reported Observations (pending review)
+
+Detection (reported 16 October 2026; raw alerts and active rule definitions not yet independently reviewed):
+
+- File creation test on "/home/sentinel-admin/sentinel-audit-test.txt": built-in Rule "554" and custom Rule "100002" were reported to fire.
+- File deletion test on the same file: built-in Rule "553" was reported to fire; custom Rule "100002" reportedly did not. This is recorded as an open custom-rule coverage question. No cause is asserted.
+- The reported creation alert for Rule "100002" is inconsistent with the reported parent condition "<if_sid>550</if_sid>". This discrepancy is unresolved.
+- These are individual reported results. They are not verified coverage, not repeatable regression tests, and not counted toward any metric.
+
+Operations (reported; logs and outputs not independently reviewed or confirmed saved in the repository):
+
+- A Wazuh Manager startup reportedly timed out at approximately 45 seconds.
+- A lock directory was removed after a check reportedly found no active Manager processes; the Manager subsequently started. The root cause of the original startup failure is unconfirmed, and the lock is not claimed to have caused it.
+- One graceful Manager/endpoint VM restart cycle was reported successful, with Agent "002" reconnecting to Active. This is a single observation and is not evidence of general resilience.
+
+Status: no Wazuh rule changes, tuning, or metric measurements are claimed.
 
 ## Engineering Principles
 
@@ -93,8 +111,8 @@ Attacker                Monitored Endpoint
 ## Project phase status:
 
 - v0.1 — Foundation: Complete. See "[0.1.0]" below.
-- v0.2 — Detection Engineering: Core controlled file-modification detection validated. Broader detection scenarios, creation/deletion testing, additional telemetry sources, and systematic false-positive/missed-detection analysis remain ongoing. See "[0.2.0]" below.
-- v0.3 — SOC Investigation (In progress): CASE-001 documented for controlled FIM validation and review of related events. Broader investigation capabilities, additional cases, threat-hunting validation, and investigation workflow improvements remain future work within this phase.
+- v0.2 — Detection Engineering: Core controlled file-modification detection validated. Creation/deletion tests have been reportedly performed but remain unverified pending raw-alert and rule-definition review. Broader detection scenarios, additional telemetry sources, and systematic false-positive/missed-detection analysis remain ongoing. See "[0.2.0]" below.
+- v0.3 — SOC Investigation (In progress): CASE-001 documented for controlled FIM validation and review of related events. The controlled modification-validation objective is closed; the overall CASE-001 investigation remains open. Broader investigation capabilities, additional cases, threat-hunting validation, and investigation workflow improvements remain future work within this phase.
 - v0.4 — Incident Response (Planned): Controlled response actions, containment workflow, eradication/recovery workflow, response validation, human-in-the-loop response, and response performance measurement.
 - v0.5 — Purple-Team Validation (Planned): Detection coverage measurement, detection rate, detection time, response time, false-positive/false-negative analysis, regression testing, before/after comparison, and purple-team feedback loop.
 - v0.6 — Attack DNA & Mutation (Planned): Attack-chain representation, Attack DNA, controlled attack variation, attack mutation, detection resilience testing, detection failure analysis, detection improvement, and retesting against modified attacker behavior.
@@ -120,14 +138,38 @@ Purpose: investigate relevant security telemetry, validate detection results, do
 - Reviewed additional home-directory events involving desktop configuration, application state, and cache files.
 - Distinguished the confirmed controlled test result from other observed events whose individual process attribution was not established.
 - Recorded the investigation scope, findings, limitations, disposition, and follow-up actions in "investigations/CASE-001.md".
+- Status: the controlled modification-validation objective is closed; the overall CASE-001 investigation remains open.
 
 ## Detection Validation
 
-- Confirmed that custom Wazuh Rule "100002" generated a Level 8 alert for the tested file modification.
-- Confirmed the event identified the modified file and included file-integrity metadata.
-- Recorded the successful controlled modification test without treating it as proof that all FIM event types or paths are covered.
+Confirmed (11 October 2026):
+
+- Custom Wazuh Rule "100002" generated a Level 8 alert for the controlled modification of "/home/sentinel-admin/sentinel-fim-validation.txt" (alert timestamp "2026-10-11T20:25:14.746+0530").
+- The event identified the modified file and included file-integrity metadata.
+- Recorded the successful controlled modification test without treating it as proof that all FIM event types or paths are covered. This confirms the tested modification scenario only.
+
+Reported, pending raw-alert review (16 October 2026):
+
+- Creation of "/home/sentinel-admin/sentinel-audit-test.txt": built-in Rule "554" and custom Rule "100002" were reported to fire.
+- Deletion of the same file: built-in Rule "553" was reported to fire; custom Rule "100002" reportedly did not.
+- These creation/deletion tests were reportedly performed; their results remain unverified until the raw alerts and active rule definitions are independently reviewed. Earlier wording that creation/deletion had not been tested is superseded by this status.
+
+Open questions:
+
+- Custom-rule coverage of file deletion is an open question. No cause is asserted.
+- The reported creation alert from Rule "100002" is inconsistent with the reported parent condition "<if_sid>550</if_sid>". This discrepancy is unresolved, and neither the reported creation result nor the reported rule definition is treated as established.
+
+Other:
+
 - Identified broad home-directory matching as an area for further noise evaluation.
-- Left file creation/deletion validation, systematic false-positive/false-negative testing, and detection-rule tuning outstanding.
+- Systematic false-positive/false-negative testing and detection-rule tuning remain outstanding. No rule change or tuning is claimed.
+
+## Operational Incident (reported; root cause unconfirmed)
+
+- A Wazuh Manager startup reportedly timed out at approximately 45 seconds.
+- A lock directory was removed after a check reportedly found no active Manager processes; the Manager subsequently started. The root cause of the original startup failure is unconfirmed; the lock is not claimed to be the cause.
+- One graceful Manager/endpoint VM restart cycle was reported successful, with Agent "002" reconnecting to Active. This is a single observation, not proof of general resilience.
+- Operational logs and outputs have not been independently reviewed or confirmed saved in the repository.
 
 ## Evidence
 
@@ -137,6 +179,7 @@ Purpose: investigate relevant security telemetry, validate detection results, do
 - Captured "evidence/v0.3/v0.3-case001-rule-550-event-details.png".
 - Captured "evidence/v0.3/v0.3-case001-endpoint-file-metadata.png".
 - Linked the evidence artifacts from the CASE-001 investigation report.
+- The 16 October 2026 raw creation/deletion alerts, active rule definitions, and operational logs have not been confirmed as saved in the repository. No evidence files are claimed for them.
 
 ## Lessons Learned
 
@@ -145,16 +188,21 @@ Purpose: investigate relevant security telemetry, validate detection results, do
 - Broad path matching can capture routine desktop activity alongside the intended validation event.
 - Investigation conclusions must distinguish observed facts, interpretations, and unresolved questions.
 - Rule tuning must be followed by testing to ensure that noise is reduced without suppressing the intended detection.
+- A built-in rule firing (for example Rule 554 or 553) does not establish whether custom Rule 100002 should cover, or does cover, the same event.
+- A reported result is not a verified result until the raw alerts and active rule definitions have been reviewed.
 
 ## Not yet included in v0.3
 
 - Comprehensive threat hunting across multiple telemetry sources
-- File creation and deletion validation for custom Rule 100002
+- Verified file creation and deletion validation for custom Rule 100002 (tests reportedly performed; pending raw-alert and rule-definition review)
+- Resolution of the Rule "100002" / "<if_sid>550</if_sid>" discrepancy and the deletion coverage question
+- Repeatable regression tests for creation and deletion
 - Systematic false-positive and false-negative testing
 - Tested noise-reduction tuning and regression validation
 - Multiple investigation cases covering different security scenarios
-- Full incident-response workflow and response performance measurement
+- Full incident-response workflow, response engineering, and response performance measurement
 - Detection coverage metrics and purple-team validation
+- MITRE ATT&CK technique mapping
 - Attack DNA / mutation testing
 
 ---
@@ -179,7 +227,7 @@ Purpose: move beyond infrastructure foundation into building, testing, and valid
 - Confirmed the custom Rule "100002" matched the tested event and produced a Level 8 alert.
 - Confirmed the alert identified the modified file and included file-integrity metadata.
 - Validated the modification-detection path end-to-end for the controlled scenario: telemetry generation → custom-rule match → Level 8 alert.
-- This validation does not establish coverage of file creation, file deletion, every monitored path, or other detection scenarios.
+- This validation does not establish coverage of file creation, file deletion, every monitored path, or other detection scenarios. Later reported creation/deletion results are recorded under "[0.3.0]" and remain pending review.
 
 ## Evidence
 
