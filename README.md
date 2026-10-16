@@ -54,14 +54,22 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 Wazuh deployed and operational, Kali and Linux01 deployed, isolated lab network established, Wazuh agent enrolled and communicating with the manager.
 
 **v0.2 — Telemetry & Initial Detection Engineering (in progress)**
-Real-time File Integrity Monitoring (FIM) is configured on `/home`. Controlled file-integrity testing confirmed that the custom Wazuh Rule `100002` generated the expected Level 8 alert for a tested modification of `/home/sentinel-admin/sentinel-fim-validation.txt`. Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") was also observed during FIM testing.
+Real-time File Integrity Monitoring (FIM) is configured on `/home`. Controlled file-integrity testing has produced the following results. All three results below are reported lab observations (the creation and deletion tests were run on 16 October 2026); the supporting raw alerts and screenshots have not yet been reviewed for this README, and each result is limited to its specific test:
 
-The custom rule's modification-detection path is validated for this specific controlled scenario. File-creation and deletion behavior, broader false-positive/false-negative testing, and detection-rule tuning remain outstanding. Validation of this test does not establish complete FIM coverage or prove malicious activity.
+| Scenario | Test file | Reported result |
+|---|---|---|
+| Modification | `/home/sentinel-admin/sentinel-fim-validation.txt` | Custom Rule `100002` fired at Level 8; built-in Rule 550 (Level 7, "Integrity checksum changed") also observed. |
+| Creation | `/home/sentinel-admin/sentinel-audit-test.txt` | Custom Rule `100002` fired at Level 8, alongside built-in Rule 554 ("File added to the system"), as real-time FIM activity. |
+| Deletion | `/home/sentinel-admin/sentinel-audit-test.txt` | Built-in Rule 553 (Level 7, "File deleted") generated an alert; custom Rule `100002` **did not** fire. |
+
+Rule `100002` is currently anchored to built-in Rule 550 and matches the `file` field against `/home/`. The deletion result is an **observed coverage gap and an open engineering finding** — the deletion was still alerted on by the built-in rule. **Unresolved discrepancy:** `100002` reportedly fired on the creation event even though it is anchored to Rule 550. This has not been explained and must be verified against the raw alert and the active rule definition before any coverage claim is relied on. The rule has not been modified in response to these findings.
+
+Still outstanding: investigation and resolution of the deletion gap, a repeatable creation/modification/deletion regression test, broader false-positive/false-negative analysis (including review of background FIM activity), and detection-rule tuning. These results are reported lab observations scoped to single controlled tests; they do not establish complete FIM coverage, measured detection rates, or malicious activity. Any ATT&CK mappings shown on built-in events are telemetry metadata, not evidence of intent.
 
 **v0.3 — SOC Investigation (started)**
-Investigation `CASE-001` (`investigations/CASE-001.md`) is underway. FIM events have been filtered and reviewed, including the Rule 550 and Rule 100002 event details. **CASE-001's controlled-validation objective is closed** — it confirms the tested modification-detection scenario only. Timeline reconstruction, root-cause analysis, attribution, and broader event review remain ongoing and are not yet complete.
+Investigation `CASE-001` (`investigations/CASE-001.md`) is underway. FIM events have been filtered and reviewed, including the Rule 550 and Rule 100002 event details. **CASE-001's controlled-validation objective is closed** — it confirms the tested modification-detection scenario only. Timeline reconstruction, root-cause analysis, attribution, and broader event review remain ongoing and are not yet complete. Recording the creation and deletion results in the case record is pending review.
 
-> Not yet in place: complete FIM coverage (creation/deletion), broader telemetry (auth, process execution), MITRE ATT&CK mapping, a completed investigation, incident response, performance metrics, purple-team validation, attack mutation, or a custom console.
+> Not yet in place: complete FIM coverage (deletion not covered by the custom rule; creation and modification validated only for single controlled tests), broader telemetry (auth, process execution), project-level MITRE ATT&CK mapping, a completed investigation, incident response, performance metrics, purple-team validation, attack mutation, or a custom console.
 
 ---
 
@@ -70,7 +78,7 @@ Investigation `CASE-001` (`investigations/CASE-001.md`) is underway. FIM events 
 | Version | Focus | Status |
 |---|---|---|
 | v0.1 | Foundation — infrastructure, network, and Wazuh deployment | Complete |
-| v0.2 | Telemetry and detection engineering — FIM and custom Rule `100002` | In progress — controlled modification detection validated; broader testing and tuning remain |
+| v0.2 | Telemetry and detection engineering — FIM and custom Rule `100002` | In progress — controlled modification and creation detection reported; deletion coverage gap open; broader testing and tuning remain |
 | v0.3 | SOC investigation — CASE-001 and evidence-backed FIM investigation | In progress — CASE-001's controlled-validation objective is closed; broader investigation work remains |
 | v0.4 | Incident response | Planned |
 | v0.5 | Purple-team measurement | Planned |
@@ -81,7 +89,7 @@ Investigation `CASE-001` (`investigations/CASE-001.md`) is underway. FIM events 
 
 ## What Makes It Valuable
 
-SENTINEL isn't judged by tool count — it's judged by whether each claim is backed by evidence. A detection is "working" only once it's been tested and the result documented. Rule `100002`'s confirmed Level 8 alert is scoped honestly to the one controlled modification scenario it was tested against — it is not presented as complete FIM coverage, and outstanding gaps (file creation/deletion behavior, false-positive/negative testing, tuning) are tracked openly rather than implied as solved.
+SENTINEL isn't judged by tool count — it's judged by whether each claim is backed by evidence. A detection is "working" only once it's been tested and the result documented. Rule `100002`'s Level 8 alerts are scoped honestly to the controlled modification and creation scenarios they were tested against — they are not presented as complete FIM coverage. The deletion test, where built-in Rule 553 alerted but `100002` did not, is tracked openly as a coverage gap rather than hidden, alongside the remaining validation work (regression testing, false-positive/negative testing, tuning).
 
 The project's differentiator is the full loop — simulate, detect, investigate, measure, improve, retest — not any single component in it.
 
@@ -94,7 +102,7 @@ The project's differentiator is the full loop — simulate, detect, investigate,
 | [`docs/05-detection-engineering.md`](docs/05-detection-engineering.md) | Detection methodology and Rule `100002`'s current validation status |
 | [`docs/06-incident-response.md`](docs/06-incident-response.md) | Incident response methodology and CASE-001 status |
 | [`docs/07-testing-and-metrics.md`](docs/07-testing-and-metrics.md) | Testing/validation methodology and metrics framework |
-| [`evidence/v0.1/`](evidence/v0.1/) • [`v0.2/`](evidence/v0.2/) • [`v0.3/`](evidence/v0.3/) | Screenshots and artifacts backing each milestone above |
+| [`evidence/v0.1/`](evidence/v0.1/) • [`v0.2/`](evidence/v0.2/) • [`v0.3/`](evidence/v0.3/) | Screenshots and artifacts for each milestone above. Evidence for the newly reported creation and deletion results is not yet confirmed to be filed here and still needs to be reviewed and added |
 | [`detections/readme.md`](detections/readme.md) • [`investigations/readme.md`](investigations/readme.md) | How detections and investigations are organized |
 | [`investigations/CASE-001.md`](investigations/CASE-001.md) | The current SOC investigation case record |
 | [`SECURITY.md`](SECURITY.md) | Safe-testing boundaries |
