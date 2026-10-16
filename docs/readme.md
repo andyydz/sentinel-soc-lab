@@ -33,7 +33,7 @@ Three rules govern all of it:
 | 04 | `04-threat-model.md` | Assets, threats, attack surfaces, trust boundaries, attacker capabilities, security objectives, threat scenarios |
 | 05 | `05-detection-engineering.md` | How SENTINEL designs, tests, tunes, validates, and improves detections |
 | 06 | `06-incident-response.md` | How SENTINEL handles a detected security event, from detection through response and improvement |
-| 07 | `07-testing-and-matrices.md` | How SENTINEL proves its security controls actually work — the main validation methodology |
+| 07 | `07-testing-and-metrics.md` | How SENTINEL proves its security controls actually work — the main validation methodology |
 | 08 | `08-lessons-and-failures.md` | Real project failures, troubleshooting, engineering decisions, and lessons learned |
 
 ### 01-project-overview.md
@@ -66,7 +66,7 @@ Detection → Triage → Investigation → Containment → Eradication →
 Recovery → Post-Incident Review → Detection Improvement → Retest
 ```
 
-### 07-testing-and-matrices.md
+### 07-testing-and-metrics.md
 Defines how SENTINEL proves that security controls actually work. This is the main validation methodology, covering test cases, test matrices, telemetry validation, detection validation, investigation validation, response testing, regression testing, false-positive testing, false-negative testing, metrics, purple-team validation, attack mutation, and detection resilience. Core principle:
 
 > "Configured does not mean validated."
