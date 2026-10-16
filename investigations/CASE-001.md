@@ -3,7 +3,7 @@
 Field	Value	
 Case ID	CASE-001	
 Project	SENTINEL — SOC Lab	
-Version	v0.3 — Detection Engineering	
+Version	v0.3 — SOC Investigation	
 Status	 Closed — Controlled Validation Completed	
 Severity	Low	
 Detection Source	Wazuh File Integrity Monitoring (FIM)	
@@ -144,9 +144,11 @@ Further testing is needed to determine whether narrower path matching or careful
 
 Disposition: Closed for the controlled validation objective.
 
-The custom rule successfully detected the tested file modification at Level 8. Additional home-directory events were observed and reviewed within the available evidence.
+This closure applies only to the controlled file-modification validation. The custom rule successfully detected the tested file modification at Level 8. Additional home-directory events were observed and reviewed within the available evidence.
 
 No malicious indicators were identified in the reviewed dataset. This finding is limited to the events and artifacts examined; it is not a comprehensive forensic assessment and does not establish that the endpoint was free from compromise.
+
+Broader investigation and detection-engineering work remains open. File creation/deletion testing, systematic false-positive/false-negative testing, and detection tuning remain outstanding, as documented in the Limitations and Follow-Up Actions sections.
 
 ---
 
@@ -172,7 +174,7 @@ No malicious indicators were identified in the reviewed dataset. This finding is
 
 ---
 
- ## Conclusion
+## Conclusion
 
 CASE-001 documents a successful controlled validation of SENTINEL's custom Wazuh FIM rule `100002`. The test demonstrates modification detection for the specified home-directory file and records the additional noise and coverage questions discovered during investigation.
 
