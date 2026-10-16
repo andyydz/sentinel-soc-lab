@@ -1,4 +1,4 @@
-## CASE-001 — File Integrity Monitoring Investigation
+## CASE-001 — Controlled FIM Modification Validation
 
 Field	Value	
 Case ID	CASE-001	
