@@ -74,18 +74,24 @@ The current lab is Linux-based. There is no Windows endpoint in the environment 
 
 SENTINEL-LINUX01's Wazuh Agent (ID `001`) is registered, appears in the Wazuh Dashboard, and is running as an enabled, automatically-starting service. The Wazuh package repository was disabled after installation to avoid unintended package upgrades.
 
+> **Note:** Other project documentation (`investigations/CASE-001.md`) records this agent as ID `002`. This discrepancy has not been resolved through live verification, so neither ID is presented here as newly verified. It should be checked separately against the Wazuh Dashboard or manager.
+
 ## 7. Technology Stack
+
+Status labels: ✅ deployed or in use as a tool · 🔄 concept or capability in partial use · ⏳ planned, not yet implemented.
 
 | Category | Technology | Status |
 |---|---|---|
 | SIEM / Security monitoring | Wazuh (server, indexer, dashboard) | ✅ Deployed |
 | Endpoint telemetry | Wazuh Agent 4.14.8 | ✅ Deployed on Linux01 |
+| File integrity monitoring | Wazuh FIM (syscheck) | 🔄 In use — exercised in one controlled modification test |
+| Custom detection rules | Wazuh custom rule `100002` | 🔄 In use — validated for the tested file modification only |
 | Attacker environment | Kali Linux | ✅ Deployed |
 | Operating systems | Ubuntu 24.04.5 LTS, Kali Linux | ✅ Deployed |
 | Virtualization | Oracle VirtualBox | ✅ In use |
 | Networking | Isolated internal lab network (SENTINEL-LAB, 10.10.10.0/24) + NAT | ✅ In use |
-| Detection framework | MITRE ATT&CK mapping | ⏳ Planned |
-| Automation / engineering | Python | ⏳ Planned |
+| Detection framework | MITRE ATT&CK mapping | ⏳ Planned — comprehensive mapping not yet implemented |
+| Automation / engineering | Python | ⏳ Planned — not yet implemented |
 | Documentation | Git / GitHub | ✅ In use |
 
 Sysmon is **not** currently deployed anywhere in the lab.
@@ -95,11 +101,15 @@ Sysmon is **not** currently deployed anywhere in the lab.
 | Version | Focus | Main Objective | Status |
 |---|---|---|---|
 | v0.1 | Foundation | Isolated lab network, Wazuh deployment, Kali attacker VM, Linux endpoint, agent connectivity | ✅ COMPLETED |
-| v0.2 | Detection Engineering | Linux/auth/SSH telemetry, File Integrity Monitoring, detection development and tuning | ⏳ PLANNED |
-| v0.3 | SOC Investigation | Alert investigation, evidence collection, timelines, IOCs, MITRE ATT&CK mapping, threat hunting, case management | ⏳ PLANNED |
+| v0.2 | Detection Engineering | Linux/auth/SSH telemetry, File Integrity Monitoring, detection development and tuning | 🔄 IN PROGRESS — controlled FIM modification test demonstrated; further testing and tuning outstanding |
+| v0.3 | SOC Investigation | Alert investigation, evidence collection, timelines, IOCs, MITRE ATT&CK mapping, threat hunting, case management | 🔄 IN PROGRESS — CASE-001 documented and closed for its controlled validation objective |
 | v0.4 | Incident Response | Controlled response actions, containment, recovery, incident reporting | ⏳ PLANNED |
 | v0.5 | Purple-Team Measurement | Detection rate, missed detections, false positives, timing metrics, before/after comparison | ⏳ PLANNED |
 | v0.6 | Attack DNA & Mutation | Attack-chain representation, controlled attacker behavior modification, resilience retesting | ⏳ PLANNED |
+
+**v0.2 progress.** A controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` generated a Level 8 alert under custom Wazuh Rule `100002`. This demonstrates detection of the tested modification only. File creation and deletion validation, systematic false-positive and false-negative testing, and detection tuning remain outstanding. This does not indicate comprehensive detection coverage.
+
+**v0.3 progress.** [`investigations/CASE-001.md`](../investigations/CASE-001.md) documents the controlled validation and a review of related FIM events. The case is closed for that validation objective only; the broader v0.3 investigation work remains in progress.
 
 ## 9. Differentiation
 
@@ -127,7 +137,7 @@ These are **design goals for later project stages**, not current capabilities:
 - **Purple-Team Feedback Loop** — Attack → Detect → Investigate → Measure → Improve → Retest, run repeatedly.
 - **Failure-Driven Detection Engineering** — a missed detection or false positive is recorded and treated as engineering evidence, not hidden.
 
-None of these have been implemented yet; they describe the direction v0.2 onward is building toward.
+Attack DNA, Attack Mutation, Detection Resilience, and the Purple-Team Feedback Loop have not been implemented. Failure-driven detection engineering remains a design goal. The controlled FIM modification validation described in CASE-001 is an existing detection-validation activity, not attack mutation or detection-resilience testing.
 
 ## 11. Evidence-Driven Development
 
@@ -145,6 +155,8 @@ evidence/
 
 Screenshots, detection test results, alerts, investigation notes, metrics, and reports may be stored here as each phase produces them. No secrets, credentials, or sensitive raw telemetry are stored in this structure.
 
+The version directories show the planned evidence organization. Actual evidence availability depends on completed work, and a listed directory does not mean its evidence set is complete.
+
 ## 12. Failure Logging
 
 ```
@@ -157,9 +169,11 @@ failure-log/
 
 A missed detection or a false positive says something useful about a detection's actual coverage — logging it, rather than omitting it, is what makes the project's later performance claims credible.
 
+This structure describes the intended organization. It does not mean every category already contains validated findings.
+
 ## 13. Documentation & Case-Based Learning
 
-Once real incidents are investigated, each significant one is intended to produce a structured case report using this format:
+Significant investigations—including controlled detection validations, suspicious-event investigations, and confirmed incidents—should produce structured case reports using this format:
 
 - Incident Summary
 - Severity
@@ -178,7 +192,7 @@ Once real incidents are investigated, each significant one is intended to produc
 - Retest Results
 - Lessons Learned
 
-No case report exists yet — this format will apply starting in v0.3.
+[`investigations/CASE-001.md`](../investigations/CASE-001.md) documents the controlled FIM modification validation and its supporting evidence. This case validates the tested modification only; it does not establish complete FIM coverage or a comprehensive forensic assessment. The list above is the intended template, and it does not mean every field has been fully validated in the lab.
 
 ## 14. Metrics Philosophy
 
@@ -193,7 +207,9 @@ Once detections exist, SENTINEL intends to measure them rather than just display
 - Response time
 - Before/after detection performance
 
-No metrics have been collected yet, and none are presented here — this section describes the intended measurement model, to be populated starting in v0.5.
+Observed event counts are not the same as formal detection-performance metrics. For example, the CASE-001 review noted 19 matching FIM events in the reviewed period. That count includes the controlled validation event, and the remaining events were not fully attributed to individual processes. It is not a detection rate, a false-positive rate, or evidence of overall detection performance.
+
+No formal detection-performance metrics have been collected yet, and none are presented here. Formal measurement, before/after comparison, and comprehensive metrics remain future work, to be populated starting in v0.5.
 
 ## 15. Future Expansion
 
@@ -215,6 +231,7 @@ SENTINEL runs entirely inside an isolated laboratory network. All adversary simu
 
 ## 17. Project Status
 
-**Current milestone:** v0.1 — Foundation
-**Status:** COMPLETED
-**Next milestone:** v0.2 — Detection Engineering & Linux Telemetry
+**Completed milestone:** v0.1 — Foundation
+**Current milestones:** v0.2 — Detection Engineering (in progress) and v0.3 — SOC Investigation (in progress)
+**Status:** IN PROGRESS — v0.2's controlled FIM modification test is demonstrated; broader validation and tuning remain outstanding. v0.3 includes CASE-001, closed for its controlled validation objective, while broader investigation work remains in progress.
+**Next planned milestone:** v0.4 — Incident Response
