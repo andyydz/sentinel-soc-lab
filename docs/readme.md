@@ -189,7 +189,7 @@ Documentation evolves alongside implementation — a document is updated when th
 | 04 Threat Model | New assets, attack surfaces, threats, or security assumptions are introduced |
 | 05 Detection Engineering | Detection methodology, telemetry strategy, detection logic, or validation approach changes |
 | 06 Incident Response | Investigation, containment, eradication, recovery, or response workflows change |
-| 07 Testing & Matrices | Tests are created, executed, failed, validated, or retired |
+| 07 Testing & Matrics | Tests are created, executed, failed, validated, or retired |
 | 08 Lessons & Failures | A meaningful failure, engineering decision, or lesson occurs |
 
 Not every document needs to change with every version — only the documents actually affected by a given change are updated.
