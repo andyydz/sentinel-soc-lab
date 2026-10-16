@@ -2,7 +2,7 @@
 
 > Does your detection still work when the attacker changes tactics?
 
-This is the **initial threat model** for SENTINEL v0.1. It is a planning document, not an attack report: it establishes what the lab is defending, who the assumed attacker is, where the trust boundaries sit, and which threats are candidates for future controlled testing. No attacks have been executed against SENTINEL yet, and no detections have been validated — this document exists to guide that work, not to describe it as done.
+This is the **initial threat model** for SENTINEL v0.1. It is a planning document, not an attack report: it establishes what the lab is defending, who the assumed attacker is, where the trust boundaries sit, and which threats are candidates for future controlled testing. No adversarial attack scenario has been executed against SENTINEL. The project has since documented one controlled File Integrity Monitoring (FIM) modification validation using custom Wazuh Rule `100002` (see `investigations/CASE-001.md`); this was a controlled validation, not an attack, and it does not establish complete FIM coverage. This document exists to guide further controlled testing, not to describe it as done.
 
 ---
 
@@ -58,10 +58,10 @@ SENTINEL v0.1 — Foundation is **completed**. The current operational lab consi
 
 **Current limitations relevant to this threat model:**
 
-- No controlled attack scenario has been executed yet.
-- No custom detection has been validated yet.
+- No adversarial attack scenario has been executed yet. The one controlled FIM modification validation (Rule `100002`) was a controlled validation, not an attack simulation.
+- One custom detection (Wazuh Rule `100002`) has been validated for a single controlled FIM file-modification scenario (`investigations/CASE-001.md`). File creation/deletion testing, systematic false-positive/false-negative testing, and tuning remain outstanding.
 - Detailed Linux telemetry engineering is not yet complete.
-- No incident has been investigated, and no incident response procedure has been tested.
+- No real incident has been investigated (CASE-001 documents a controlled validation, not an incident), and no incident response procedure has been tested.
 - No detection-performance metrics exist yet.
 - Attack mutation, Attack DNA, and purple-team validation are not implemented.
 
@@ -366,17 +366,16 @@ This is the core SENTINEL validation loop that this threat model feeds into: a t
 
 ## 17. Threat Model Limitations
 
-Current v0.1 limitations that this threat model is honest about:
+Current limitations:
 
 - Only Linux endpoint coverage exists — there is no Windows/AD coverage.
 - Endpoint diversity is limited to a single monitored host.
-- Detailed telemetry engineering (auth logs, FIM, etc.) is not yet complete.
-- No validated detection scenarios exist yet.
+- FIM is configured on `/home`, and one controlled file-modification scenario has been validated using custom Wazuh Rule `100002`. File creation/deletion testing, systematic false-positive/false-negative testing, broader telemetry engineering, and detection tuning remain incomplete.
 - No real incident cases exist yet.
 - No detection-performance metrics exist yet.
 - No attack mutation testing has occurred yet.
 
-This threat model will evolve as SENTINEL's architecture and capabilities expand — it reflects the current, narrow scope of v0.1 rather than a mature enterprise environment.
+This threat model will evolve as SENTINEL's architecture and capabilities expand — it reflects the project's current, narrow scope rather than a mature enterprise environment.
 
 ---
 
