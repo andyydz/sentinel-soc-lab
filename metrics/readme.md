@@ -153,9 +153,11 @@ When a detection or control is changed to fix a gap, tune a false positive, or r
 
 ## Current status
 
-SENTINEL is currently in **v0.1 Foundation**. Verified current capabilities include the Wazuh deployment and dashboard, the Kali attacker VM, the Linux monitored endpoint with an active Wazuh agent, the initial telemetry pipeline, the isolated lab network, and initial infrastructure evidence.
+SENTINEL has completed **v0.1 Foundation** and is currently in **v0.2 Detection Engineering**. Verified capabilities include the Wazuh deployment and dashboard, the Kali attacker VM, the Linux monitored endpoint with an active Wazuh agent, the initial telemetry pipeline, the isolated lab network, and infrastructure evidence.
 
-The project has **not** yet completed a detection, investigation, or response cycle, so this directory does not currently contain — and this README does not claim — any of the following:
+During a controlled file-modification test on 11 October 2026, custom Rule `100002` generated a confirmed Level 8 alert for that specific scenario, and CASE-001's controlled-validation objective for it is closed. This is a single controlled-test observation, not a measured metric, and it does not establish complete detection coverage. Broader investigation work remains ongoing. The reported 16 October 2026 file-creation and deletion results remain unverified, and the custom rule's deletion coverage question is unresolved.
+
+The project has **not** yet completed the full SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST workflow, and this directory does not currently contain — and this README does not claim — any measured performance metrics, including:
 
 - a measured detection rate
 - measured MTTA or MTTR
@@ -165,4 +167,4 @@ The project has **not** yet completed a detection, investigation, or response cy
 - a detection resilience or mutation percentage
 - any other performance result
 
-These values will be produced from real, controlled tests beginning in v0.2 Detection Engineering and later phases, and recorded here as they occur.
+These values will be produced from real, controlled tests as v0.2 Detection Engineering and later phases progress, and recorded here as they occur.
