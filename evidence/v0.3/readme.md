@@ -82,7 +82,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 5. October 16 File-Creation Test: Built-in Rule 554
 
-![Oct 16 creation, Rule 554](v0.3-oct16-creation-rule-664.png)
+![Oct 16 creation, Rule 554](v0.3-oct16-creation-rule-553.png)
 
 ![Oct 16 creation, file path](v0.3-oct16-creation-file-path.png)
 
