@@ -50,30 +50,33 @@ Observe actual results → Compare outcomes → Record evidence → Fix and rete
 | Item | Status |
 |---|---|
 | Wazuh Manager ↔ SENTINEL-LINUX01 communication | Verified |
-| Real-time File Integrity Monitoring configured for `/home` | Configured and confirmed working |
-| Controlled file **modification** test on `/home/sentinel-admin/sentinel-fim-validation.txt` | Executed; produced observable FIM telemetry at `2026-10-11T20:25:14.746+0530` |
+| Real-time File Integrity Monitoring configured for `/home` | Configured; telemetry confirmed for the tested scenarios. Complete coverage has not been established. |
+| Controlled file **modification** test on `/home/sentinel-admin/sentinel-fim-validation.txt` (11 October 2026) | Executed; produced observable FIM telemetry at `2026-10-11T20:25:14.746+0530` |
 | Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") | Observed during the controlled test |
-| Custom Rule 100002 (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested file-modification scenario |
+| Custom Rule 100002 (Level 8) | **Confirmed to generate the expected Level 8 alert** for the tested file-modification scenario only |
 
 Full detail and screenshots are documented in `investigations/CASE-001.md` and under `evidence/v0.3/`, with the initial telemetry-pipeline evidence under `evidence/v0.2/`.
 
-**Reported, not yet independently reviewed (October 16):**
+**Reviewed records from 16 October 2026** (controlled actions on `/home/sentinel-admin/sentinel-audit-test.txt`; the screenshots have been reviewed, the source alert JSON has not):
 
-| Item | Status |
+| Item | Reviewed record |
 |---|---|
-| Controlled file **creation** test on `/home/sentinel-admin/sentinel-audit-test.txt` | Reported: built-in Rule 554 and custom Rule 100002 both fired. Raw-alert review is pending. |
-| Controlled file **deletion** test | Reported: built-in Rule 553 fired; custom Rule 100002 did not. Treated as an **open custom-rule coverage question**, pending review of the raw alerts and the active rule definitions. No cause is asserted. |
+| Controlled file **creation** | The reviewed screenshot shows built-in Rule 554. Custom Rule 100002 is **absent** from that record. Timestamp unresolved (see below). |
+| Controlled file **deletion** | The reviewed record shows built-in Rule 553 at `2026-10-16T12:31:32.819+0530`. Custom Rule 100002 is **absent** from that record. |
 
-These two results are individual reported scenarios. Neither is treated as confirmed until the raw alerts have been reviewed, and neither is counted toward any metric in Section 3.
+These are reviewed records of individual controlled actions. They are **not** successful validations of Rule 100002 for creation or deletion, and neither is counted toward any metric in Section 3. For deletion, a built-in alert appeared and the custom rule's absence is an **unresolved custom-rule coverage question** — not a confirmed detection miss and not a definitive root cause. An earlier claim that Rules 554 and 100002 fired together during creation is unsupported by the reviewed screenshot and remains unexplained; it is not treated as a result.
 
-The reported Rule 554 and Rule 553 alerts indicate that FIM events were reportedly generated for the respective creation and deletion tests. Their raw alerts still need review, and their reported firing does not establish whether custom Rule 100002 should cover those events.
+**Rule 550 dependency (unresolved):** a read-only inspection of the on-disk `local_rules.xml` showed Rule 100002 at Level 8 with parent `<if_sid>550</if_sid>`, a `file` field condition of `/home/`, and group `sentinel_fim`. The reviewed creation and deletion records show built-in Rules 554 and 553, respectively, and do not show Rule 550 as the matching parent rule for those records. This is consistent with Rule 100002 being absent, but it does not explain the earlier creation claim or establish a definitive root cause. The inspection shows the file as it was at inspection time, not necessarily the version loaded by the manager during the earlier tests, and the exact matching semantics of the `/home/` condition remain unverified. The rule has not been changed.
 
-**Unresolved discrepancy — creation alert vs. parent condition:** the reported creation result (Rule 100002 firing alongside Rule 554) has not been reconciled with the reported parent condition `<if_sid>550</if_sid>` for Rule 100002. Rule 550 is the rule observed in the October 11 modification test, and the reported creation event was attributed to Rule 554. Neither the active rule definition nor the raw alerts have been independently reviewed, so it is not yet known whether the reported rule definition, the reported creation alert, or both need correction. Until that review is done, neither the creation result nor the reported parent condition is treated as established.
+**Open evidence-reconciliation items:**
+
+- **Creation timestamp:** the reviewed screenshot shows `2026-10-16T11:40:06.007+0530`, while the evidence README contains `2026-10-16T11:40:06.087+0530`. Unresolved pending review of the source alert JSON.
+- **Creation screenshot filename:** it contains `creation-rule-553` although its content shows Rule 554, and the evidence README references `creation-rule-664`. Unresolved pending filename review.
 
 **Scope of results:**
 
 - The October 11 test confirms Rule 100002 works for file *modification* specifically.
-- The October 16 creation and deletion results are reported only. They do **not** yet confirm creation coverage, and they leave deletion coverage for Rule 100002 an open question.
+- The October 16 records do **not** confirm creation coverage, and they leave deletion coverage for Rule 100002 an open question.
 - Nothing yet confirms behavior under false-positive conditions (legitimate `/home` activity).
 - Nothing yet confirms behavior under false-negative conditions beyond the scenarios above.
 - Nothing here confirms complete FIM coverage of `/home`, or anything about malicious activity — these were controlled lab tests.
@@ -86,12 +89,12 @@ No controlled attack scenario, response action, or repeatable regression/mutatio
 
 | Metric | What it measures | Status |
 |---|---|---|
-| Detection Rate / Coverage | Successful detections ÷ applicable test executions | Not measured — one confirmed scenario plus two reported, unreviewed scenarios; insufficient for a rate |
-| Missed Detections | Malicious test activity that should have triggered a detection but didn't | Not measured — the reported deletion result is an open question, not a confirmed miss |
+| Detection Rate / Coverage | Successful detections ÷ applicable test executions | Not measured — one confirmed scenario (modification); the 16 October reviewed records are not counted; insufficient for a rate |
+| Missed Detections | Malicious test activity that should have triggered a detection but didn't | Not measured — the absence of Rule 100002 from the reviewed creation and deletion records is an open coverage question, not a confirmed miss |
 | False-Positive Rate | Legitimate activity incorrectly flagged ÷ applicable benign events tested | Not measured — no false-positive testing performed yet |
 | Mean Time to Detect (MTTD) | Time between activity occurring and a detection firing | Not measured |
 | Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured — response capability not yet implemented |
-| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **validated for the file-modification scenario**. Creation: reported to fire, pending raw-alert review and reconciliation with the reported `<if_sid>550</if_sid>` condition. Deletion: reported not to fire, open pending review. Broader FP/FN testing not yet performed. |
+| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **validated for the file-modification scenario only**. Creation: not validated — reviewed record shows built-in Rule 554 with Rule 100002 absent. Deletion: not validated — reviewed record shows built-in Rule 553 with Rule 100002 absent; open coverage question. Broader FP/FN testing not yet performed. |
 | MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Planned — no mappings exist yet |
 
 No aggregate numerical values are reported above beyond the single confirmed test result, because there isn't yet enough test data to support a rate or trend. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
@@ -104,9 +107,13 @@ Every test should leave behind enough to reproduce it later: the exact procedure
 
 Evidence for the Rule 100002 validation and CASE-001 is stored under `evidence/v0.3/`; earlier infrastructure/telemetry-pipeline evidence is under `evidence/v0.2/`. This document references those paths without restating their contents — the evidence directories themselves are the source of truth for what was actually captured.
 
-**October 16 evidence status:** the raw alerts and operational artifacts from the creation and deletion tests have **not been confirmed as saved in the repository**. No evidence path is claimed for them here. Until those artifacts are located, reviewed, and saved, the October 16 results remain reported observations rather than documented evidence.
+**October 16 evidence status:**
 
-Evidence is never edited to make a failed or inconclusive test look like a pass. If a result changes on retest, both the original and the retest are kept on record.
+- **Reviewed:** the creation and deletion screenshots, which are referenced in the v0.3 evidence index and stored under `evidence/v0.3/`.
+- **Not confirmed located or reviewed:** the source alert JSON for those records, and any operational artifacts from the same period. No evidence path is claimed for them here.
+- **Open reconciliation:** the creation timestamp and filename discrepancies listed in Section 2.
+
+Screenshot review is not the same as source-alert review; until the source JSON is located, reviewed, and saved, the creation timestamp stays unresolved. Evidence is never edited to make a failed or inconclusive test look like a pass. If a result changes on retest, both the original and the retest are kept on record.
 
 ---
 
@@ -117,8 +124,8 @@ A few distinctions matter enough to call out directly:
 - **Tool availability is not agent connectivity.** Wazuh being installed and running doesn't mean an agent is enrolled and reporting.
 - **Agent connectivity is not telemetry validation.** An active agent doesn't guarantee the specific telemetry a detection needs is actually being generated or collected correctly.
 - **A rule passing syntax validation is not a validated detection — and one validated scenario is not complete coverage.** Rule 100002 moved from "syntax-valid only" to "confirmed firing on a controlled modification test" — a real step forward, but it validates one specific scenario.
-- **A reported test is not verified coverage.** The October 16 creation and deletion results are individual reported scenarios. Without reviewed raw alerts and a checked rule definition, they do not establish that Rule 100002 covers creation, and they do not establish why it did not fire on deletion.
-- **A built-in rule firing is not a custom-rule firing.** The reported Rule 554 and Rule 553 alerts indicate FIM events were reportedly generated, but their raw alerts still need review, and their reported firing does not establish whether custom Rule 100002 should cover those events.
+- **A reviewed record is not validated coverage.** The October 16 creation and deletion records each show a built-in rule with Rule 100002 absent. They do not establish that Rule 100002 covers creation, and they do not establish why it was absent for deletion.
+- **A built-in rule alert is not a custom rule alert.** The reviewed creation record showed built-in Rule 554 and the reviewed deletion record showed built-in Rule 553; custom Rule 100002 was absent from both. Rule 100002's documented parent dependency is `<if_sid>550</if_sid>`; Rules 553 and 554 are not its parent rules. A built-in alert for one FIM event type should not be read as coverage by the custom rule.
 - **A single test run is not repeatable regression testing.** One execution per scenario, on one asset, is not a documented, repeatable test that can be rerun after a rule change.
 - **One passing test is not production readiness.** A single successful result, on one asset, under one set of conditions, doesn't generalize to other environments, other event types, or attacker behavior.
 
@@ -130,13 +137,15 @@ Documenting failed and inconclusive tests matters as much as documenting passes 
 
 The following are planned and **not yet completed**:
 
-- Reviewing the raw alerts and the active Rule 100002 definition to resolve the creation-alert vs. `<if_sid>550</if_sid>` discrepancy
-- Reviewing the reported deletion result (Rule 553 fired, Rule 100002 did not) against the raw alerts and active rule definitions, and determining whether Rule 100002 is intended to cover deletion
-- Locating and saving the October 16 raw-alert and operational artifacts in the repository, then confirming or correcting the reported creation and deletion results
+- Reviewing or obtaining the source alert JSON for the 16 October creation and deletion records, if available, and settling the creation timestamp
+- Resolving the creation screenshot filename and evidence README discrepancies in a separately approved documentation pass
+- Verifying the Rule 100002 version loaded by the manager during testing, if historical evidence permits
+- Reviewing built-in Rules 550, 553, and 554, and verifying the field-condition matching behavior of the `/home/` condition
+- Determining whether Rule 100002 is intended to cover creation and deletion, without presuming a cause for its absence from the reviewed records
 - Broader investigation and response-engineering work, which remains open
-- Repeatable, documented creation and deletion test procedures, with expected results written in advance, so they can serve as regression tests
+- Repeatable, documented creation, modification, and deletion test procedures, with expected results written in advance, so they can serve as regression tests
 - False-positive and false-negative testing for Rule 100002 against legitimate `/home` activity
-- Tuning Rule 100002 based on the above, and retesting after any change
+- Tuning Rule 100002 based on the above, only after review and approval, and retesting after any change
 - Broader telemetry sources: authentication activity and process execution
 - Repeatable, documented detection test scenarios beyond the FIM tests performed so far
 - MITRE ATT&CK mapping for implemented detections
