@@ -75,19 +75,33 @@ Attacker                Monitored Endpoint
 
 - Captured initial v0.1 infrastructure verification evidence, including the Wazuh Dashboard showing the active SENTINEL-LINUX01 endpoint and confirmation of a running Wazuh agent.
 - Captured v0.2 detection-engineering evidence for the built-in Rule 550 and custom Rule 100002 validation.
-- Captured v0.3 investigation evidence, including custom-rule alert details, dashboard JSON, filtered FIM events, Rule 550 event details, and endpoint file metadata.
+- Captured v0.3 investigation evidence for the confirmed 11 October 2026 modification test and CASE-001, including custom-rule alert details, dashboard JSON, filtered FIM events, Rule 550 event details, and endpoint file metadata.
 - Evidence is organized under "evidence/v0.2/" and "evidence/v0.3/" as applicable.
 - CASE-001 documents the confirmed controlled modification test and the limitations of the reviewed dataset.
-- No evidence has been confirmed as saved in the repository for the 16 October 2026 reported observations below.
+- The 16 October 2026 creation and deletion screenshots have been reviewed and are referenced in "evidence/v0.3/readme.md". See "Reviewed Records and Reported Observations" below for what they show.
+- The source alert JSON for the 16 October records has not been confirmed as located or reviewed, and no raw-alert files are claimed.
+- Operational artifacts from the reported Wazuh Manager startup observation have not been independently reviewed or confirmed saved in the repository.
 
-## Reported Observations (pending review)
+## Reviewed Records and Reported Observations
 
-Detection (reported 16 October 2026; raw alerts and active rule definitions not yet independently reviewed):
+Detection — reviewed screenshots, 16 October 2026 (test file "/home/sentinel-admin/sentinel-audit-test.txt"):
 
-- File creation test on "/home/sentinel-admin/sentinel-audit-test.txt": built-in Rule "554" and custom Rule "100002" were reported to fire.
-- File deletion test on the same file: built-in Rule "553" was reported to fire; custom Rule "100002" reportedly did not. This is recorded as an open custom-rule coverage question. No cause is asserted.
-- The reported creation alert for Rule "100002" is inconsistent with the reported parent condition "<if_sid>550</if_sid>". This discrepancy is unresolved.
-- These are individual reported results. They are not verified coverage, not repeatable regression tests, and not counted toward any metric.
+- Creation: the reviewed screenshot shows built-in Rule "554" ("File added to the system"). Custom Rule "100002" is absent from that screenshot.
+- Deletion: the reviewed screenshot shows built-in Rule "553" ("File deleted") at "2026-10-16T12:31:32.819+0530". Custom Rule "100002" is absent from that screenshot.
+- These are reviewed records of individual controlled actions. They are not successful custom-rule validations, not repeatable regression tests, and not counted toward any metric.
+- An earlier claim that Rules "554" and "100002" fired together during creation is unsupported by the reviewed screenshot and remains unexplained.
+- The absence of Rule "100002" from the reviewed deletion screenshot is an unresolved coverage question, not a confirmed detection miss or an established root cause.
+
+Rule 100002 dependency:
+
+- A read-only inspection of the on-disk "/var/ossec/etc/rules/local_rules.xml" showed Rule "100002" at Level 8, group "sentinel_fim", with parent "<if_sid>550</if_sid>" and a "file" field condition of "/home/". This establishes what was in the on-disk file at inspection time, not which rule version the manager had loaded during earlier tests.
+- The reviewed creation and deletion screenshots show Rules "554" and "553", respectively, and do not show Rule "550" as the matching parent rule in those records. This is consistent with Rule "100002" being absent from them, but it does not explain the earlier creation claim or establish a definitive root cause.
+- The exact matching semantics of "/home/" remain unverified. The rule has not been changed.
+
+Unresolved evidence discrepancies:
+
+- Creation timestamp: the screenshot shows "2026-10-16T11:40:06.007+0530", whereas the evidence README records "2026-10-16T11:40:06.087+0530". Neither value is assumed correct; source alert JSON review is still outstanding and, if the JSON is available, is needed to resolve the timestamp.
+- Creation screenshot filename: it contains "creation-rule-553" even though the image shows Rule "554"; the evidence README reportedly references "creation-rule-664". Both remain unresolved.
 
 Operations (reported; logs and outputs not independently reviewed or confirmed saved in the repository):
 
@@ -95,7 +109,7 @@ Operations (reported; logs and outputs not independently reviewed or confirmed s
 - A lock directory was removed after a check reportedly found no active Manager processes; the Manager subsequently started. The root cause of the original startup failure is unconfirmed, and the lock is not claimed to have caused it.
 - One graceful Manager/endpoint VM restart cycle was reported successful, with Agent "002" reconnecting to Active. This is a single observation and is not evidence of general resilience.
 
-Status: no Wazuh rule changes, tuning, or metric measurements are claimed.
+Status: no Wazuh rule changes, tuning, or metric measurements are claimed. No definitive root cause, complete FIM coverage, measured detection rate, or comprehensive false-positive/false-negative result has been established. CASE-001 remains open overall.
 
 ## Engineering Principles
 
@@ -111,7 +125,7 @@ Status: no Wazuh rule changes, tuning, or metric measurements are claimed.
 ## Project phase status:
 
 - v0.1 — Foundation: Complete. See "[0.1.0]" below.
-- v0.2 — Detection Engineering: Core controlled file-modification detection validated. Creation/deletion tests have been reportedly performed but remain unverified pending raw-alert and rule-definition review. Broader detection scenarios, additional telemetry sources, and systematic false-positive/missed-detection analysis remain ongoing. See "[0.2.0]" below.
+- v0.2 — Detection Engineering: Core controlled file-modification detection validated. The reviewed 16 October creation/deletion screenshots show built-in Rules 554/553 with custom Rule 100002 absent; they are not custom-rule validations. Broader detection scenarios, additional telemetry sources, and systematic false-positive/missed-detection analysis remain ongoing. See "[0.2.0]" below.
 - v0.3 — SOC Investigation (In progress): CASE-001 documented for controlled FIM validation and review of related events. The controlled modification-validation objective is closed; the overall CASE-001 investigation remains open. Broader investigation capabilities, additional cases, threat-hunting validation, and investigation workflow improvements remain future work within this phase.
 - v0.4 — Incident Response (Planned): Controlled response actions, containment workflow, eradication/recovery workflow, response validation, human-in-the-loop response, and response performance measurement.
 - v0.5 — Purple-Team Validation (Planned): Detection coverage measurement, detection rate, detection time, response time, false-positive/false-negative analysis, regression testing, before/after comparison, and purple-team feedback loop.
@@ -138,31 +152,30 @@ Purpose: investigate relevant security telemetry, validate detection results, do
 - Reviewed additional home-directory events involving desktop configuration, application state, and cache files.
 - Distinguished the confirmed controlled test result from other observed events whose individual process attribution was not established.
 - Recorded the investigation scope, findings, limitations, disposition, and follow-up actions in "investigations/CASE-001.md".
-- Status: the controlled modification-validation objective is closed; the overall CASE-001 investigation remains open.
+- Status: CASE-001's controlled modification-validation objective is closed; the overall CASE-001 investigation remains open.
 
 ## Detection Validation
 
 Confirmed (11 October 2026):
 
-- Custom Wazuh Rule "100002" generated a Level 8 alert for the controlled modification of "/home/sentinel-admin/sentinel-fim-validation.txt" (alert timestamp "2026-10-11T20:25:14.746+0530").
+- Custom Wazuh Rule "100002" generated a Level 8 alert for the controlled modification of "/home/sentinel-admin/sentinel-fim-validation.txt" (alert timestamp "2026-10-11T20:25:14.746+0530"). Built-in Rule "550" was also observed.
 - The event identified the modified file and included file-integrity metadata.
 - Recorded the successful controlled modification test without treating it as proof that all FIM event types or paths are covered. This confirms the tested modification scenario only.
 
-Reported, pending raw-alert review (16 October 2026):
+Reviewed screenshots (16 October 2026):
 
-- Creation of "/home/sentinel-admin/sentinel-audit-test.txt": built-in Rule "554" and custom Rule "100002" were reported to fire.
-- Deletion of the same file: built-in Rule "553" was reported to fire; custom Rule "100002" reportedly did not.
-- These creation/deletion tests were reportedly performed; their results remain unverified until the raw alerts and active rule definitions are independently reviewed. Earlier wording that creation/deletion had not been tested is superseded by this status.
+- Creation of "/home/sentinel-admin/sentinel-audit-test.txt": built-in Rule "554" shown; custom Rule "100002" absent.
+- Deletion of the same file: built-in Rule "553" shown at "2026-10-16T12:31:32.819+0530"; custom Rule "100002" absent.
+- These are not custom-rule validations for creation or deletion. Earlier wording that creation/deletion had not been tested, and the earlier claim that Rule "100002" fired on creation, are superseded; see "Reviewed Records and Reported Observations" above for the full findings and discrepancies.
 
 Open questions:
 
-- Custom-rule coverage of file deletion is an open question. No cause is asserted.
-- The reported creation alert from Rule "100002" is inconsistent with the reported parent condition "<if_sid>550</if_sid>". This discrepancy is unresolved, and neither the reported creation result nor the reported rule definition is treated as established.
+- Why Rule "100002" was absent from the reviewed creation and deletion screenshots, and whether it is intended to cover those events, is an open coverage question, not a confirmed detection miss. No cause is asserted. The Rule "550" dependency question and the earlier creation claim remain unresolved; the on-disk rule definition does not establish the version the manager had loaded during testing (details under "[Unreleased]").
 
 Other:
 
 - Identified broad home-directory matching as an area for further noise evaluation.
-- Systematic false-positive/false-negative testing and detection-rule tuning remain outstanding. No rule change or tuning is claimed.
+- Source-alert review, evidence reconciliation, loaded-rule-version verification (if historical evidence permits), matching-behavior verification, regression testing, systematic false-positive/false-negative testing, and detection-rule tuning remain outstanding. No rule change or tuning is claimed.
 
 ## Operational Incident (reported; root cause unconfirmed)
 
@@ -178,8 +191,9 @@ Other:
 - Captured "evidence/v0.3/v0.3-case001-fim-filtered-events.png".
 - Captured "evidence/v0.3/v0.3-case001-rule-550-event-details.png".
 - Captured "evidence/v0.3/v0.3-case001-endpoint-file-metadata.png".
-- Linked the evidence artifacts from the CASE-001 investigation report.
-- The 16 October 2026 raw creation/deletion alerts, active rule definitions, and operational logs have not been confirmed as saved in the repository. No evidence files are claimed for them.
+- Linked the evidence artifacts above from the CASE-001 investigation report.
+- The 16 October creation and deletion screenshots have been reviewed and are referenced in "evidence/v0.3/readme.md"; the creation timestamp and screenshot-filename discrepancies are unresolved (see "[Unreleased]").
+- The source alert JSON for the 16 October records and the operational logs have not been confirmed as located, reviewed, or saved in the repository. No such files are claimed.
 
 ## Lessons Learned
 
@@ -188,14 +202,16 @@ Other:
 - Broad path matching can capture routine desktop activity alongside the intended validation event.
 - Investigation conclusions must distinguish observed facts, interpretations, and unresolved questions.
 - Rule tuning must be followed by testing to ensure that noise is reduced without suppressing the intended detection.
-- A built-in rule firing (for example Rule 554 or 553) does not establish whether custom Rule 100002 should cover, or does cover, the same event.
-- A reported result is not a verified result until the raw alerts and active rule definitions have been reviewed.
+- A built-in rule alert (for example Rule 554 or 553) is not a custom Rule 100002 alert, and does not establish whether the custom rule should cover, or does cover, the same event.
+- A reviewed screenshot is not a reviewed source alert; claims that depend on source detail (such as an exact timestamp) stay unresolved until the source alert JSON is located and reviewed.
 
 ## Not yet included in v0.3
 
 - Comprehensive threat hunting across multiple telemetry sources
-- Verified file creation and deletion validation for custom Rule 100002 (tests reportedly performed; pending raw-alert and rule-definition review)
-- Resolution of the Rule "100002" / "<if_sid>550</if_sid>" discrepancy and the deletion coverage question
+- Custom-rule validation of file creation and deletion for Rule 100002 (the reviewed screenshots show built-in Rules 554/553 with Rule 100002 absent)
+- Source alert JSON review and resolution of the creation timestamp and screenshot-filename discrepancies
+- Resolution of the Rule "100002" / "<if_sid>550</if_sid>" question and the deletion coverage question
+- Verification of the rule version loaded by the manager during testing, and of the "/home/" matching behavior
 - Repeatable regression tests for creation and deletion
 - Systematic false-positive and false-negative testing
 - Tested noise-reduction tuning and regression validation
@@ -227,7 +243,7 @@ Purpose: move beyond infrastructure foundation into building, testing, and valid
 - Confirmed the custom Rule "100002" matched the tested event and produced a Level 8 alert.
 - Confirmed the alert identified the modified file and included file-integrity metadata.
 - Validated the modification-detection path end-to-end for the controlled scenario: telemetry generation → custom-rule match → Level 8 alert.
-- This validation does not establish coverage of file creation, file deletion, every monitored path, or other detection scenarios. Later reported creation/deletion results are recorded under "[0.3.0]" and remain pending review.
+- The modification scenario is the confirmed custom-rule validation. This validation does not establish coverage of file creation, file deletion, every monitored path, or other detection scenarios. The 16 October creation/deletion screenshots have been reviewed but do not validate custom Rule "100002" for creation or deletion; see "[Unreleased]" and "[0.3.0]".
 
 ## Evidence
 
