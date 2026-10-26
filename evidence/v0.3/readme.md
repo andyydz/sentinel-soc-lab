@@ -21,7 +21,7 @@ The evidence supports the specific results described below. It does not establis
 | 7 | Oct 16 creation, file path | [`v0.3-oct16-creation-file-path.png`](v0.3-oct16-creation-file-path.png) | Test-file path on the creation event |
 | 8 | Oct 16 deletion, Rule 553 | [`v0.3-oct16-detection-rule-553.png`](v0.3-oct16-detection-rule-553.png) | Built-in "File deleted" alert |
 | 9 | Oct 16 deletion, file path | [`v0.3-oct16-detection-file-path.png`](v0.3-oct16-detection-file-path.png) | Test-file path on the deletion event |
-| 10 | Oct 26 modification, source alerts | [`v0.2-oct26-controlled-modification-source-alerts.png`](../v0.2/v0.2-oct26-controlled-modification-source-alerts.png) | Terminal output of two Level 8 Rule 100002 modification alerts (stored in `evidence/v0.2/`) |
+| 10 | Oct 26 modification, source alerts | [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) | Terminal output of two Level 8 Rule 100002 modification alerts (stored in `evidence/v0.2/`) |
 | 11 | Rule 100002 definition | [`v0.3-rule-100002-definition.png`](v0.3-rule-100002-definition.png) | Reported configuration of the custom rule |
 | 12 | Investigation report on GitHub | [`v0.3-fim-rule-100002-investigation-github.png`](v0.3-fim-rule-100002-investigation-github.png) | How the report appears on GitHub; not independent proof of detection |
 
