@@ -1,28 +1,46 @@
-SENTINEL v0.3 — Custom FIM Rule Investigation
+# SENTINEL v0.3 — Custom FIM Rule Investigation
 
 Investigation: Rule 100002 lifecycle-event scope
-Historical evidence: "/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json"
+Reviewed source records (October 16): `/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json`
 
-Objective
+## Objective
 
-Resolve whether custom Wazuh Rule 100002 triggers on file creation, modification, and deletion under "/home/".
+Determine how custom Wazuh Rule `100002` behaves for controlled file modification, creation, and deletion events under `/home/`, based on the records reviewed.
 
-Findings
+## Findings
 
-- Modification: An earlier October 11 verification indicated that Rule 100002 triggered for a matching file-modification event.
-- Creation: The October 16 archived JSON record at "2026-10-16T11:40:06.087+0530" recorded built-in Rule 554, “File added to the system.” Rule 100002 did not trigger in the reviewed record.
-- Deletion: The October 16 archived JSON record at "2026-10-16T12:31:32.819+0530" recorded built-in Rule 553, “File deleted.” Rule 100002 did not trigger in the reviewed record.
+All times IST (`+0530`).
 
-Technical interpretation
+- **Modification (11 Oct):** Rule `100002` (Level 8) fired for a controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` at `2026-10-11T20:25:14.746+0530`. The existing v0.3 screenshots support this result.
+- **Creation (16 Oct):** For `/home/sentinel-admin/sentinel-audit-test.txt`, the reviewed record showed built-in Rule `554`, "File added to the system", at `2026-10-16T11:40:06.007+0530`. Rule `100002` was absent from this record.
+- **Deletion (16 Oct):** For the same file, the reviewed record showed built-in Rule `553`, "File deleted" (Level 7), at `2026-10-16T12:31:32.819+0530`. Rule `100002` was absent from this record.
+- **Modification (26 Oct):** Terminal output showed two Rule `100002` Level 8 alerts for `/home/sentinel-admin/sentinel-v02-mod-test.txt`:
+  - `2026-10-26T21:38:27.910+0530`: size 0 → 23 bytes.
+  - `2026-10-26T21:38:48.473+0530`: size 23 → 61 bytes.
 
-Custom Rule 100002 depends on parent Rule 550 through "<if_sid>550</if_sid>". Creation and deletion events represented by Rules 554 and 553 do not satisfy this parent-rule dependency.
+  Screenshot: [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) (stored in `evidence/v0.2/`, not in the v0.3 evidence directory).
 
-Conclusion
+**Corrections to earlier versions of this report:** the creation timestamp `11:40:06.087` was incorrect and is now `11:40:06.007`. The earlier statement that Rule `100002` fired on creation is not supported by the reviewed records and has been removed.
 
-The reviewed evidence is consistent with Rule 100002 being scoped to qualifying modification events rather than file creation or deletion. No rule changes were made during this investigation.
+## Technical interpretation
 
-Evidence and limitations
+Rule `100002` has been reported as depending on built-in Rule `550` through `<if_sid>550</if_sid>`. The active rule configuration and its matching behavior have not been re-verified for this report, so the dependency is a reported property of the rule and not a confirmed explanation.
 
-Retain the original archived JSON records and associated screenshots as supporting evidence. The findings apply to the reviewed events; broader coverage should only be claimed after additional testing.
+The reviewed October 16 records show Rules `554` and `553` without Rule `100002`. Why `100002` was absent from those records is **unresolved**. If the reported dependency is accurate, it could be relevant, but that has not been tested and is not asserted as the cause.
 
-Status: Historical discrepancy resolved; detection rule unchanged.
+## Conclusion
+
+Rule `100002` detected the tested modification scenario on 11 and 26 October 2026. For the two reviewed October 16 records, creation and deletion were alerted on by built-in Rules `554` and `553` only, and `100002` was absent. These are observations about specific records. They do not establish how `100002` behaves for creation or deletion events in general, and they do not establish a root cause. No rule changes were made during this investigation.
+
+## Evidence and limitations
+
+- The original 11 October alert log could not be recovered from the currently available logs during the 26 October review. That result rests on the existing v0.3 screenshots.
+- The October 16 results come from the reviewed source records at the path named above. No exported copy or additional link is claimed.
+- The October 26 results come from terminal output, supported by the `evidence/v0.2/` screenshot linked above.
+- Each lifecycle event was reviewed for a single test file. Other paths, file types, multiple files, and repeated events remain untested.
+- No detection rates, false-positive/false-negative results, or complete FIM coverage are claimed.
+- Broader coverage claims should follow additional testing and review of the active rule definition, including the built-in Rules `550`, `553`, and `554`.
+
+## Status
+
+Modification detection validated for the tested scenarios (11 and 26 October). The October 16 absence of Rule `100002` from the reviewed creation and deletion records is **unresolved**. The detection rule is unchanged, and the engineering question of creation/deletion coverage remains open.
