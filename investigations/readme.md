@@ -182,7 +182,7 @@ Additional file-integrity events involving desktop configuration, application st
 
 > The case remains open. Evidence reconciliation for the reviewed scope is closed. Resolution of the Rule 100002 absence, broader false-positive/false-negative testing, and detection-rule tuning remain follow-up tasks.
 
-Supporting evidence: existing screenshots for the 11 October modification test are stored in [`evidence/v0.3/`](../evidence/v0.3/). A screenshot of the 26 October terminal output was reported as uploaded to `evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts.png`; that path has not been verified here. The 11 October original source log and the 16 October raw records are not claimed to be committed to the repository.
+Supporting evidence: existing screenshots for the 11 October modification test are stored in [`evidence/v0.3/`](../evidence/v0.3/). A screenshot of the 26 October terminal output was reported as uploaded to `evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png`; that path has not been verified here. The 11 October original source log and the 16 October raw records are not claimed to be committed to the repository.
 
 ---
 
