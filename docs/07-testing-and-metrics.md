@@ -63,7 +63,7 @@ Observe actual results → Compare outcomes → Record evidence → Fix and rete
 | 11 October 2026 | Controlled **modification** of `/home/sentinel-admin/sentinel-fim-validation.txt` | Custom Rule 100002, Level 8, at `2026-10-11T20:25:14.746+0530` | Supported by screenshot evidence. The original source alert record was not recovered during the later review, so this result is not source-log verified. |
 | 16 October 2026 | Controlled **creation** of `/home/sentinel-admin/sentinel-audit-test.txt` | Built-in Rule 554 at `2026-10-16T11:40:06.007+0530`. Custom Rule 100002 is **absent** from the reviewed record. | Reviewed from the source alert record at `/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json`. This document does not claim the raw log is committed to the repository. |
 | 16 October 2026 | Controlled **deletion** of the same file | Built-in Rule 553 at `2026-10-16T12:31:32.819+0530`. Custom Rule 100002 is **absent** from the reviewed record. | Same reviewed source alert record. |
-| 26 October 2026 | Controlled **modification** of `/home/sentinel-admin/sentinel-v02-mod-test.txt` | Two custom Rule 100002 Level 8 alerts: `2026-10-26T21:38:27.910+0530` (file size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (file size 23 → 61 bytes) | Recorded alerts. No repository evidence path is cited for them in this document. |
+| 26 October 2026 | Controlled **modification** of `/home/sentinel-admin/sentinel-v02-mod-test.txt` | Two custom Rule 100002 Level 8 alerts: `2026-10-26T21:38:27.910+0530` (file size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (file size 23 → 61 bytes) | Recorded alerts from two consecutive modifications of one file, not a repeatable regression suite. Screenshot: [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png). |
 
 Full detail is documented in `investigations/CASE-001.md` and `investigations/fim-rule-100002-investigation.md`, with evidence under `evidence/v0.3/` and initial telemetry-pipeline evidence under `evidence/v0.2/`.
 
@@ -117,7 +117,7 @@ Evidence for the Rule 100002 results and CASE-001 is stored under `evidence/v0.3
 
 - **11 October 2026:** supported by screenshot evidence. The original source alert record was not recovered, so the result is not source-log verified.
 - **16 October 2026:** reviewed from the source alert record at `/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json`. This is a Wazuh runtime log on the manager; it is not claimed here to be committed to the repository, and no repository path is claimed for it. Reviewing a source record is separate from storing it as a repository artifact.
-- **26 October 2026:** the two alerts are recorded in Section 2. No repository evidence path is cited for them here.
+- **26 October 2026:** the screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) documents two custom Rule 100002 Level 8 alerts from consecutive modifications of one file (the alerts are listed in Section 2). These are not independent test cases or a regression suite.
 
 Screenshots and source records are different levels of evidence, and claims should state which level supports them. Evidence is never edited to make a failed or inconclusive test look like a pass. If a result changes on retest, both the original and the retest are kept on record.
 
@@ -133,10 +133,7 @@ A few distinctions matter enough to call out directly:
 - **Reviewing evidence is not validating coverage.** The 16 October creation and deletion records were reviewed at source level, and each shows a built-in rule with Rule 100002 absent. Reviewing them clarified what happened; it does not establish that Rule 100002 covers creation or deletion, or why it was absent.
 - **A built-in rule alert is not a custom rule alert.** The reviewed creation record showed built-in Rule 554 and the reviewed deletion record showed built-in Rule 553; custom Rule 100002 was absent from both. Rule 100002's documented parent dependency is `<if_sid>550</if_sid>`; Rules 553 and 554 are not its parent rules. A built-in alert for one FIM event type should not be read as coverage by the custom rule.
 - **On-disk configuration is not historical runtime configuration.** The inspected `local_rules.xml` does not establish what the manager had loaded during earlier tests.
-- **A few recorded alerts are not a regression suite.** Recorded alerts from one file, or one execution per scenario, are not documented, repeatable tests that can be rerun after a rule change.
-- **One passing scenario is not production readiness.** A successful result, on one asset, under one set of conditions, doesn't generalize to other environments, other event types, or attacker behavior.
-
-Documenting failed and inconclusive tests matters as much as documenting passes — a missing or incomplete result is information about where the lab's current coverage actually ends, and hiding it would make every other claim in this document less trustworthy.
+- **A few recorded alerts are not a regression suite.** Recorded alerts from one file, or one execution per scenario, are not documented, repeatable tests that can be rerun after a rule change. Overstating this would make every other claim in this document less trustworthy.
 
 ---
 
