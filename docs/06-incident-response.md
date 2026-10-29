@@ -23,7 +23,7 @@ All timestamps in this document are IST (`+0530`).
 - Built-in Wazuh Rule 550 (Level 7, "Integrity checksum changed") was observed during the 11 October controlled modification test.
 - Custom Wazuh Rule 100002 (Level 8) is confirmed to fire for the documented controlled modification scenarios — see `docs/05-detection-engineering.md`:
   - **11 October 2026:** `/home/sentinel-admin/sentinel-fim-validation.txt`, `2026-10-11T20:25:14.746+0530`. Supported by screenshot evidence; the original source alert record was not recovered during the later review.
-  - **26 October 2026:** `/home/sentinel-admin/sentinel-v02-mod-test.txt`, two recorded Level 8 alerts at `2026-10-26T21:38:27.910+0530` (file size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (file size 23 → 61 bytes). These are two recorded alert events, not a repeatable regression suite; no evidence path is cited for them here.
+  - **26 October 2026:** `/home/sentinel-admin/sentinel-v02-mod-test.txt`, two recorded Level 8 alerts at `2026-10-26T21:38:27.910+0530` (file size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (file size 23 → 61 bytes). These are two alerts from consecutive modifications of one file, not a repeatable regression suite. Screenshot: [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png).
   - These results do not establish complete FIM coverage or malicious activity. They were controlled lab tests, not real incidents.
 - **Investigation `CASE-001`** (`investigations/CASE-001.md`) has started. Real FIM events, including Rule 550 and Rule 100002 event details, have been filtered and reviewed as a first investigation exercise. **Current assessment:**
   - CASE-001's modification-validation objective is closed for the scenarios tested. This is not the same as completing the investigation.
@@ -56,7 +56,7 @@ Everything from Section 2 onward is the methodology SENTINEL follows. Where some
 
 ## 2. Incident Response Lifecycle
 
-```mermaid
+````mermaid
 flowchart LR
     P[Preparation] --> DA[Detection & Analysis]
     DA --> C[Containment]
@@ -64,7 +64,7 @@ flowchart LR
     E --> R[Recovery]
     R --> L[Lessons Learned]
     L -.-> P
-```
+````
 
 | Phase | Objective | Status in SENTINEL |
 |---|---|---|
@@ -98,7 +98,7 @@ Wazuh alerts and endpoint telemetry are the starting point for analysis, not a c
 **Evidence handling:** every piece of evidence should be timestamped, traceable to its source, and preserved rather than overwritten. CASE-001 evidence and supporting artifacts are organized under `evidence/v0.3/`, with earlier pipeline/infrastructure evidence under `evidence/v0.2/`. The evidence level for each result is stated explicitly:
 - **11 October:** screenshot-supported; the original source alert record was not recovered.
 - **16 October:** reviewed from the source alert record at the Wazuh runtime log path documented in Section 1. Reviewing a source record is separate from storing it in the repository; the raw log is not claimed to be committed.
-- **26 October:** two recorded alerts; no repository evidence path is cited in this document.
+- **26 October:** the screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) documents two Level 8 Rule 100002 alerts from consecutive modifications of one file. These are not two independent test cases or a regression suite.
 - **Manager startup observation:** operational artifacts have not been confirmed as saved in the repository, and no evidence path is claimed.
 
 Nothing sensitive (credentials, secrets, VM disks, large raw datasets) is committed alongside evidence.
@@ -109,10 +109,10 @@ Nothing sensitive (credentials, secrets, VM disks, large raw datasets) is commit
 
 Not every alert or anomaly needs the same depth of response. SENTINEL's escalation path:
 
-```
+````
 Alert/Anomaly → Triage → [Escalate to full investigation?] → Investigation
    → [Confirmed malicious?] → Containment decision
-```
+````
 
 - **Escalate to investigation** when triage can't rule out malicious activity from available context, or when the affected asset/data matters enough to be worth the time even if the activity is probably benign.
 - **Escalate to containment** only once investigation has established enough confidence that inaction carries more risk than action — containment is not a default reaction to every alert, including a confirmed Rule 100002 alert.
@@ -125,9 +125,9 @@ Alert/Anomaly → Triage → [Escalate to full investigation?] → Investigation
 
 Every case that reaches this phase should answer: what happened, how it was detected, what evidence confirmed it, what was missed, and what should change. The core loop:
 
-```
+````
 Incident → Lesson → Detection Improvement → Retest
-```
+````
 
 This is the mechanism that connects incident response back to `docs/05-detection-engineering.md`: a gap found during investigation (missing telemetry, a rule that didn't fire, insufficient alert context) becomes a concrete engineering task, not just a note.
 
@@ -137,7 +137,7 @@ No case has completed the full post-incident review phase. CASE-001 is still in 
 
 **Case report format** (used once a case is complete):
 
-```markdown
+````markdown
 # Case-XXX
 ## Incident Summary
 ## Severity
@@ -149,7 +149,7 @@ No case has completed the full post-incident review phase. CASE-001 is still in 
 ## Root Cause
 ## Containment / Eradication / Recovery
 ## Lessons Learned
-```
+````
 
 `investigations/CASE-001.md` is an investigation record documenting the controlled-validation work completed so far. It is not a completed incident report in the sense above — its broader timeline, root cause, attribution, and final conclusions remain open.
 
@@ -183,3 +183,8 @@ None of the above are claimed as current capability — they're the direction th
 | `docs/07-testing-and-metrics.md` | How results are tested and measured |
 | `investigations/CASE-001.md` | The current SOC investigation case record |
 | `evidence/v0.2/`, `evidence/v0.3/` | Evidence supporting CASE-001 and other work, organized by version |
+````
+
+I made no other changes. The 11 October result is still screenshot-supported, the 16 October results are still tied to the reviewed source record with the absence of Rule `100002` unresolved, and CASE-001 is open overall. No containment, eradication, recovery, or metrics are claimed, and the raw runtime log is not claimed to be committed.
+
+I haven't verified that the linked screenshot exists at that path. The `../evidence/…` link only works because this file lives in `docs/`, so click it on GitHub after pushing.\
