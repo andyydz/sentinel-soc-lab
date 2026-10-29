@@ -8,57 +8,29 @@ Evidence for v0.2: getting Wazuh and SENTINEL-LINUX01 actually talking to each o
 
 ## Infrastructure & connectivity
 
-
-
 ![Wazuh Manager health check](v0.2-wazuh-hc-startup-01.png)
-
-
-
-
 
 ![Wazuh Manager health check](v0.2-wazuh-hc-startup-02.png)
 
-
-
 Manager starts up clean, health check passes.
-
-
 
 ![Wazuh Manager running](v0.2-wazuh-manager-running-01.png)
 
-
-
 Manager process is up on SENTINEL-WAZUH.
-
-
 
 ![Agent running on Linux01](v0.2-linux01-agent-running.png)
 
-
-
 Agent service is installed and running on SENTINEL-LINUX01.
-
-
 
 ![Connectivity check](v0.2-linux01-to-wazuh-connectivity.png)
 
-
-
 Linux01 can actually reach the manager over the network.
-
-
 
 ![Agent active in dashboard](v0.2-agent-active.png)
 
-
-
-Agent `002` shows up in the dashboard as Active — so the whole chain (agent → network → manager → dashboard) works end to end.
-
-
+Agent `002` is shown as Active in the dashboard. Together with the documented connectivity check and the original Rule 550 FIM alert, this supports agent–manager communication and file-change detection for the specific controlled modification tested. It does not establish that the complete telemetry pipeline was validated for all event types.
 
 ![Dashboard lab status](wazuh-dashboard-lab-status.png)
-
-
 
 Overall dashboard view at the time, matching everything above.
 
@@ -66,33 +38,17 @@ Overall dashboard view at the time, matching everything above.
 
 ## FIM on `/home`
 
-
-
 ![FIM realtime config on /home](v0.2-fim-home-realtime-cong.png)
-
-
 
 Set up real-time FIM on `/home` via Syscheck.
 
-
-
 ![Test file created](v0.2-fim-test-file-created.png)
-
-
-
-
 
 ![Test file modified](v0.2-fim-test-file-modified.png)
 
-
-
 Created and then modified a test file in `/home` to actually trigger something.
 
-
-
 ![FIM result](v0.2-fim-controlled-modification.png)
-
-
 
 The modification got picked up — Wazuh's built-in **Rule 550** (Level 7, "Integrity checksum changed") fired. So the telemetry pipeline from file change → Wazuh Manager works.
 
@@ -111,6 +67,16 @@ The results below were recorded after the v0.2 evidence above and are not part o
 - **26 October 2026 — modification:** Two consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt` produced Level 8 Rule `100002` alerts at `2026-10-26T21:38:27.910+0530` (size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (size 23 → 61 bytes). These are two alerts from consecutive modifications of one file, not independent test cases or a regression suite. Screenshot: [`v0.2-oct26-controlled-modification-source-alerts-new.png`](v0.2-oct26-controlled-modification-source-alerts-new.png). It supports those two recorded alerts and nothing beyond them.
 
 **Bounds on these results:** Modification detection by Rule `100002` is validated only for the tested scenarios. The two reviewed 16 October records do not establish how the custom rule behaves for creation or deletion events in general, and no root cause for its absence from those records is asserted. No comprehensive FIM coverage, measured detection rates, completed tuning, or regression testing is claimed. The raw 16 October records and the original 11 October source log are not claimed to be committed to the repository.
+
+---
+
+## Later observation — Security Configuration Assessment (29 October 2026)
+
+![Wazuh SCA dashboard showing the CIS Ubuntu Linux 24.04 LTS Benchmark results](v0.2-sca-telementry-processing.png)
+
+This is one Wazuh Security Configuration Assessment (SCA) dashboard observation from 29 October 2026. It is later evidence stored in this directory for repository organization only. It is not part of the original v0.2 capture. SCA is built-in Wazuh functionality, not a custom SENTINEL detection.
+
+The results and their limitations are documented in the [SCA baseline report](sca-baseline.md). This observation does not claim remediation, an improved security posture, successful compliance, or any detection performance.
 
 ---
 
@@ -137,5 +103,7 @@ More detail on the infrastructure/telemetry setup and the Linux01 integration wo
 | [v0.2-fim-test-file-created.png](v0.2-fim-test-file-created.png) / [v0.2-fim-test-file-modified.png](v0.2-fim-test-file-modified.png) | Test file create/modify |
 | [v0.2-fim-controlled-modification.png](v0.2-fim-controlled-modification.png) | Rule 550 result (original v0.2 capture) |
 | [v0.2-oct26-controlled-modification-source-alerts-new.png](v0.2-oct26-controlled-modification-source-alerts-new.png) | 26 October 2026 source alerts: two Level 8 Rule `100002` alerts from consecutive modifications of one file (`sentinel-v02-mod-test.txt`). Added after the original v0.2 capture; the filename keeps the `v0.2` prefix but the evidence dates from the later review. |
+| [sca-baseline.md](sca-baseline.md) | Later report (29 October 2026) documenting one SCA dashboard observation. Not original v0.2 evidence. |
+| [v0.2-sca-telementry-processing.png](v0.2-sca-telementry-processing.png) | SCA dashboard view supporting that report. Captured 29 October 2026, after the original v0.2 capture; the filename keeps the `v0.2` prefix but is not original v0.2 evidence. |
 
 [v0.3-case001-fim-filtered-events.png](v0.3-case001-fim-filtered-events.png) and [v0.3-case001-rule-550-event-details.png](v0.3-case001-rule-550-event-details.png) are in this folder too but belong to v0.3 — not covered here.
