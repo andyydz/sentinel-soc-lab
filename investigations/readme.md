@@ -167,22 +167,22 @@ CASE-001 documents controlled file-integrity tests on SENTINEL-LINUX01. Details 
 **Observed — modification:**
 
 - 11 October 2026: existing screenshots support a Level 8 custom Rule 100002 alert for a controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` (`2026-10-11T20:25:14.746+0530`). The original source alert log was not recovered during the 26 October review.
-- 26 October 2026: two controlled modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt` produced Rule 100002 Level 8 alerts at `2026-10-26T21:38:27.910+0530` (size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (size 23 → 61 bytes).
+- 26 October 2026: two consecutive modifications of one file, `/home/sentinel-admin/sentinel-v02-mod-test.txt`, produced two Level 8 Rule 100002 alerts at `2026-10-26T21:38:27.910+0530` (size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (size 23 → 61 bytes). These are not two independent test cases and not a regression suite.
 - These validate the tested modification scenarios only. They say nothing about creation or deletion coverage.
 
 **Observed — creation and deletion (16 October 2026, `/home/sentinel-admin/sentinel-audit-test.txt`):**
 
 - The reviewed creation record showed built-in Rule 554 at `2026-10-16T11:40:06.007+0530`. Rule 100002 was absent from that record.
-- The reviewed deletion record showed built-in Rule 553 at `2026-10-16T12:31:32.819+0530`. Rule 100002 was absent from that record.
+- The reviewed deletion record showed built-in Rule 553 (Level 7) at `2026-10-16T12:31:32.819+0530`. Rule 100002 was absent from that record.
 - These statements are limited to the two reviewed records and do not show how Rule 100002 behaves for other creation or deletion events. Earlier versions of this guide recorded Rule 100002 as firing on creation; that is not supported by the reviewed records.
 
-**Unresolved:** why Rule 100002 was absent from the two reviewed records. Rule 100002 has been described as depending on parent Rule 550 (`<if_sid>550</if_sid>`), but the active rule definition and its matching behavior have not been re-verified, and that dependency is not asserted as the cause. No rule change or tuning has been made. A built-in rule firing does not by itself establish whether custom Rule 100002 should cover the same event.
+**Unresolved:** why Rule 100002 was absent from the two reviewed records. Rule 100002 has been reported as depending on parent Rule 550 (`<if_sid>550</if_sid>`), but the active and historical loaded rule configurations and the rule's matching behavior have not been verified for this investigation, and that dependency is not asserted as the cause. No root cause is confirmed. No rule change or tuning has been made. A built-in rule firing does not by itself establish whether custom Rule 100002 should cover the same event.
 
 Additional file-integrity events involving desktop configuration, application state, and cache files were documented as observed background activity within the 11 October reviewed dataset; individual process attribution was not conclusively established.
 
 > The case remains open. Evidence reconciliation for the reviewed scope is closed. Resolution of the Rule 100002 absence, broader false-positive/false-negative testing, and detection-rule tuning remain follow-up tasks.
 
-Supporting evidence: existing screenshots for the 11 October modification test are stored in [`evidence/v0.3/`](../evidence/v0.3/). A screenshot of the 26 October terminal output was reported as uploaded to `evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png`; that path has not been verified here. The 11 October original source log and the 16 October raw records are not claimed to be committed to the repository.
+Supporting evidence: existing screenshots for the 11 October modification test are stored in [`evidence/v0.3/`](../evidence/v0.3/). The 26 October terminal output is supported by the screenshot [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png), stored in `evidence/v0.2/` rather than the v0.3 evidence directory; it supports the two Level 8 alerts from consecutive modifications of one file. The 11 October original source log and the 16 October raw records are not claimed to be committed to the repository.
 
 ---
 
@@ -202,11 +202,11 @@ Investigations feed back into detection engineering: a detection gap leads to id
 
 - ✅ Investigation methodology and directory structure are documented.
 - ✅ SENTINEL-WAZUH and SENTINEL-LINUX01 provide the telemetry foundation for the current investigation workflow.
-- ✅ CASE-001 is documented in [`investigations/CASE-001.md`](CASE-001.md) and [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); existing supporting evidence for the 11 October modification test is under [`evidence/v0.3/`](../evidence/v0.3/).
-- ✅ Custom Rule 100002 detected the controlled file modifications tested on 11 and 26 October 2026 (tested scenarios only).
+- ✅ CASE-001 is documented in [`investigations/CASE-001.md`](CASE-001.md) and [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); supporting evidence is under [`evidence/v0.3/`](../evidence/v0.3/) (11 October screenshots) and [`evidence/v0.2/`](../evidence/v0.2/) (26 October screenshot, linked above).
+- ✅ Custom Rule 100002 detected the controlled file modifications tested on 11 and 26 October 2026 (tested scenarios only; the 26 October result is two consecutive modifications of one file).
 - ✅ The 16 October creation and deletion records were reviewed: built-in Rules 554 and 553 were observed, and Rule 100002 was absent from both records.
 - ✅ Additional home-directory FIM events were reviewed, and potential noise from routine desktop activity was documented with appropriate attribution limitations.
-- 🟡 Open: why Rule 100002 was absent from the reviewed creation/deletion records. The active rule definition and matching behavior have not been re-verified, and no root cause is asserted.
-- ⬜ Broader false-positive/false-negative testing, repeatable regression testing, detection tuning, and validation of tuning effectiveness remain outstanding.
+- 🟡 Open: why Rule 100002 was absent from the reviewed creation/deletion records. The active and historical loaded rule configurations and matching behavior have not been verified, and no root cause is asserted.
+- ⬜ Broader false-positive/false-negative testing, repeatable regression testing, detection tuning, and validation of tuning effectiveness remain outstanding. No detection rates or comprehensive FIM coverage have been established.
 - ⬜ Threat hunting and additional investigation cases remain planned; future investigations should receive unique case IDs and follow the evidence-first principles described in this guide.
 - ⬜ Attack Mutation is not implemented.
