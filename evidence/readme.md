@@ -1,109 +1,344 @@
-# SENTINEL Evidence — v0.2
+# SENTINEL Evidence
 
-Evidence for v0.2: getting Wazuh and SENTINEL-LINUX01 actually talking to each other, and building out a first File Integrity Monitoring (FIM) setup on top of that pipeline.
+This directory contains evidence produced during the development, testing, validation, investigation, and measurement of the SENTINEL SOC laboratory. Evidence exists to support the claims the project makes about itself.
 
-**Environment:** SENTINEL-WAZUH (`10.10.10.10`, Wazuh `4.14.8`) ↔ SENTINEL-LINUX01 (`10.10.10.40`, Wazuh Agent `4.14.8`, Agent ID `002`)
-
----
-
-## Infrastructure & connectivity
-
-![Wazuh Manager health check](v0.2-wazuh-hc-startup-01.png)
-
-![Wazuh Manager health check](v0.2-wazuh-hc-startup-02.png)
-
-Manager starts up clean, health check passes.
-
-![Wazuh Manager running](v0.2-wazuh-manager-running-01.png)
-
-Manager process is up on SENTINEL-WAZUH.
-
-![Agent running on Linux01](v0.2-linux01-agent-running.png)
-
-Agent service is installed and running on SENTINEL-LINUX01.
-
-![Connectivity check](v0.2-linux01-to-wazuh-connectivity.png)
-
-Linux01 can actually reach the manager over the network.
-
-![Agent active in dashboard](v0.2-agent-active.png)
-
-Agent `002` is shown as Active in the dashboard. Together with the documented connectivity check and the original Rule 550 FIM alert, this supports agent–manager communication and file-change detection for the specific controlled modification tested. It does not establish that the complete telemetry pipeline was validated for all event types.
-
-![Dashboard lab status](wazuh-dashboard-lab-status.png)
-
-Overall dashboard view at the time, matching everything above.
+> **Core principle:** if SENTINEL claims that something happened, the relevant evidence should exist whenever practical.
 
 ---
 
-## FIM on `/home`
+## 1. Purpose
 
-![FIM realtime config on /home](v0.2-fim-home-realtime-cong.png)
+Evidence preserves proof of actual project activity. It may demonstrate infrastructure configuration, connectivity, Wazuh operation, agent status, telemetry, detection behavior, investigation findings, incident timelines, response actions, test results, metrics, before/after improvements, attack mutation results, or detection resilience.
 
-Set up real-time FIM on `/home` via Syscheck.
-
-![Test file created](v0.2-fim-test-file-created.png)
-
-![Test file modified](v0.2-fim-test-file-modified.png)
-
-Created and then modified a test file in `/home` to actually trigger something.
-
-![FIM result](v0.2-fim-controlled-modification.png)
-
-The modification got picked up — Wazuh's built-in **Rule 550** (Level 7, "Integrity checksum changed") fired. So the telemetry pipeline from file change → Wazuh Manager works.
+This directory preserves **what actually happened**, not what the project intended to happen.
 
 ---
 
-## Custom rule — open at the time of v0.2
+## 2. Evidence Philosophy
 
-Wrote a custom rule, ID `100002`, in `local_rules.xml` to catch this same event specifically. It passed Wazuh's syntax check (`analysisd`), but at the time of this evidence capture I hadn't gotten it to actually fire a Level 8 alert. Rule 550 firing proves the telemetry works — it doesn't prove my custom rule works. That was unfinished at this milestone.
-
-### Later updates (after the original v0.2 capture)
-
-The results below were recorded after the v0.2 evidence above and are not part of the original v0.2 capture. They are summarized here for context; see [`../v0.3/readme.md`](../v0.3/readme.md) for the v0.3 evidence.
-
-- **11 October 2026 — modification:** Existing screenshots support a Level 8 Rule `100002` alert for a controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` at `2026-10-11T20:25:14.746+0530`. The original source alert log was not recovered during the 26 October review, so this result rests on the screenshots.
-- **16 October 2026 — creation and deletion:** The reviewed creation record showed built-in Rule `554` at `2026-10-16T11:40:06.007+0530`, and the reviewed deletion record showed built-in Rule `553` (Level 7) at `2026-10-16T12:31:32.819+0530`. Custom Rule `100002` was absent from both reviewed records. Why it was absent remains unresolved.
-- **26 October 2026 — modification:** Two consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt` produced Level 8 Rule `100002` alerts at `2026-10-26T21:38:27.910+0530` (size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (size 23 → 61 bytes). These are two alerts from consecutive modifications of one file, not independent test cases or a regression suite. Screenshot: [`v0.2-oct26-controlled-modification-source-alerts-new.png`](v0.2-oct26-controlled-modification-source-alerts-new.png). It supports those two recorded alerts and nothing beyond them.
-
-**Bounds on these results:** Modification detection by Rule `100002` is validated only for the tested scenarios. The two reviewed 16 October records do not establish how the custom rule behaves for creation or deletion events in general, and no root cause for its absence from those records is asserted. No comprehensive FIM coverage, measured detection rates, completed tuning, or regression testing is claimed. The raw 16 October records and the original 11 October source log are not claimed to be committed to the repository.
+- **Evidence over claims** — written statements alone aren't sufficient.
+- **Preserve failures** — a failed test is evidence too.
+- **Traceability** — evidence should be traceable to a version, scenario, detection, test, investigation, incident, or metric.
+- **Reproducibility** — evidence should contain enough context to understand what was being tested.
+- **Integrity** — evidence is never altered to make a result look better than it was.
+- **Minimalism** — capture useful evidence without storing unnecessary data.
+- **Security** — never store secrets or sensitive information.
 
 ---
 
-## Later observation — Security Configuration Assessment (29 October 2026)
+## 3. Directory Structure
 
-![Wazuh SCA dashboard showing the CIS Ubuntu Linux 24.04 LTS Benchmark results](v0.2-sca-telementry-processing.png)
+```
+evidence/
+├── README.md
+├── v0.1/
+├── v0.2/
+├── v0.3/
+├── v0.4/
+├── v0.5/
+└── v0.6/
+```
 
-This is one Wazuh Security Configuration Assessment (SCA) dashboard observation from 29 October 2026. It is later evidence stored in this directory for repository organization only. It is not part of the original v0.2 capture. SCA is built-in Wazuh functionality, not a custom SENTINEL detection.
-
-The results and their limitations are documented in the [SCA baseline report](sca-baseline.md). This observation does not claim remediation, an improved security posture, successful compliance, or any detection performance.
-
----
-
-## Full write-up
-
-More detail on the infrastructure/telemetry setup and the Linux01 integration work lives in:
-
-- [Infrastructure and Telemetry Foundation](infrastructure-and-telemetry-foundation.md)
-- [Wazuh–Linux01 Integration](wazuh-linux01-integration.md)
+Each project version gets its own evidence directory, kept separate so the project's evolution can be reconstructed later.
 
 ---
 
-## Full file list
+## 4. Version-Specific Evidence
 
-| File | What it shows |
+| Version | Focus |
 |---|---|
-| [v0.2-wazuh-hc-startup-01.png](v0.2-wazuh-hc-startup-01.png) / [v0.2-wazuh-hc-startup-02.png](v0.2-wazuh-hc-startup-02.png) | Manager health check / startup |
-| [v0.2-wazuh-manager-running-01.png](v0.2-wazuh-manager-running-01.png) | Manager running |
-| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png) / [wazuh-agent-running.png](wazuh-agent-running.png) | Agent running on Linux01 |
-| [v0.2-linux01-to-wazuh-connectivity.png](v0.2-linux01-to-wazuh-connectivity.png) | Linux01 ↔ Wazuh connectivity |
-| [v0.2-agent-active.png](v0.2-agent-active.png) | Agent active in dashboard |
-| [wazuh-dashboard-lab-status.png](wazuh-dashboard-lab-status.png) | Dashboard overview |
-| [v0.2-fim-home-realtime-cong.png](v0.2-fim-home-realtime-cong.png) | `/home` FIM config |
-| [v0.2-fim-test-file-created.png](v0.2-fim-test-file-created.png) / [v0.2-fim-test-file-modified.png](v0.2-fim-test-file-modified.png) | Test file create/modify |
-| [v0.2-fim-controlled-modification.png](v0.2-fim-controlled-modification.png) | Rule 550 result (original v0.2 capture) |
-| [v0.2-oct26-controlled-modification-source-alerts-new.png](v0.2-oct26-controlled-modification-source-alerts-new.png) | 26 October 2026 source alerts: two Level 8 Rule `100002` alerts from consecutive modifications of one file (`sentinel-v02-mod-test.txt`). Added after the original v0.2 capture; the filename keeps the `v0.2` prefix but the evidence dates from the later review. |
-| [sca-baseline.md](sca-baseline.md) | Later report (29 October 2026) documenting one SCA dashboard observation. Not original v0.2 evidence. |
-| [v0.2-sca-telementry-processing.png](v0.2-sca-telementry-processing.png) | SCA dashboard view supporting that report. Captured 29 October 2026, after the original v0.2 capture; the filename keeps the `v0.2` prefix but is not original v0.2 evidence. |
+| v0.1 | Foundation and infrastructure evidence (e.g., Wazuh Dashboard agent status, agent service status, network verification, infrastructure verification) |
+| v0.2 | *(Future)* Linux telemetry and initial detection evidence |
+| v0.3 | *(Future)* SOC investigation evidence |
+| v0.4 | *(Future)* Incident response evidence |
+| v0.5 | *(Future)* Purple-team testing, measurement, and validation evidence |
+| v0.6 | *(Future)* Attack DNA, mutation, and detection-resilience evidence |
 
-[v0.3-case001-fim-filtered-events.png](v0.3-case001-fim-filtered-events.png) and [v0.3-case001-rule-550-event-details.png](v0.3-case001-rule-550-event-details.png) are in this folder too but belong to v0.3 — not covered here.
+Only v0.1 currently contains real evidence. No future-version evidence is claimed to exist.
+
+---
+
+## 5. Current v0.1 State
+
+**Current project phase:** v0.1 — Foundation.
+
+The repository currently contains actual v0.1 infrastructure evidence, which may include the Wazuh Agent running, the Dashboard showing the agent as active, and final infrastructure verification artifacts. No attack, detection, investigation, response, or mutation evidence exists yet — none is claimed here.
+
+---
+
+## 6. Evidence Categories
+
+| Category | Proof of... |
+|---|---|
+| Infrastructure Evidence | VM configuration, network configuration, services, agent connectivity, platform availability |
+| Telemetry Evidence | Expected telemetry generated and received |
+| Detection Evidence | A detection behaving as expected during a controlled test |
+| Investigation Evidence | Reconstruction of an event |
+| Incident Response Evidence | Containment, eradication, recovery, and response actions |
+| Testing Evidence | Test execution and results |
+| Metrics Evidence | Measured values |
+| Failure Evidence | Failed tests, broken configurations, or unexpected behavior |
+| Mutation Evidence | *(Future)* Original vs. mutated attack behavior |
+
+---
+
+## 7. Evidence Traceability
+
+```
+Scenario → Test → Detection → Evidence → Investigation → Metric → Lesson
+```
+
+Where practical, evidence should reference a Test ID, Detection ID, Scenario ID, Case ID, and project version. Not every screenshot needs every identifier — traceability should be proportionate to the artifact.
+
+---
+
+## 8. Evidence Naming
+
+Current examples: `dashboard-agent-active.png`, `wazuh-agent-running.png`, `final-verification.png`.
+
+Future example conventions (illustrative only — none of these files exist yet): `DET-001-alert.png`, `DET-001-test-result.png`, `INV-001-timeline.png`, `IR-001-containment.png`, `MUT-001-original.png`, `MUT-001-variant.png`.
+
+Prefer lowercase, descriptive names with consistent identifiers where useful. Avoid generic names like `IMG_1234.png` or `Screenshot_2026-09-XX.png` unless the original filename must be preserved for another reason.
+
+---
+
+## 9. Evidence README Files
+
+| | Top-level `evidence/README.md` (this file) | `evidence/v0.x/README.md` |
+|---|---|---|
+| Explains | Evidence philosophy, directory structure, categories, naming, integrity, security, traceability, version organization | What was implemented in that version, what evidence was captured, what each artifact demonstrates, known limitations, verification status |
+
+This file does not duplicate the detailed, artifact-by-artifact descriptions that belong in each version's own README.
+
+---
+
+## 10. Evidence Quality
+
+Useful evidence is:
+
+- **Relevant** — directly supports the claim
+- **Authentic** — represents the actual project state
+- **Understandable** — someone unfamiliar with the experiment can understand what it demonstrates
+- **Timestamped** — the relevant date/time can be determined where important
+- **Contextual** — includes enough surrounding information to interpret it
+- **Traceable** — connects to a scenario, test, detection, or case
+
+---
+
+## 11. Screenshot Guidelines
+
+Capture only what's needed. Where practical: include useful context, avoid excessive empty UI, ensure important text is readable, avoid exposing secrets or personal information, use descriptive filenames, and record what the screenshot demonstrates in the relevant version README. Screenshots are never edited in a misleading way — cropping for readability is fine as long as it doesn't change the meaning of the evidence.
+
+---
+
+## 12. Terminal / Log Evidence
+
+Future evidence may include command output, service status, logs, Wazuh events, detection output, or test output. When practical, record the host, the command/action, the timestamp, the expected result, and the actual result. Full raw system logs are not stored when a smaller, relevant excerpt is sufficient.
+
+---
+
+## 13. Test Evidence
+
+Connects to `docs/07-testing-and-matrices.md`. A test should eventually produce evidence supporting what was tested, expected behavior, actual behavior, detection result, investigation result, response result, and final status:
+
+```
+TEST-XXX → Execution → Evidence → Result → Matrix Update
+```
+
+No fictional test IDs are used.
+
+---
+
+## 14. Detection Evidence
+
+Detection evidence should support actual detection claims: a Wazuh alert, a relevant event/log, the detection configuration, the test execution, a screenshot, a before/after result, a false-positive test, a false-negative test, or a retest result. It should eventually reference the relevant Detection ID where practical. Connects to `detections/`, `docs/05-detection-engineering.md`, and `docs/07-testing-and-matrices.md`.
+
+---
+
+## 15. Investigation Evidence
+
+Future investigation evidence may include alert details, a timeline, relevant logs, IOCs, process information, network information, analyst notes, and investigation conclusions. Connects to `investigations/` and `docs/06-incident-response.md`. No investigation evidence currently exists.
+
+---
+
+## 16. Metric Evidence
+
+Every metric should be traceable to underlying evidence — for example, Detection Time is derived from the timestamp of the activity plus the timestamp of the detection. A metric is never recorded without being able to explain its source. Connects to `metrics/` and `docs/07-testing-and-matrices.md`. No fabricated metrics are stored.
+
+---
+
+## 17. Failure Evidence
+
+Failures are preserved when useful for understanding the engineering process: a failed detection, a false positive, a false negative, an infrastructure failure, an investigation gap, a response failure, or a mutation failure. Connects to `failure-log/`.
+
+> A failed test is still evidence.
+
+Failed evidence is never deleted just because a later implementation succeeded.
+
+---
+
+## 18. Evidence Integrity
+
+Evidence is never altered to change the meaning of a result. Permitted actions: cropping screenshots for readability, redacting secrets, and removing unrelated sensitive information. Redaction never removes information that would change how the evidence is interpreted. When an artifact is transformed, the original is preserved where appropriate and safe to do so.
+
+---
+
+## 19. Security Rules
+
+**Never commit:** passwords, API keys, authentication tokens, private keys, recovery codes, real credentials, sensitive personal information, confidential third-party information, VM disks, full sensitive databases, or unnecessary raw telemetry. Use sanitized evidence when needed, and keep anything too sensitive for the repository outside it, in an appropriately protected location.
+
+---
+
+## 20. Git / Repository Practices
+
+Evidence is committed when it's useful to the project's history and safe to store. Large binary artifacts are not committed automatically. **Never commit:** VM images, huge packet captures, huge raw logs, generated databases, or secrets — use `.gitignore` rules where appropriate. Evidence commits use clear messages, for example:
+
+```
+evidence: add v0.1 Wazuh verification artifacts
+```
+
+No commit is claimed to exist unless it actually does.
+
+---
+
+## 21. Evidence Retention
+
+Evidence is retained when it contributes to reproducibility, debugging, detection validation, incident investigation, measurement, or historical comparison. Temporary artifacts with no long-term value can be discarded once the useful information has been preserved elsewhere. The repository is not treated as a general storage dump.
+
+---
+
+## 22. Before / After Evidence
+
+Future improvements should sometimes preserve a before/after pair:
+
+```
+BEFORE → Change → AFTER → Retest
+```
+
+Examples: detection before vs. after tuning, telemetry before vs. after a configuration change, original attack vs. mutated attack. No before/after results are fabricated — they exist only once a real change has actually been tested both ways.
+
+---
+
+## 23. Attack Mutation Evidence
+
+**Status: FUTURE — v0.6.** Future evidence may compare an original attack against a mutated attack, recording the attack objective, the behavioral difference, the telemetry difference, the detection result, the investigation result, and the response result — to evaluate detection resilience. No mutation evidence exists today.
+
+---
+
+## 24. Evidence → Portfolio
+
+Evidence may eventually support public project documentation, but sensitive internal information is never published. Before any public release, artifacts are reviewed for credentials, tokens, host information, personal information, sensitive network details, unnecessary logs, and private infrastructure information. Public case studies use sanitized evidence where necessary.
+
+---
+
+## 25. Evidence Checklist
+
+Before storing evidence:
+
+- [ ] Does it support a real project claim?
+- [ ] Is the source known?
+- [ ] Is the context understood?
+- [ ] Is the timestamp relevant?
+- [ ] Is the artifact traceable?
+- [ ] Does it contain secrets?
+- [ ] Does it contain sensitive information?
+- [ ] Does it need redaction?
+- [ ] Is it stored in the correct version directory?
+- [ ] Is a README description required?
+
+---
+
+## 26. Evidence Workflow
+
+```
+ACTION → CAPTURE → VERIFY → SANITIZE → NAME → STORE → REFERENCE → COMMIT
+```
+
+- **Action** — the real event occurs (a test, a configuration change, a verification step)
+- **Capture** — a screenshot, log excerpt, or output is taken
+- **Verify** — confirm the artifact actually reflects what happened
+- **Sanitize** — remove secrets or sensitive information
+- **Name** — apply the naming convention from Section 8
+- **Store** — place it in the correct version directory
+- **Reference** — link it from the relevant README, test, or detection record
+- **Commit** — commit with a clear, descriptive message
+
+---
+
+## 27. Relationship with Other Directories
+
+| Directory | Relationship |
+|---|---|
+| `docs/` | Defines methodology |
+| `detections/` | Contains actual detection implementations |
+| `scenarios/` | Contains controlled test/attack scenarios |
+| `evidence/` | Contains proof produced by those activities |
+| `investigations/` | Contains investigation records |
+| `metrics/` | Contains measured results |
+| `failure-log/` | Contains documented failures and lessons |
+
+Overall flow:
+
+```
+Scenario → Detection → Test → Evidence → Investigation → Metrics → Lessons → Improvement → Retest
+```
+
+---
+
+## 28. Current Directory State
+
+```
+evidence/
+├── README.md
+└── v0.1/
+    ├── README.md
+    ├── dashboard-agent-active.png
+    ├── final-verification.png
+    └── wazuh-agent-running.png
+```
+
+If the actual repository contains additional verified files beyond this list, they are preserved as-is rather than removed or reinterpreted here. This v0.1 evidence represents infrastructure verification only. Future version directories are populated as those versions are actually implemented.
+
+---
+
+## 29. Version Roadmap
+
+| Version | Expected Evidence |
+|---|---|
+| v0.1 | Infrastructure foundation |
+| v0.2 | *(Planned)* Linux telemetry and detection testing |
+| v0.3 | *(Planned)* Investigation and case evidence |
+| v0.4 | *(Planned)* Incident response evidence |
+| v0.5 | *(Planned)* Measurement and purple-team evidence |
+| v0.6 | *(Planned)* Attack mutation and detection-resilience evidence |
+
+---
+
+## 30. Documentation Rules
+
+1. Never fabricate evidence.
+2. Never modify evidence to change the result.
+3. Keep evidence traceable.
+4. Separate evidence by project version.
+5. Protect secrets and sensitive information.
+6. Preserve meaningful failures.
+7. Avoid unnecessary repository bloat.
+8. Keep filenames descriptive.
+9. Link evidence to tests/detections/cases where practical.
+10. Update version-specific README files when new evidence is added.
+
+---
+
+## 31. Interview / Engineering Value
+
+Evidence is what turns SENTINEL's documented methodology into something a reviewer, recruiter, or interviewer can actually verify rather than take on faith. A written claim that "a detection was validated" is easy to make and hard to trust; a linked screenshot of the Wazuh Dashboard, a test's recorded before/after comparison, or a documented false positive shows the underlying work actually happened, and shows it honestly — failures and all. This is what separates SENTINEL from a project that simply lists tools and claims outcomes: the evidence directory is the receipts.
+
+---
+
+## 32. Final Status
+
+**Current phase:** v0.1 — Foundation. Real infrastructure evidence exists under `v0.1/`. No evidence exists yet under `v0.2/` through `v0.6/`.
+
+**Next expected evidence:** v0.2 telemetry and initial detection-test artifacts, once that phase of work begins.
+
+This file describes SENTINEL's overall evidence strategy. It does not duplicate the detailed, per-artifact descriptions that belong in each version's own `README.md`, and it does not claim any evidence exists beyond what is actually present in the repository.
