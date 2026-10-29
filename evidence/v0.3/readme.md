@@ -17,7 +17,7 @@ The evidence supports the specific results described below. It does not establis
 | 3 | CASE-001 Rule 550 event details | [`v0.3-case001-rule-550-event-details.png`](v0.3-case001-rule-550-event-details.png) | Built-in integrity-checksum-change alert |
 | 4 | Custom Rule 100002 alert | [`v0.3-custom-rule-100002.png`](v0.3-custom-rule-100002.png) | Custom Level 8 alert from the Oct 11 modification test |
 | 5 | Custom Rule 100002 dashboard JSON | [`v0.3-custom-rule-100002-dashboard-json.png`](v0.3-custom-rule-100002-dashboard-json.png) | Event fields used to verify the alert |
-| 6 | Oct 16 creation, Rule 554 | [`v0.3-oct16-creation-rule-553.png`](v0.3-oct16-creation-rule-553.png) | Built-in "File added to the system" alert (the filename contains `553`, but the content shows Rule `554`) |
+| 6 | Oct 16 creation, Rule 554 | [`v0.3-oct16-creation-rule-554.png`](v0.3-oct16-creation-rule-554.png) | Built-in "File added to the system" alert  |
 | 7 | Oct 16 creation, file path | [`v0.3-oct16-creation-file-path.png`](v0.3-oct16-creation-file-path.png) | Test-file path on the creation event |
 | 8 | Oct 16 deletion, Rule 553 | [`v0.3-oct16-detection-rule-553.png`](v0.3-oct16-detection-rule-553.png) | Built-in "File deleted" alert |
 | 9 | Oct 16 deletion, file path | [`v0.3-oct16-detection-file-path.png`](v0.3-oct16-detection-file-path.png) | Test-file path on the deletion event |
@@ -83,7 +83,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 5. October 16 File-Creation Test: Built-in Rule 554
 
-![Oct 16 creation, Rule 554](v0.3-oct16-creation-rule-553.png)
+![Oct 16 creation, Rule 554](v0.3-oct16-creation-rule-554.png)
 
 ![Oct 16 creation, file path](v0.3-oct16-creation-file-path.png)
 
