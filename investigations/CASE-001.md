@@ -73,7 +73,7 @@ Scope: the controlled modification, creation, and deletion tests listed above, t
 
 - **11 October:** the original alert log could not be recovered from the currently available log files during the 26 October review. The existing 11 October evidence above still supports the documented result; no new source-log evidence is claimed.
 - **16 October:** the results rest on the reviewed source records. No repository evidence path for them is listed in this document.
-- **26 October:** the results rest on terminal output showing two Rule `100002` modification alerts. A screenshot of that output counts as repository evidence only once its upload and exact path have been verified; until then no link is provided.
+- **26 October:** the results rest on terminal output showing two Rule `100002` modification alerts. The screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) supports the two recorded custom Rule `100002` Level 8 alerts from consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt`. These are not independent test cases or a repeatable regression suite.
 
 ---
 
@@ -112,7 +112,7 @@ Result: Confirmed for the 11 and 26 October tests.
 
 The event included file-integrity metadata, including size and hash information.
 
-On 26 October, terminal output showed two consecutive modifications of `sentinel-v02-mod-test.txt`, each with a Rule `100002` Level 8 alert (size changes in the timeline). This repeats the modification validation; it does not extend it to other paths, file types, or event types.
+On 26 October, terminal output showed two consecutive modifications of `sentinel-v02-mod-test.txt`, each with a Rule `100002` Level 8 alert (size changes in the timeline). These are two alerts from consecutive modifications of one file, not independent test cases or a repeatable regression suite; they do not extend it to other paths, file types, or event types.
 
 ### Finding 2 — 16 October creation and deletion records: Rule 100002 absent
 
@@ -184,7 +184,7 @@ Rule `100002` detected the tested modification scenario at Level 8. For the 16 O
 Future engineering work; none is a prerequisite for the limited closure above.
 
 - Review the active `100002` definition and the built-in `550`, `553`, and `554` definitions (read-only) to explain the absence of `100002` from the 16 October records and confirm how the `file` condition matches.
-- Optionally export the raw 16 and 26 October alert records as additional evidence, and verify the upload and path of any 26 October screenshot before linking it.
+- Optionally export the raw 16 and 26 October alert records as additional evidence; no raw alert records are currently committed to the repository.
 - After review and approval, design and test a safe change for creation/deletion coverage; do not alter the rule before that review.
 - Define repeatable creation, modification, and deletion regression tests with explicit pass/fail criteria, and document false-positive/false-negative results.
 - Evaluate narrower path matching and test any exclusions against benign and controlled events, confirming modification detection is preserved.
