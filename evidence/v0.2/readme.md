@@ -117,8 +117,9 @@ The results below were recorded after the v0.2 evidence above and are not part o
 ## Full write-up
 
 More detail on the infrastructure/telemetry setup and the Linux01 integration work lives in:
-- `infrastructure-and-telemetry-foundation.md`
-- `wazuh-linux01-integration.md`
+
+- [Infrastructure and Telemetry Foundation](infrastructure-and-telemetry-foundation.md)
+- [Wazuh–Linux01 Integration](wazuh-linux01-integration.md)
 
 ---
 
@@ -126,15 +127,15 @@ More detail on the infrastructure/telemetry setup and the Linux01 integration wo
 
 | File | What it shows |
 |---|---|
-| `v0.2-wazuh-hc-startup-01.png` / `-02.png` | Manager health check / startup |
-| `v0.2-wazuh-manager-running-01.png` | Manager running |
-| `v0.2-linux01-agent-running.png` / `wazuh-agent-running.png` | Agent running on Linux01 |
-| `v0.2-linux01-to-wazuh-connectivity.png` | Linux01 ↔ Wazuh connectivity |
-| `v0.2-agent-active.png` | Agent active in dashboard |
-| `wazuh-dashboard-lab-status.png` | Dashboard overview |
-| `v0.2-fim-home-realtime-cong.png` | `/home` FIM config |
-| `v0.2-fim-test-file-created.png` / `-modified.png` | Test file create/modify |
-| `v0.2-fim-controlled-modification.png` | Rule 550 result (original v0.2 capture) |
-| `v0.2-oct26-controlled-modification-source-alerts-new.png` | 26 October 2026 source alerts: two Level 8 Rule `100002` alerts from consecutive modifications of one file (`sentinel-v02-mod-test.txt`). Added after the original v0.2 capture; the filename keeps the `v0.2` prefix but the evidence dates from the later review. |
+| [v0.2-wazuh-hc-startup-01.png](v0.2-wazuh-hc-startup-01.png) / [v0.2-wazuh-hc-startup-02.png](v0.2-wazuh-hc-startup-02.png) | Manager health check / startup |
+| [v0.2-wazuh-manager-running-01.png](v0.2-wazuh-manager-running-01.png) | Manager running |
+| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png) / [wazuh-agent-running.png](wazuh-agent-running.png) | Agent running on Linux01 |
+| [v0.2-linux01-to-wazuh-connectivity.png](v0.2-linux01-to-wazuh-connectivity.png) | Linux01 ↔ Wazuh connectivity |
+| [v0.2-agent-active.png](v0.2-agent-active.png) | Agent active in dashboard |
+| [wazuh-dashboard-lab-status.png](wazuh-dashboard-lab-status.png) | Dashboard overview |
+| [v0.2-fim-home-realtime-cong.png](v0.2-fim-home-realtime-cong.png) | `/home` FIM config |
+| [v0.2-fim-test-file-created.png](v0.2-fim-test-file-created.png) / [v0.2-fim-test-file-modified.png](v0.2-fim-test-file-modified.png) | Test file create/modify |
+| [v0.2-fim-controlled-modification.png](v0.2-fim-controlled-modification.png) | Rule 550 result (original v0.2 capture) |
+| [v0.2-oct26-controlled-modification-source-alerts-new.png](v0.2-oct26-controlled-modification-source-alerts-new.png) | 26 October 2026 source alerts: two Level 8 Rule `100002` alerts from consecutive modifications of one file (`sentinel-v02-mod-test.txt`). Added after the original v0.2 capture; the filename keeps the `v0.2` prefix but the evidence dates from the later review. |
 
-`v0.3-case001-fim-filtered-events.png` and `v0.3-case001-rule-550-event-details.png` are in this folder too but belong to v0.3 — not covered here.
+[v0.3-case001-fim-filtered-events.png](v0.3-case001-fim-filtered-events.png) and [v0.3-case001-rule-550-event-details.png](v0.3-case001-rule-550-event-details.png) are in this folder too but belong to v0.3 — not covered here.
