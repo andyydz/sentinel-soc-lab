@@ -142,12 +142,13 @@ A master table may summarize completed tests. It will be populated only with rea
 
 When a detection or control is changed to fix a gap, tune a false positive, or respond to a missed detection, performance is recorded before and after the change using matching records (same scenario, same technique, comparable conditions where possible). A comparison exists only once a real "before" measurement and a real "after" retest are both recorded.
 
+
 ## Related documentation
 
-- [`docs/07-testing-and-metrics.md`](../docs/07-testing-and-metrics.md): full testing and validation methodology this directory implements.
-- [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md): how detections are designed and validated.
-- `docs/06-incident-response.md`: the response methodology that response metrics would measure against.
-- `investigations/`: case records that investigation metrics would draw from.
-- `failure-log/`: failures (including misses and regressions) that may also appear here as measured results.
-- `evidence/`: supporting evidence that metric records link to.
-- [`CHANGELOG.md`](../CHANGELOG.md): project-level milestones and architecture changes.
+- [`docs/07-testing-and-metrics.md`](../docs/07-testing-and-metrics.md): full testing and validation methodology.
+- [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md): detection design and validation.
+- [`docs/06-incident-response.md`](../docs/06-incident-response.md): incident response methodology.
+- [`investigations/`](../investigations/): investigation case records.
+- [`failure-log/`](../failure-log/): documented failures, misses, and regressions.
+- [`evidence/`](../evidence/): supporting evidence and screenshots.
+- [`CHANGELOG.md`](../CHANGELOG.md): project milestones and changes.
