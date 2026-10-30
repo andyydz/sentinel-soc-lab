@@ -39,16 +39,16 @@ The Linux01 agent communicates with the Manager. The currently registered agent 
 | State | `ACTIVE` |
 
 Supporting screenshots (a filename alone does not establish what an image shows beyond its description here):
-- [Agent status](v0.2-agent-active.png)
-- [Manager running](v0.2-wazuh-manager-running-01.png)
-- [Linux01 agent service running](v0.2-linux01-agent-running.png)
-- [Linux01-to-Wazuh connectivity check](v0.2-linux01-to-wazuh-connectivity.png)
+- [Agent status](screenschots/v0.2-agent-active.png)
+- [Manager running](screenschots/v0.2-wazuh-manager-running-01.png)
+- [Linux01 agent service running](screenschots/v0.2-linux01-agent-running.png)
+- [Linux01-to-Wazuh connectivity check](screenschots/v0.2-linux01-to-wazuh-connectivity.png)
 
 The connectivity screenshot supports a check between the two hosts. This document does not state which command, port, or protocol it shows.
 
 ## Evidence-backed telemetry observations
 
-**Agent communication.** The `HC_STARTUP` screenshots ([1](v0.2-wazuh-hc-startup-01.png), [2](v0.2-wazuh-hc-startup-02.png)) record an `HC_STARTUP` observation from `sentinel-linux01`. `HC_STARTUP` is an agent startup/control message. It supports agent–manager communication. It does not by itself show that endpoint events were processed or that the full telemetry pipeline was validated.
+**Agent communication.** The `HC_STARTUP` screenshots ([1](screenschots/v0.2-wazuh-hc-startup-01.png), [2](screenschots/v0.2-wazuh-hc-startup-02.png)) record an `HC_STARTUP` observation from `sentinel-linux01`. `HC_STARTUP` is an agent startup/control message. It supports agent–manager communication. It does not by itself show that endpoint events were processed or that the full telemetry pipeline was validated.
 
 **Original FIM event.** In the original v0.2 capture, real-time FIM on `/home` was configured, and a controlled file modification produced built-in Wazuh **Rule 550** (Level 7, "Integrity checksum changed"). This supports file-change detection for that tested scenario only. See the [v0.2 evidence README](readme.md).
 
@@ -72,12 +72,12 @@ This document does not attribute the current `ACTIVE` state to any specific conf
 
 | Evidence | Supports |
 |---|---|
-| [v0.2-agent-active.png](v0.2-agent-active.png) | Agent `002` listed as active |
-| [v0.2-wazuh-manager-running-01.png](v0.2-wazuh-manager-running-01.png) | Manager running |
-| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png), [wazuh-agent-running.png](wazuh-agent-running.png) | Agent running on Linux01 |
-| [v0.2-linux01-to-wazuh-connectivity.png](v0.2-linux01-to-wazuh-connectivity.png) | Host-to-manager connectivity check |
-| [v0.2-wazuh-hc-startup-01.png](v0.2-wazuh-hc-startup-01.png), [v0.2-wazuh-hc-startup-02.png](v0.2-wazuh-hc-startup-02.png) | `HC_STARTUP` observation |
-| [wazuh-dashboard-lab-status.png](wazuh-dashboard-lab-status.png) | Dashboard overview |
+| [v0.2-agent-active.png](screenschots/v0.2-agent-active.png) | Agent `002` listed as active |
+| [v0.2-wazuh-manager-running-01.png](screenschots/v0.2-wazuh-manager-running-01.png) | Manager running |
+| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png), [wazuh-agent-running.png](screenschots/wazuh-agent-running.png) | Agent running on Linux01 |
+| [v0.2-linux01-to-wazuh-connectivity.png](screenschots/v0.2-linux01-to-wazuh-connectivity.png) | Host-to-manager connectivity check |
+| [v0.2-wazuh-hc-startup-01.png](screenschots/v0.2-wazuh-hc-startup-01.png), [v0.2-wazuh-hc-startup-02.png](screenschots/v0.2-wazuh-hc-startup-02.png) | `HC_STARTUP` observation |
+| [wazuh-dashboard-lab-status.png](screenschots/wazuh-dashboard-lab-status.png) | Dashboard overview |
 
 No screenshot of the earlier enrollment issue exists.
 
