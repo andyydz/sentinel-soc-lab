@@ -72,7 +72,7 @@ The results below were recorded after the v0.2 evidence above and are not part o
 
 ## Later observation — Security Configuration Assessment (29 October 2026)
 
-![Wazuh SCA dashboard showing the CIS Ubuntu Linux 24.04 LTS Benchmark results](v0.2-sca-telementry-processing.png)
+![Wazuh SCA dashboard showing the CIS Ubuntu Linux 24.04 LTS Benchmark results](screenschots/v0.2-sca-telementry-processing.png)
 
 This is one Wazuh Security Configuration Assessment (SCA) dashboard observation from 29 October 2026. It is later evidence stored in this directory for repository organization only. It is not part of the original v0.2 capture. SCA is built-in Wazuh functionality, not a custom SENTINEL detection.
 
