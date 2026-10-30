@@ -96,7 +96,7 @@ More detail on the infrastructure/telemetry setup and the Linux01 integration wo
 | [v0.2-wazuh-hc-startup-01.png](screenschots/v0.2-wazuh-hc-startup-01.png) / [v0.2-wazuh-hc-startup-02.png](screenschots/v0.2-wazuh-hc-startup-02.png) | Manager health check / startup |
 | [v0.2-wazuh-manager-running-01.png](screenschots/v0.2-wazuh-manager-running-01.png) | Manager running |
 | [v0.2-linux01-agent-running.png](screenschots/v0.2-linux01-agent-running.png) / [wazuh-agent-running.png](screenschots/wazuh-agent-running.png) | Agent running on Linux01 |
-| [v0.2-linux01-to-wazuh-connectivity.png](v0.2-linux01-to-wazuh-connectivity.png) | Linux01 ↔ Wazuh connectivity |
+| [v0.2-linux01-to-wazuh-connectivity.png](screenschots/v0.2-linux01-to-wazuh-connectivity.png) | Linux01 ↔ Wazuh connectivity |
 | [v0.2-agent-active.png](screenschots/v0.2-agent-active.png) | Agent active in dashboard |
 | [wazuh-dashboard-lab-status.png](screenschots/wazuh-dashboard-lab-status.png) | Dashboard overview |
 | [v0.2-fim-home-realtime-cong.png](screenschots/v0.2-fim-home-realtime-cong.png) | `/home` FIM config |
