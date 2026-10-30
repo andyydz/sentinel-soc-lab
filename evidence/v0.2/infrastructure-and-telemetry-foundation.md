@@ -35,11 +35,11 @@ Kali appears in the diagram only as a lab member. No Kali-driven attack is docum
 The verified agent is `sentinel-linux01`, Agent ID `002`, confirmed `ACTIVE`.
 
 Evidence:
-- [Agent status screenshot](v0.2-agent-active.png)
-- [Wazuh Manager running](v0.2-wazuh-manager-running-01.png)
-- [Linux01 agent running](v0.2-linux01-agent-running.png)
-- [Linux01-to-Wazuh connectivity](v0.2-linux01-to-wazuh-connectivity.png)
-- [Dashboard lab status](wazuh-dashboard-lab-status.png)
+- [Agent status screenshot](screenschots/v0.2-agent-active.png)
+- [Wazuh Manager running](screenschots/v0.2-wazuh-manager-running-01.png)
+- [Linux01 agent running](screenschots/v0.2-linux01-agent-running.png)
+- [Linux01-to-Wazuh connectivity](screenschots/v0.2-linux01-to-wazuh-connectivity.png)
+- [Dashboard lab status](screenschots/wazuh-dashboard-lab-status.png)
 
 The connectivity screenshot supports a connectivity check between the two hosts. This document does not claim which command, port, or protocol it shows. Enrollment ports, keys, and network controls are not described here.
 
@@ -59,7 +59,7 @@ As a result, the cause and sequence of the earlier issue, and the relationship b
 
 ## Telemetry interpretation
 
-The [HC_STARTUP evidence 1](v0.2-wazuh-hc-startup-01.png) and [HC_STARTUP evidence 2](v0.2-wazuh-hc-startup-02.png) screenshots are linked as records of an `HC_STARTUP` observation from `sentinel-linux01`. HC_STARTUP is an agent startup/control message. It indicates agent–manager communication. It is not, by itself, proof that arbitrary endpoint events were processed or that the full telemetry pipeline was validated.
+The [HC_STARTUP evidence 1](screenschots/v0.2-wazuh-hc-startup-01.png) and [HC_STARTUP evidence 2](screenschots/v0.2-wazuh-hc-startup-02.png) screenshots are linked as records of an `HC_STARTUP` observation from `sentinel-linux01`. HC_STARTUP is an agent startup/control message. It indicates agent–manager communication. It is not, by itself, proof that arbitrary endpoint events were processed or that the full telemetry pipeline was validated.
 
 In the original capture, the pipeline claim rests on the Rule 550 FIM event above, and only for that scenario.
 
@@ -69,12 +69,12 @@ A Security Configuration Assessment (SCA) result for the CIS Ubuntu Linux 24.04 
 
 | Evidence | Supports |
 |---|---|
-| [v0.2-agent-active.png](v0.2-agent-active.png) | Agent `002` active |
-| [v0.2-wazuh-manager-running-01.png](v0.2-wazuh-manager-running-01.png) | Manager running |
-| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png) | Agent service running on Linux01 |
-| [v0.2-linux01-to-wazuh-connectivity.png](v0.2-linux01-to-wazuh-connectivity.png) | Host-to-manager connectivity check |
-| [v0.2-wazuh-hc-startup-01.png](v0.2-wazuh-hc-startup-01.png), [v0.2-wazuh-hc-startup-02.png](v0.2-wazuh-hc-startup-02.png) | `HC_STARTUP` observation |
-| [wazuh-dashboard-lab-status.png](wazuh-dashboard-lab-status.png) | Dashboard overview |
+| [v0.2-agent-active.png](screenschots/v0.2-agent-active.png) | Agent `002` active |
+| [v0.2-wazuh-manager-running-01.png](screenschots/v0.2-wazuh-manager-running-01.png) | Manager running |
+| [v0.2-linux01-agent-running.png](screenschots/v0.2-linux01-agent-running.png) | Agent service running on Linux01 |
+| [v0.2-linux01-to-wazuh-connectivity.png](screenschots/v0.2-linux01-to-wazuh-connectivity.png) | Host-to-manager connectivity check |
+| [v0.2-wazuh-hc-startup-01.png](screenschots/v0.2-wazuh-hc-startup-01.png), [v0.2-wazuh-hc-startup-02.png](screenschots/v0.2-wazuh-hc-startup-02.png) | `HC_STARTUP` observation |
+| [wazuh-dashboard-lab-status.png](screenschots/wazuh-dashboard-lab-status.png) | Dashboard overview |
 
 No screenshot of the earlier enrollment issue exists in this directory.
 
