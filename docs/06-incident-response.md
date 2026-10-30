@@ -98,7 +98,7 @@ Wazuh alerts and endpoint telemetry are the starting point for analysis, not a c
 **Evidence handling:** every piece of evidence should be timestamped, traceable to its source, and preserved rather than overwritten. CASE-001 evidence and supporting artifacts are organized under `evidence/v0.3/`, with earlier pipeline/infrastructure evidence under `evidence/v0.2/`. The evidence level for each result is stated explicitly:
 - **11 October:** screenshot-supported; the original source alert record was not recovered.
 - **16 October:** reviewed from the source alert record at the Wazuh runtime log path documented in Section 1. Reviewing a source record is separate from storing it in the repository; the raw log is not claimed to be committed.
-- **26 October:** the screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) documents two Level 8 Rule 100002 alerts from consecutive modifications of one file. These are not two independent test cases or a regression suite.
+- **26 October:** the screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png) documents two Level 8 Rule 100002 alerts from consecutive modifications of one file. These are not two independent test cases or a regression suite.
 - **Manager startup observation:** operational artifacts have not been confirmed as saved in the repository, and no evidence path is claimed.
 
 Nothing sensitive (credentials, secrets, VM disks, large raw datasets) is committed alongside evidence.
