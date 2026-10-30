@@ -73,7 +73,7 @@ Scope: the controlled modification, creation, and deletion tests listed above, t
 
 - **11 October:** the original alert log could not be recovered from the currently available log files during the 26 October review. The existing 11 October evidence above still supports the documented result; no new source-log evidence is claimed.
 - **16 October:** the results rest on the reviewed source records. No repository evidence path for them is listed in this document.
-- **26 October:** the results rest on terminal output showing two Rule `100002` modification alerts. The screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) supports the two recorded custom Rule `100002` Level 8 alerts from consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt`. These are not independent test cases or a repeatable regression suite.
+- **26 October:** the results rest on terminal output showing two Rule `100002` modification alerts. The screenshot [October 26 controlled-modification source alerts](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png) supports the two recorded custom Rule `100002` Level 8 alerts from consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt`. These are not independent test cases or a repeatable regression suite.
 
 ---
 
