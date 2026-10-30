@@ -139,7 +139,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 7. Custom Rule 100002: October 26 Modification Test
 
-![Oct 26 modification, source alerts](../v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png)
+![Oct 26 modification, source alerts](../v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png)
 
 - **Test file:** `/home/sentinel-admin/sentinel-v02-mod-test.txt`
 - **Observed result:** Terminal output shows two Level 8 Rule `100002` alerts, recorded from two consecutive modifications of the same file:
