@@ -53,21 +53,21 @@ Scope: the controlled modification, creation, and deletion tests listed above, t
 
 | Evidence | Purpose |
 |---|---|
-| [`v0.3-custom-rule-100002.png`](../evidence/v0.3/v0.3-custom-rule-100002.png) | Custom rule validation evidence (11 Oct) |
-| [`v0.3-custom-rule-100002-dashboard-json.png`](../evidence/v0.3/v0.3-custom-rule-100002-dashboard-json.png) | Alert JSON and event-field evidence (11 Oct) |
-| [`v0.3-case001-fim-filtered-events.png`](../evidence/v0.3/v0.3-case001-fim-filtered-events.png) | Filtered FIM event view |
-| [`v0.3-case001-rule-550-event-details.png`](../evidence/v0.3/v0.3-case001-rule-550-event-details.png) | Built-in Rule 550 event details |
-| [`v0.3-case001-endpoint-file-metadata.png`](../evidence/v0.3/v0.3-case001-endpoint-file-metadata.png) | Endpoint file metadata evidence |
+| [`v0.3-custom-rule-100002.png`](../evidence/v0.3/screenshots/v0.3-custom-rule-100002.png) | Custom rule validation evidence (11 Oct) |
+| [`v0.3-custom-rule-100002-dashboard-json.png`](../evidence/v0.3/screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Alert JSON and event-field evidence (11 Oct) |
+| [`v0.3-case001-fim-filtered-events.png`](../evidence/v0.3/screenshots/v0.3-case001-fim-filtered-events.png) | Filtered FIM event view |
+| [`v0.3-case001-rule-550-event-details.png`](../evidence/v0.3/screenshots/v0.3-case001-rule-550-event-details.png) | Built-in Rule 550 event details |
+| [`v0.3-case001-endpoint-file-metadata.png`](../evidence/v0.3/screenshots/v0.3-case001-endpoint-file-metadata.png) | Endpoint file metadata evidence |
 
-![Custom rule 100002 terminal evidence](../evidence/v0.3/v0.3-custom-rule-100002.png)
+![Custom rule 100002 terminal evidence](../evidence/v0.3/screenshots/v0.3-custom-rule-100002.png)
 
-![Custom rule 100002 dashboard JSON evidence](../evidence/v0.3/v0.3-custom-rule-100002-dashboard-json.png)
+![Custom rule 100002 dashboard JSON evidence](../evidence/v0.3/screenshots/v0.3-custom-rule-100002-dashboard-json.png)
 
-![Filtered FIM events](../evidence/v0.3/v0.3-case001-fim-filtered-events.png)
+![Filtered FIM events](../evidence/v0.3/screenshots/v0.3-case001-fim-filtered-events.png)
 
-![Rule 550 event details](../evidence/v0.3/v0.3-case001-rule-550-event-details.png)
+![Rule 550 event details](../evidence/v0.3/screenshots/v0.3-case001-rule-550-event-details.png)
 
-![Endpoint file metadata](../evidence/v0.3/v0.3-case001-endpoint-file-metadata.png)
+![Endpoint file metadata](../evidence/v0.3/screenshots/v0.3-case001-endpoint-file-metadata.png)
 
 **Evidence basis and limitations**
 
