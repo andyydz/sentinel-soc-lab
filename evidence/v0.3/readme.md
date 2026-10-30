@@ -24,18 +24,18 @@ The evidence supports the specific results described below. It does not establis
 
 | # | Evidence | File | What it supports |
 |---|----------|------|------------------|
-| 1 | CASE-001 endpoint file metadata | [`v0.3-case001-endpoint-file-metadata.png`](v0.3-case001-endpoint-file-metadata.png) | Metadata for the controlled test file |
-| 2 | CASE-001 filtered FIM events | [`v0.3-case001-fim-filtered-events.png`](v0.3-case001-fim-filtered-events.png) | FIM events reviewed during the investigation |
-| 3 | CASE-001 Rule 550 event details | [`v0.3-case001-rule-550-event-details.png`](v0.3-case001-rule-550-event-details.png) | Built-in integrity-checksum-change alert |
-| 4 | Custom Rule 100002 alert (Oct 11) | [`v0.3-custom-rule-100002.png`](v0.3-custom-rule-100002.png) | Custom Level 8 alert from the Oct 11 modification test |
-| 5 | Custom Rule 100002 dashboard JSON (Oct 11) | [`v0.3-custom-rule-100002-dashboard-json.png`](v0.3-custom-rule-100002-dashboard-json.png) | Event fields used to verify the Oct 11 alert |
-| 6 | Oct 16 creation, Rule 554 | [`v0.3-oct16-creation-rule-554.png`](v0.3-oct16-creation-rule-554.png) | Built-in "File added to the system" alert |
-| 7 | Oct 16 creation, file path | [`v0.3-oct16-creation-file-path.png`](v0.3-oct16-creation-file-path.png) | Test-file path on the creation event |
-| 8 | Oct 16 deletion, Rule 553 | [`v0.3-oct16-detection-rule-553.png`](v0.3-oct16-detection-rule-553.png) | Built-in "File deleted" alert |
-| 9 | Oct 16 deletion, file path | [`v0.3-oct16-detection-file-path.png`](v0.3-oct16-detection-file-path.png) | Test-file path on the deletion event |
+| 1 | CASE-001 endpoint file metadata | [`v0.3-case001-endpoint-file-metadata.png`](screenshots/v0.3-case001-endpoint-file-metadata.png) | Metadata for the controlled test file |
+| 2 | CASE-001 filtered FIM events | [`v0.3-case001-fim-filtered-events.png`](screenshots/v0.3-case001-fim-filtered-events.png) | FIM events reviewed during the investigation |
+| 3 | CASE-001 Rule 550 event details | [`v0.3-case001-rule-550-event-details.png`](screenshots/v0.3-case001-rule-550-event-details.png) | Built-in integrity-checksum-change alert |
+| 4 | Custom Rule 100002 alert (Oct 11) | [`v0.3-custom-rule-100002.png`](screenshots/v0.3-custom-rule-100002.png) | Custom Level 8 alert from the Oct 11 modification test |
+| 5 | Custom Rule 100002 dashboard JSON (Oct 11) | [`v0.3-custom-rule-100002-dashboard-json.png`](screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Event fields used to verify the Oct 11 alert |
+| 6 | Oct 16 creation, Rule 554 | [`v0.3-oct16-creation-rule-554.png`](screenshots/v0.3-oct16-creation-rule-554.png) | Built-in "File added to the system" alert |
+| 7 | Oct 16 creation, file path | [`v0.3-oct16-creation-file-path.png`](screenshots/v0.3-oct16-creation-file-path.png) | Test-file path on the creation event |
+| 8 | Oct 16 deletion, Rule 553 | [`v0.3-oct16-detection-rule-553.png`](screenshots/v0.3-oct16-detection-rule-553.png) | Built-in "File deleted" alert |
+| 9 | Oct 16 deletion, file path | [`v0.3-oct16-detection-file-path.png`](screenshots/v0.3-oct16-detection-file-path.png) | Test-file path on the deletion event |
 | 10 | Oct 26 modification, source alerts | [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../v0.2/v0.2-oct26-controlled-modification-source-alerts-new.png) | Terminal output of two Level 8 Rule 100002 alerts from two consecutive modifications of one file (stored in `evidence/v0.2/`) |
-| 11 | Rule 100002 definition | [`v0.3-rule-100002-definition.png`](v0.3-rule-100002-definition.png) | Reported configuration of the custom rule |
-| 12 | Investigation report on GitHub | [`v0.3-fim-rule-100002-investigation-github.png`](v0.3-fim-rule-100002-investigation-github.png) | How the report appears on GitHub; not independent proof of detection |
+| 11 | Rule 100002 definition | [`v0.3-rule-100002-definition.png`](screenshots/v0.3-rule-100002-definition.png) | Reported configuration of the custom rule |
+| 12 | Investigation report on GitHub | [`v0.3-fim-rule-100002-investigation-github.png`](screenshots/v0.3-fim-rule-100002-investigation-github.png) | How the report appears on GitHub; not independent proof of detection |
 
 > **Filename note:** The deletion screenshots (rows 8 and 9) keep their existing `detection` filenames. Descriptive text in this document uses "deletion".
 
@@ -43,7 +43,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 1. CASE-001: Endpoint File Metadata
 
-![CASE-001 endpoint file metadata](v0.3-case001-endpoint-file-metadata.png)
+![CASE-001 endpoint file metadata](screenshots/v0.3-case001-endpoint-file-metadata.png)
 
 - **Purpose:** Records metadata for the controlled test file in the investigation scenario.
 - **Evidence value:** Documents the test artifact and provides context for the file-integrity investigation.
@@ -52,7 +52,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 2. CASE-001: Filtered FIM Events
 
-![CASE-001 filtered FIM events](v0.3-case001-fim-filtered-events.png)
+![CASE-001 filtered FIM events](screenshots/v0.3-case001-fim-filtered-events.png)
 
 - **Purpose:** Shows the filtered Wazuh FIM events reviewed during CASE-001.
 - **Evidence value:** Demonstrates the event-review stage and helps identify the relevant integrity-change activity.
@@ -61,7 +61,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 3. CASE-001: Built-in Rule 550 Event Details
 
-![CASE-001 Rule 550 event details](v0.3-case001-rule-550-event-details.png)
+![CASE-001 Rule 550 event details](screenshots/v0.3-case001-rule-550-event-details.png)
 
 - **Purpose:** Captures a built-in Wazuh Rule `550` (integrity checksum changed) alert.
 - **Evidence value:** Provides context for the underlying FIM event and shows the built-in detection path observed during testing.
@@ -72,7 +72,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 4. Custom Rule 100002: October 11 Modification Test
 
-![Custom Rule 100002 alert](v0.3-custom-rule-100002.png)
+![Custom Rule 100002 alert](screenshots/v0.3-custom-rule-100002.png)
 
 | Field | Value |
 |-------|-------|
@@ -84,7 +84,7 @@ The evidence supports the specific results described below. It does not establis
 
 ### Dashboard event JSON
 
-![Custom Rule 100002 dashboard JSON](v0.3-custom-rule-100002-dashboard-json.png)
+![Custom Rule 100002 dashboard JSON](screenshots/v0.3-custom-rule-100002-dashboard-json.png)
 
 - **Purpose:** Captures the event details used to inspect and verify the alert.
 - **Evidence value:** Supports verification of the rule ID, alert level, file path, event details, and integrity information visible in the captured event.
@@ -97,9 +97,9 @@ The evidence supports the specific results described below. It does not establis
 
 ## 5. October 16 File-Creation Test: Built-in Rule 554
 
-![Oct 16 creation, Rule 554](v0.3-oct16-creation-rule-554.png)
+![Oct 16 creation, Rule 554](screenshots/v0.3-oct16-creation-rule-554.png)
 
-![Oct 16 creation, file path](v0.3-oct16-creation-file-path.png)
+![Oct 16 creation, file path](screenshots/v0.3-oct16-creation-file-path.png)
 
 **From the reviewed source alert record**
 
@@ -117,9 +117,9 @@ The evidence supports the specific results described below. It does not establis
 
 ## 6. October 16 File-Deletion Test: Built-in Rule 553
 
-![Oct 16 deletion, Rule 553](v0.3-oct16-detection-rule-553.png)
+![Oct 16 deletion, Rule 553](screenshots/v0.3-oct16-detection-rule-553.png)
 
-![Oct 16 deletion, file path](v0.3-oct16-detection-file-path.png)
+![Oct 16 deletion, file path](screenshots/v0.3-oct16-detection-file-path.png)
 
 **From the reviewed source alert record**
 
@@ -152,7 +152,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 8. Custom Rule 100002: Rule Definition
 
-![Rule 100002 definition](v0.3-rule-100002-definition.png)
+![Rule 100002 definition](screenshots/v0.3-rule-100002-definition.png)
 
 - **Purpose:** Shows the reported configuration of the custom rule.
 - **Reported dependency:** The rule has been described as using `<if_sid>550</if_sid>`, which would tie it to events already matched by built-in Rule 550.
@@ -164,7 +164,7 @@ The evidence supports the specific results described below. It does not establis
 
 ## 9. Investigation Report
 
-![Investigation report on GitHub](v0.3-fim-rule-100002-investigation-github.png)
+![Investigation report on GitHub](screenshots/v0.3-fim-rule-100002-investigation-github.png)
 
 - The detailed findings are in the [FIM Rule 100002 investigation report](../../investigations/fim-rule-100002-investigation.md).
 - This screenshot documents how the report appears on GitHub. It is not independent proof of the underlying detection; the supporting evidence is in sections 1 to 8.
