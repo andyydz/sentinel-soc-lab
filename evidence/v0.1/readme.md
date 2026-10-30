@@ -25,19 +25,19 @@ This folder contains the evidence collected during SENTINEL's v0.1 milestone: st
 
 ### 1. Wazuh Agent — Active and Connected
 
-![Wazuh Dashboard showing SENTINEL-LINUX01 agent active](dashboard-agent-active.png)
+![Wazuh Dashboard showing SENTINEL-LINUX01 agent active](screenshots/dashboard-agent-active.png)
 
 The Wazuh Dashboard showing SENTINEL-LINUX01 (Agent ID `001`) registered and reporting a status of **Active**. This confirms the agent successfully enrolled with the Wazuh Manager and is sending telemetry.
 
 ### 2. Wazuh Agent Service — Running on the Endpoint
 
-![Wazuh agent service running on SENTINEL-LINUX01](wazuh-agent-running.png)
+![Wazuh agent service running on SENTINEL-LINUX01](screenshots/wazuh-agent-running.png)
 
 The Wazuh Agent service running on SENTINEL-LINUX01 itself, confirming the agent is installed, enabled, and healthy from the endpoint side — not just reporting as active from the dashboard's perspective.
 
 ### 3. Final Infrastructure Verification
 
-![Final v0.1 infrastructure verification](fiinal-verification.png)
+![Final v0.1 infrastructure verification](screenshots/fiinal-verification.png)
 
 A final check confirming the lab components — SENTINEL-WAZUH and SENTINEL-LINUX01 — are connected over the `SENTINEL-LAB` network as intended, closing out v0.1.
 
