@@ -74,7 +74,7 @@ This document does not attribute the current `ACTIVE` state to any specific conf
 |---|---|
 | [v0.2-agent-active.png](screenschots/v0.2-agent-active.png) | Agent `002` listed as active |
 | [v0.2-wazuh-manager-running-01.png](screenschots/v0.2-wazuh-manager-running-01.png) | Manager running |
-| [v0.2-linux01-agent-running.png](v0.2-linux01-agent-running.png), [wazuh-agent-running.png](screenschots/wazuh-agent-running.png) | Agent running on Linux01 |
+| [v0.2-linux01-agent-running.png](screenschots/v0.2-linux01-agent-running.png), [wazuh-agent-running.png](screenschots/wazuh-agent-running.png) | Agent running on Linux01 |
 | [v0.2-linux01-to-wazuh-connectivity.png](screenschots/v0.2-linux01-to-wazuh-connectivity.png) | Host-to-manager connectivity check |
 | [v0.2-wazuh-hc-startup-01.png](screenschots/v0.2-wazuh-hc-startup-01.png), [v0.2-wazuh-hc-startup-02.png](screenschots/v0.2-wazuh-hc-startup-02.png) | `HC_STARTUP` observation |
 | [wazuh-dashboard-lab-status.png](screenschots/wazuh-dashboard-lab-status.png) | Dashboard overview |
