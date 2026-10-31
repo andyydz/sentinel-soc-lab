@@ -155,7 +155,7 @@ The following are planned and **not yet completed**:
 - Investigating the custom-rule creation and deletion coverage question — whether Rule 100002 is intended to cover those events, and why it was absent from the reviewed records — without presuming a cause
 - Reviewing the definitions and matching behavior of custom Rules 100003 and 100004 (read-only), followed by dedicated controlled creation and deletion tests using dedicated test files, with explicit expected outcomes written in advance, before assigning either rule validated status
 - Repeatable, documented creation, modification, and deletion test procedures, with expected results written in advance, so they can serve as regression tests
-- False-positive testing against legitimate activity and false-negative testing against controlled scenarios expected to trigger the custom FIM rules within the configured /home scope.configured `/home` scope
+- False-positive testing against legitimate activity and false-negative testing against controlled scenarios expected to trigger the custom FIM rules within the configured /home scope.
 - Tuning the custom FIM rules based on the above, only after review and approval, and retesting after any change
 - Completing the broader CASE-001 investigation and response-engineering work, which remain open
 - Broader telemetry sources: authentication activity and process execution
