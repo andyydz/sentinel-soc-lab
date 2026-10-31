@@ -137,7 +137,7 @@ Each case is a single Markdown file (e.g. `CASE-001.md`). Sections contain only 
 
 | Document | Role |
 |---|---|
-| [`investigations/README.md`](README.md) (this file) | Directory-level guide for how investigation records are organized |
+| [`investigations/README.md`](readme.md) (this file) | Directory-level guide for how investigation records are organized |
 | [`investigations/CASE-001.md`](CASE-001.md) | CASE-001 — FIM detection validation and evidence reconciliation: custom Wazuh FIM Rules 100002, 100003 and 100004, creation/deletion evidence reconciliation, and review of related file-integrity events |
 | [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md) | Rule 100002 lifecycle-event scope investigation |
 | [`docs/06-incident-response.md`](../docs/06-incident-response.md) | Incident-response methodology and workflow |
@@ -184,7 +184,7 @@ CASE-001 documents Wazuh FIM detection observations on SENTINEL-LINUX01 across s
 - Process attribution, trigger and root cause have not been established. No repeatability, completed regression test, or comprehensive FIM coverage is claimed.
 - The 11/26 October, 16 October and 31 October observations are separate sessions. They are not one end-to-end lifecycle test, and Rule 100002 is not claimed to handle creation or deletion.
 
-**Configuration evidence (kept separate):** the v0.3 evidence directory holds two distinct configuration screenshots from different hosts. One shows the local Syscheck configuration of the endpoint SENTINEL-LINUX01, including real-time monitoring of `/home`. The other shows the manager SENTINEL-WAZUH's Syscheck configuration. The manager configuration is not evidence of endpoint `/home` monitoring, and neither establishes which configuration was loaded during the 16 October tests. See the evidence index in [`evidence/v0.3/`](../evidence/v0.3/) for current filenames and status.
+**Configuration evidence (kept separate):** two Syscheck configurations were reviewed, but their screenshots are not yet committed or linked as repository evidence; both are indexed as pending evidence in [`evidence/v0.3/`](../evidence/v0.3/). E14 is the local configuration of the endpoint SENTINEL-LINUX01, including real-time monitoring of `/home`. E15 is the manager-side configuration of SENTINEL-WAZUH. The manager-side configuration is not evidence of endpoint `/home` monitoring, and neither establishes which configuration was loaded during the 16 October tests. Until the screenshots are committed and linked, these findings rest on maintainer review.
 
 **Unresolved:**
 
@@ -206,7 +206,7 @@ Detection → Investigation → Findings → Response → Measurement → Improv
 
 An investigation should not automatically trigger destructive response actions. Response actions are deliberate and documented separately; the investigation provides the evidence base for those decisions.
 
-Investigations feed back into detection engineering: a detection gap leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario. CASE-001 confirmed the tested modification-detection behavior of custom Rule 100002, left the absence of Rule 100002 from the reviewed creation/deletion records unresolved, recorded observations of custom Rules 100003 and 100004 without establishing their trigger or repeatability, and identified broad home-directory matching as an area for further evaluation. Proposed tuning must be tested before its effectiveness is claimed.
+Investigations feed back into detection engineering: a detection gap leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario. CASE-001 confirmed the tested modification-detection behavior of custom Rule 100002, left the absence of Rule 100002 from the reviewed creation/deletion records unresolved, recorded observations of custom Rules 100003 and 100004 without establishing their trigger or repeatability, and identified the reported "/home/" matching scope as an area for further evaluation. Proposed tuning must be tested before its effectiveness is claimed.
 
 > Attack DNA and Attack Mutation are not currently implemented in SENTINEL. A future use of this directory may be to record how attacker behavior and detection performance change under mutation.
 
