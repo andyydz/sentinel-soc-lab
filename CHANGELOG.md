@@ -130,7 +130,7 @@ See the "Detection findings" table and open question under "[Unreleased]". In br
 
 - CASE-001: "evidence/v0.3/v0.3-custom-rule-100002.png", "evidence/v0.3/v0.3-custom-rule-100002-dashboard-json.png", "evidence/v0.3/v0.3-case001-fim-filtered-events.png", "evidence/v0.3/v0.3-case001-rule-550-event-details.png", "evidence/v0.3/v0.3-case001-endpoint-file-metadata.png".
 - 16 October (referenced from "evidence/v0.3/readme.md"): "evidence/v0.3/v0.3-oct16-creation-rule-554.png", "evidence/v0.3/v0.3-oct16-creation-file-path.png", "evidence/v0.3/v0.3-oct16-detection-rule-553.png", "evidence/v0.3/v0.3-oct16-detection-file-path.png".
-- 26 October: "evidence/v0.2/screenshots/v0.2-oct26-controlled-modification-source-alerts-new.png" (stored under "evidence/v0.2/screenshots/", not copied into "evidence/v0.3/"; referenced as "../v0.2/screenshots/v0.2-oct26-controlled-modification-source-alerts-new.png").
+- 26 October: "evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png" (stored under "evidence/v0.2/screenshots/", not copied into "evidence/v0.3/"; referenced as "../v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png").
 - 31 October: "evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png". Screenshot evidence only.
 
 ### Lessons learned
