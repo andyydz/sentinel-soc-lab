@@ -55,6 +55,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 Key findings (October 2026):
 - **Modification:** Rule `100002` (Level 8) fired on controlled modifications on 11 Oct (supported by screenshots; the original source log was not recovered) and 26 Oct (two alerts from consecutive modifications of one file, not two independent test cases).
 - **Creation and deletion (16 Oct):** the reviewed records showed built-in Rules `554` and `553`, and Rule `100002` was absent. The reason is unresolved. No root cause is claimed, and this is not labeled a confirmed detection failure.
+- **Custom creation/deletion rules (31 Oct, observation only):** custom Rule `100003` (creation, Level 8) and custom Rule `100004` (deletion, Level 8) appeared in one terminal screenshot: [`evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png`](evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png). These are observations, not validated controlled tests. Raw alert records, process attribution, and root cause are not established. This is separate from the 16 Oct built-in Rule `554`/`553` records and from the 11/26 Oct Rule `100002` modification results, and it does not explain the Rule `100002` absence above.
 
 These results do not establish complete FIM coverage, measured detection rates, or malicious activity. Details: [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md).
 
