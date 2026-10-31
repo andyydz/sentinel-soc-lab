@@ -182,7 +182,7 @@ CASE-001 documents Wazuh FIM detection observations on SENTINEL-LINUX01 across s
 - These are observed detections, not established deliberate or controlled tests. The paths are in an application configuration directory, and whether the events were deliberately triggered or ordinary application activity has not been established.
 - The evidence is a single terminal screenshot covering both alerts. Raw alert records are not committed.
 - Process attribution, trigger and root cause have not been established. No repeatability, completed regression test, or comprehensive FIM coverage is claimed.
-- The 11/26 October, 16 October and 31 October observations are separate sessions. They are not one end-to-end lifecycle test, and Rule 100002 is not claimed to handle creation or deletion.
+- The 11 October and 26 October modification tests, the 16 October built-in-rule observations, and the 31 October custom-rule observations were separate sessions. They do not constitute one end-to-end lifecycle test, and Rule 100002 is not claimed to handle creation or deletion.
 
 **Configuration evidence (kept separate):** two Syscheck configurations were reviewed, but their screenshots are not yet committed or linked as repository evidence; both are indexed as pending evidence in [`evidence/v0.3/`](../evidence/v0.3/). E14 is the local configuration of the endpoint SENTINEL-LINUX01, including real-time monitoring of `/home`. E15 is the manager-side configuration of SENTINEL-WAZUH. The manager-side configuration is not evidence of endpoint `/home` monitoring, and neither establishes which configuration was loaded during the 16 October tests. Until the screenshots are committed and linked, these findings rest on maintainer review.
 
