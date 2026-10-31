@@ -70,9 +70,9 @@ RESPONSE / IMPROVEMENT
 
 **v0.3 — SOC Investigation (in progress)**
 
-CASE-001 remains open overall. Evidence reconciliation for the reviewed CASE-001 scope is closed: the controlled modification tests (11 and 26 October 2026) are recorded, and the 16 October creation/deletion observations have been reconciled against the reviewed source records. Background configuration and cache changes were observed in the 11 October review, but process-level attribution for every event was not established.
+CASE-001 remains open overall. Evidence reconciliation for the reviewed CASE-001 scope is closed: the controlled modification tests (11 and 26 October 2026) are recorded, the 16 October creation/deletion observations have been reconciled against the reviewed source records, and the 31 October custom creation/deletion alerts are recorded as observations. Background configuration and cache changes were observed in the 11 October review, but process-level attribution for every event was not established.
 
-Broader investigation and detection-engineering work remains open, including resolving why custom Rule "100002" was absent from the reviewed 16 October creation/deletion records, broader false-positive/false-negative testing, repeatable regression testing, and detection tuning. Additional cases remain future work.
+Broader investigation and detection-engineering work remains open, including resolving why custom Rule "100002" was absent from the reviewed 16 October creation/deletion records, explaining the differences between the 16 and 31 October observations, broader false-positive/false-negative testing, repeatable regression testing, and detection tuning. Additional cases remain future work. No containment, eradication, or recovery exercise has been completed.
 
 > "Inconclusive" is a valid outcome when evidence is insufficient. Investigations are not forced to produce a finding they cannot support.
 
@@ -138,7 +138,7 @@ Each case is a single Markdown file (e.g. `CASE-001.md`). Sections contain only 
 | Document | Role |
 |---|---|
 | [`investigations/README.md`](README.md) (this file) | Directory-level guide for how investigation records are organized |
-| [`investigations/CASE-001.md`](CASE-001.md) | CASE-001 — controlled validation of custom Wazuh FIM rule 100002, creation/deletion evidence reconciliation, and review of related file-integrity events |
+| [`investigations/CASE-001.md`](CASE-001.md) | CASE-001 — FIM detection validation and evidence reconciliation: custom Wazuh FIM Rules 100002, 100003 and 100004, creation/deletion evidence reconciliation, and review of related file-integrity events |
 | [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md) | Rule 100002 lifecycle-event scope investigation |
 | [`docs/06-incident-response.md`](../docs/06-incident-response.md) | Incident-response methodology and workflow |
 | [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md) | How detections are designed and validated |
@@ -156,15 +156,15 @@ Each case is a single Markdown file (e.g. `CASE-001.md`). Sections contain only 
 
 | Case ID | Investigation | Status | Primary Detection |
 |---|---|---|---|
-| [CASE-001](CASE-001.md) | Controlled FIM Validation and Evidence Reconciliation (modification, creation, deletion) | 🟡 Open — evidence reconciliation for the reviewed scope closed | Wazuh FIM, custom Rule 100002 |
+| [CASE-001](CASE-001.md) | FIM Detection Validation and Evidence Reconciliation (modification, creation, deletion) | 🟡 Open — evidence reconciliation for the reviewed scope closed | Wazuh FIM, custom Rules 100002 (modification), 100003 (creation), 100004 (deletion) |
 
 ---
 
 ## CASE-001 Summary
 
-CASE-001 documents controlled file-integrity tests on SENTINEL-LINUX01. Details are in [`CASE-001.md`](CASE-001.md) and [`fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); this is a short summary.
+CASE-001 documents Wazuh FIM detection observations on SENTINEL-LINUX01 across separate sessions on 11, 16, 26 and 31 October 2026. Details are in [`CASE-001.md`](CASE-001.md) and [`fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); this is a short summary.
 
-**Observed — modification:**
+**Observed — modification (custom Rule 100002, Level 8):**
 
 - 11 October 2026: existing screenshots support a Level 8 custom Rule 100002 alert for a controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` (`2026-10-11T20:25:14.746+0530`). The original source alert log was not recovered during the 26 October review.
 - 26 October 2026: two consecutive modifications of one file, `/home/sentinel-admin/sentinel-v02-mod-test.txt`, produced two Level 8 Rule 100002 alerts at `2026-10-26T21:38:27.910+0530` (size 0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (size 23 → 61 bytes). These are not two independent test cases and not a regression suite.
@@ -172,17 +172,31 @@ CASE-001 documents controlled file-integrity tests on SENTINEL-LINUX01. Details 
 
 **Observed — creation and deletion (16 October 2026, `/home/sentinel-admin/sentinel-audit-test.txt`):**
 
-- The reviewed creation record showed built-in Rule 554 at `2026-10-16T11:40:06.007+0530`. Rule 100002 was absent from that record.
+- The reviewed creation record showed built-in Rule 554 (Level 5) at `2026-10-16T11:40:06.007+0530`. Rule 100002 was absent from that record.
 - The reviewed deletion record showed built-in Rule 553 (Level 7) at `2026-10-16T12:31:32.819+0530`. Rule 100002 was absent from that record.
-- These statements are limited to the two reviewed records and do not show how Rule 100002 behaves for other creation or deletion events. Earlier versions of this guide recorded Rule 100002 as firing on creation; that is not supported by the reviewed records.
+- These statements are limited to the two reviewed records and do not show how Rule 100002 behaves for other creation or deletion events. This is an observation, not a confirmed detection failure. Earlier versions of this guide recorded Rule 100002 as firing on creation; that is not supported by the reviewed records.
 
-**Unresolved:** why Rule 100002 was absent from the two reviewed records. Rule 100002 has been reported as depending on parent Rule 550 (`<if_sid>550</if_sid>`), but the active and historical loaded rule configurations and the rule's matching behavior have not been verified for this investigation, and that dependency is not asserted as the cause. No root cause is confirmed. No rule change or tuning has been made. A built-in rule firing does not by itself establish whether custom Rule 100002 should cover the same event.
+**Observed — custom creation and deletion (31 October 2026):**
 
-Additional file-integrity events involving desktop configuration, application state, and cache files were documented as observed background activity within the 11 October reviewed dataset; individual process attribution was not conclusively established.
+- Custom Rule 100003 (file creation, Level 8) and custom Rule 100004 (file deletion, Level 8) were observed at approximately 18:51:56 IST, with paths under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/`.
+- These are observed detections, not established deliberate or controlled tests. The paths are in an application configuration directory, and whether the events were deliberately triggered or ordinary application activity has not been established.
+- The evidence is a single terminal screenshot covering both alerts. Raw alert records are not committed.
+- Process attribution, trigger and root cause have not been established. No repeatability, completed regression test, or comprehensive FIM coverage is claimed.
+- The 11/26 October, 16 October and 31 October observations are separate sessions. They are not one end-to-end lifecycle test, and Rule 100002 is not claimed to handle creation or deletion.
 
-> The case remains open. Evidence reconciliation for the reviewed scope is closed. Resolution of the Rule 100002 absence, broader false-positive/false-negative testing, and detection-rule tuning remain follow-up tasks.
+**Configuration evidence (kept separate):** the v0.3 evidence directory holds two distinct configuration screenshots from different hosts. One shows the local Syscheck configuration of the endpoint SENTINEL-LINUX01, including real-time monitoring of `/home`. The other shows the manager SENTINEL-WAZUH's Syscheck configuration. The manager configuration is not evidence of endpoint `/home` monitoring, and neither establishes which configuration was loaded during the 16 October tests. See the evidence index in [`evidence/v0.3/`](../evidence/v0.3/) for current filenames and status.
 
-Supporting evidence: existing screenshots for the 11 October modification test are stored in [`evidence/v0.3/`](../evidence/v0.3/). The 26 October terminal output is supported by the screenshot [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png), stored in `evidence/v0.2/` rather than the v0.3 evidence directory; it supports the two Level 8 alerts from consecutive modifications of one file. The 11 October original source log and the 16 October raw records are not claimed to be committed to the repository.
+**Unresolved:**
+
+- Why Rule 100002 was absent from the two 16 October records. Rule 100002 has been reported as depending on parent Rule 550 (`<if_sid>550</if_sid>`), but the active and historical loaded rule configurations and the rule's matching behavior have not been verified for this investigation, and that dependency is not asserted as the cause. No root cause is confirmed. No rule change or tuning has been made. A built-in rule firing does not by itself establish whether a custom rule should cover the same event.
+- Why custom Rules 100003 and 100004 were observed on 31 October when built-in Rules 554 and 553 appeared on 16 October.
+- Whether the 31 October events were deliberate or ordinary application activity.
+
+Additional file-integrity events involving desktop configuration, application state, and cache files were documented as observed background activity within the 11 October reviewed dataset only; this does not describe all endpoint activity or all `/home` events. Individual process attribution was not conclusively established.
+
+> The case remains open. Evidence reconciliation for the reviewed scope is closed. Resolution of the unresolved items above, broader false-positive/false-negative testing, repeatable regression testing, and detection-rule tuning remain follow-up tasks. No containment, eradication, or recovery exercise has been completed.
+
+Supporting evidence: screenshots for the 11 October modification test and the 31 October observation are stored in [`evidence/v0.3/`](../evidence/v0.3/). The 26 October terminal output is supported by the screenshot [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png), stored in `evidence/v0.2/` rather than the v0.3 evidence directory; it supports the two Level 8 alerts from consecutive modifications of one file. The 11 October original source log and the raw 16 and 31 October records are not claimed to be committed to the repository.
 
 ---
 
@@ -192,7 +206,7 @@ Detection → Investigation → Findings → Response → Measurement → Improv
 
 An investigation should not automatically trigger destructive response actions. Response actions are deliberate and documented separately; the investigation provides the evidence base for those decisions.
 
-Investigations feed back into detection engineering: a detection gap leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario. CASE-001 confirmed the tested modification-detection behavior of custom Rule 100002, left the absence of Rule 100002 from the reviewed creation/deletion records unresolved, and identified broad home-directory matching as an area for further evaluation. Proposed tuning must be tested before its effectiveness is claimed.
+Investigations feed back into detection engineering: a detection gap leads to identifying missing telemetry or weak logic, improving the detection, testing it, and retesting the original scenario. CASE-001 confirmed the tested modification-detection behavior of custom Rule 100002, left the absence of Rule 100002 from the reviewed creation/deletion records unresolved, recorded observations of custom Rules 100003 and 100004 without establishing their trigger or repeatability, and identified broad home-directory matching as an area for further evaluation. Proposed tuning must be tested before its effectiveness is claimed.
 
 > Attack DNA and Attack Mutation are not currently implemented in SENTINEL. A future use of this directory may be to record how attacker behavior and detection performance change under mutation.
 
@@ -202,11 +216,13 @@ Investigations feed back into detection engineering: a detection gap leads to id
 
 - ✅ Investigation methodology and directory structure are documented.
 - ✅ SENTINEL-WAZUH and SENTINEL-LINUX01 provide the telemetry foundation for the current investigation workflow.
-- ✅ CASE-001 is documented in [`investigations/CASE-001.md`](CASE-001.md) and [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); supporting evidence is under [`evidence/v0.3/`](../evidence/v0.3/) (11 October screenshots) and [`evidence/v0.2/`](../evidence/v0.2/) (26 October screenshot, linked above).
+- ✅ CASE-001 is documented in [`investigations/CASE-001.md`](CASE-001.md) and [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); supporting evidence is under [`evidence/v0.3/`](../evidence/v0.3/) and [`evidence/v0.2/`](../evidence/v0.2/) (26 October screenshot, linked above).
 - ✅ Custom Rule 100002 detected the controlled file modifications tested on 11 and 26 October 2026 (tested scenarios only; the 26 October result is two consecutive modifications of one file).
-- ✅ The 16 October creation and deletion records were reviewed: built-in Rules 554 and 553 were observed, and Rule 100002 was absent from both records.
-- ✅ Additional home-directory FIM events were reviewed, and potential noise from routine desktop activity was documented with appropriate attribution limitations.
-- 🟡 Open: why Rule 100002 was absent from the reviewed creation/deletion records. The active and historical loaded rule configurations and matching behavior have not been verified, and no root cause is asserted.
+- ✅ The 16 October creation and deletion records were reviewed: built-in Rules 554 (Level 5) and 553 (Level 7) were observed, and Rule 100002 was absent from both records.
+- ✅ Custom Rules 100003 (creation) and 100004 (deletion) were observed and documented at Level 8 on 31 October 2026 in a single terminal screenshot, under an application configuration path. Their behavior is not fully validated or shown to be repeatable, and the events are not established as deliberate or controlled tests.
+- ✅ Additional home-directory FIM events within the 11 October reviewed dataset were reviewed, and potential noise from routine desktop activity was documented with appropriate attribution limitations.
+- 🟡 Open: why Rule 100002 was absent from the reviewed creation/deletion records, and the differences between the 16 and 31 October observations. The active and historical loaded rule configurations and matching behavior have not been verified, and no root cause is asserted.
 - ⬜ Broader false-positive/false-negative testing, repeatable regression testing, detection tuning, and validation of tuning effectiveness remain outstanding. No detection rates or comprehensive FIM coverage have been established.
 - ⬜ Threat hunting and additional investigation cases remain planned; future investigations should receive unique case IDs and follow the evidence-first principles described in this guide.
 - ⬜ Attack Mutation is not implemented.
+- ⬜ No containment, eradication, or recovery exercise has been completed.
