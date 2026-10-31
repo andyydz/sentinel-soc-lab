@@ -36,8 +36,7 @@ These validate the tested modification scenarios only. They do not establish com
 - The evidence is a single terminal screenshot showing both alerts: `../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png`. It is not a raw alert record and not a repeatable test. Raw alert records are not committed.
 - The paths are in an application configuration directory. Whether the events were deliberately triggered or ordinary application activity has not been established, and no process attribution or root cause exists.
 - These are **observed alerts**, not controlled-test validations. They show that each rule fired in the observed instance only; they do not establish repeatability, behavior for other paths or file types, or complete FIM coverage.
-- The 11 October and 26 October modification tests, the 16 October built-in-rule observations, and the 31 October custom-rule observations were separate sessions. They do not constitute one end-to-end lifecycle test.. Rule 100002 is not claimed to handle creation or deletion.
-
+- The 11 October and 26 October modification tests, the 16 October built-in-rule observations, and the 31 October custom-rule observations were separate sessions. They do not constitute one end-to-end lifecycle test. Rule 100002 is not claimed to handle creation or deletion.
 **16 October 2026 reviewed records** (`/home/sentinel-admin/sentinel-audit-test.txt`):
 
 | Event | Rule shown in reviewed record | Timestamp | Rule 100002 |
