@@ -43,5 +43,8 @@ The November 2 validation is documented separately through screenshot evidence i
 
 ## Related Evidence
 
-- [SENTINEL v0.3 Evidence README](../readme.md)
-- [SENTINEL v0.3 Screenshots](../screenshots/)
+- [SENTINEL v0.3 Evidence Index](../readme.md)
+- [October 31 Creation Alert](sentinel-v03-creation-alert.json)
+- [October 31 Deletion Alert](sentinel-v03-deletion-alert.json)
+- [SHA-256 Checksum Manifest](SHA256SUMS)
+- [November 2 Lifecycle Validation Screenshot](../screenshots/v0.3-fim-full-lifecycle-custom-rules.png)
