@@ -136,7 +136,7 @@ All times IST (+0530) where recorded.
 | 31 Oct 2026, 22:56:46.988 | Wazuh alert JSON record: Rule 100003 (creation, Level 8) for /home/sentinel-admin/sentinel-v03-controlled-test.txt. Relationship to the ~18:51:56 screenshot observation not established. |
 | 31 Oct 2026, 23:27:05.164 | Wazuh alert JSON record: Rule 100004 (deletion, Level 8) for the same file. Relationship to the ~18:51:56 screenshot observation not established. |
 | 2 Nov 2026 (separate session; exact times not recorded) | Controlled lifecycle test on dedicated file sentinel-v03-final-test.txt: creation ("added", Rule 100003, Level 8), modification ("modified", Rule 100002, Level 8), deletion ("deleted", Rule 100004, Level 8), all for the same path. |
-| 2 Nov 2026 (exact time not recorded) | sudo /var/ossec/bin/wazuh-analysisd -t run; exit code 0. |
+| 2 Nov 2026 (exact time not recorded) | Command: sudo /var/ossec/bin/wazuh-analysisd -t; reported exit code 0. |
 
 The 11 Oct window is approximate. No modification-test timestamp is recorded for 31 Oct. All five dates were separate sessions. No exact timestamps are recorded for the 2 Nov events, and none are inferred here; the order shown for 2 Nov follows the lifecycle sequence stated for the test and the table of events, and individual alert times and the time of the -t run are not established.
 
