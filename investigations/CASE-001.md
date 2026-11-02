@@ -75,27 +75,27 @@ Scope: the controlled tests of 11, 16 and 26 October, the 31 October observed al
 
 | Evidence | Purpose |
 |---|---|
-| v0.3-fim-full-lifecycle-custom-rules.png | Rules 100003, 100002 and 100004 alerts for the dedicated test file (2 Nov) |
-| v0.3-fim-lifecycle-custom-detections.png | Rules 100003 and 100004 alerts (31 Oct) |
+| [v0.3-fim-full-lifecycle-custom-rules.png](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Rules 100003, 100002 and 100004 alerts for the dedicated test file (2 Nov) |
+| [v0.3-fim-lifecycle-custom-detections.png](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png) | Rules 100003 and 100004 alerts (31 Oct) |
 | [sentinel-v03-creation-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-creation-alert.json) | 31 Oct Wazuh alert JSON record: Rule 100003, Level 8, timestamp 2026-10-31T22:56:46.988+0530, file /home/sentinel-admin/sentinel-v03-controlled-test.txt. This is a Wazuh alert record, not an original Syscheck input log. It is a 31 Oct record, not a 2 Nov record |
 | [sentinel-v03-deletion-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-deletion-alert.json) | 31 Oct Wazuh alert JSON record: Rule 100004, Level 8, timestamp 2026-10-31T23:27:05.164+0530, file /home/sentinel-admin/sentinel-v03-controlled-test.txt. This is a Wazuh alert record, not an original Syscheck input log. It is a 31 Oct record, not a 2 Nov record |
 | [SHA256SUMS](../evidence/v0.3/raw-alerts/SHA256SUMS) | Checksum manifest for the 31 Oct alert JSON records. Hashes were not independently recomputed for this document |
-| v0.3-custom-rule-100002.png | Rule 100002 validation (11 Oct) |
-| v0.3-custom-rule-100002-dashboard-json.png | Alert JSON and event fields (11 Oct) |
-| v0.3-case001-fim-filtered-events.png | Filtered FIM event view |
-| v0.3-case001-rule-550-event-details.png | Built-in Rule 550 event details |
-| v0.3-case001-endpoint-file-metadata.png | Endpoint file metadata |
+| [v0.3-custom-rule-100002.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002.png) | Rule 100002 validation (11 Oct) |
+| [v0.3-custom-rule-100002-dashboard-json.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Alert JSON and event fields (11 Oct) |
+| [v0.3-case001-fim-filtered-events.png](../evidence/v0.3/screenshots/v0.3-case001-fim-filtered-events.png) | Filtered FIM event view |
+| [v0.3-case001-rule-550-event-details.png](../evidence/v0.3/screenshots/v0.3-case001-rule-550-event-details.png) | Built-in Rule 550 event details |
+| [v0.3-case001-endpoint-file-metadata.png](../evidence/v0.3/screenshots/v0.3-case001-endpoint-file-metadata.png) | Endpoint file metadata |
 | [v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png) | Manager-side syscheck configuration on SENTINEL-WAZUH (not endpoint configuration). Committed. The "e14" in the filename appears inconsistent with the endpoint screenshot's "e14" label; flagged for later evidence-index reconciliation; not renamed |
 | [v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Endpoint syscheck configuration screenshot, committed. Its contents were not reviewed for this document update and are not relied on here |
-| v0.2-oct26-controlled-modification-source-alerts-new.png | Two Rule 100002 alerts (26 Oct); existing v0.2 directory spelling preserved |
+| [v0.2-oct26-controlled-modification-source-alerts-new.png](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png) | Two Rule 100002 alerts (26 Oct); existing v0.2 directory spelling preserved |
 
 ### 2 November — full lifecycle, custom rules 100003, 100002, 100004
 
-FIM full lifecycle custom rules, 2 November
+[![FIM full lifecycle custom rules, 2 November](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)
 
 ### 31 October — observed creation/deletion (not a controlled test)
 
-FIM lifecycle custom detections, 31 October
+[![FIM lifecycle custom detections, 31 October](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png)](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png)
 
 ### Evidence basis
 
@@ -104,7 +104,7 @@ FIM lifecycle custom detections, 31 October
 - 26 Oct: two Rule 100002 alerts from consecutive modifications of one file; not independent test cases.
 - 31 Oct: a terminal screenshot, plus two committed Wazuh alert JSON records (creation, Rule 100003; deletion, Rule 100004) and a SHA256SUMS manifest, listed in the Evidence table. The JSON records are Wazuh alert records, not original Syscheck input logs, and they are separate from the 2 Nov evidence. They concern /home/sentinel-admin/sentinel-v03-controlled-test.txt at 22:56:46.988 and 23:27:05.164 (+0530), whereas the screenshot shows paths under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/ at ~18:51:56; the relationship between the two sets is not established. The evidence does not establish how the screenshot events were triggered or repeatability. Checksums were not independently recomputed for this document.
 - 2 Nov: a terminal screenshot showing Rules 100003 (added), 100002 (modified) and 100004 (deleted), each Level 8, for the same dedicated test-file path, plus the reported exit code 0 from wazuh-analysisd -t. No raw JSON alert records for 2 Nov have been committed. The screenshot does not show repeatability, and the exit-code result is a command outcome reported for this session, not a committed artifact.
-- 31 Oct manager configuration: a screenshot of ossec.conf syscheck configuration on SENTINEL-WAZUH is committed (v0.3-e14-manager-syscheck-configuration.png). It shows manager-side configuration, not endpoint configuration (see Finding 5).
+- 31 Oct manager configuration: a screenshot of ossec.conf syscheck configuration on SENTINEL-WAZUH is committed ([v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). It shows manager-side configuration, not endpoint configuration (see Finding 5).
 
 ### Corrections and Evidence-Quality Notes
 
@@ -114,7 +114,7 @@ These are documentation and evidence-quality notes, not security incidents.
 2. The 31 Oct creation and deletion events in the screenshot are observations, not confirmed deliberate tests.
 3. The manager configuration screenshot is not endpoint configuration evidence.
 4. The v0.2 directory spelling (screenschots) is preserved; a rename requires a coordinated update and has not been approved.
-5. The manager configuration screenshot is committed (evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png). Its filename contains "e14", which appears inconsistent with the endpoint screenshot's "e14" label; flagged for later evidence-index reconciliation. It has not been renamed.
+5. The manager configuration screenshot is committed ([evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). Its filename contains "e14", which appears inconsistent with the endpoint screenshot's "e14" label; flagged for later evidence-index reconciliation. It has not been renamed.
 6. The 2 Nov controlled lifecycle validation is recorded separately and is not merged with the 31 Oct observations, which used a different path and have no established trigger.
 7. The committed 31 Oct alert JSON records (file sentinel-v03-controlled-test.txt; 22:56:46.988 and 23:27:05.164 +0530) differ in path and time from the 31 Oct screenshot observation (application configuration path; ~18:51:56). They are recorded separately and not reconciled here. They are not 2 Nov records.
 
@@ -132,7 +132,7 @@ All times IST (+0530) where recorded.
 | 26 Oct 2026, 21:38:27.910 | sentinel-v02-mod-test.txt modified; Rule 100002 (Level 8); 0 → 23 bytes. |
 | 26 Oct 2026, 21:38:48.473 | Same file modified again; Rule 100002 (Level 8); 23 → 61 bytes. |
 | 31 Oct 2026, ~18:51:56 | Terminal screenshot showed Rule 100004 (deletion, Level 8) and 100003 (creation, Level 8), each with a path under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/. Trigger, individual timestamps and order not established. |
-| 31 Oct 2026 | Manager-side ossec.conf syscheck configuration on SENTINEL-WAZUH; screenshot committed (v0.3-e14-manager-syscheck-configuration.png). |
+| 31 Oct 2026 | Manager-side ossec.conf syscheck configuration on SENTINEL-WAZUH; screenshot committed ([v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). |
 | 31 Oct 2026, 22:56:46.988 | Wazuh alert JSON record: Rule 100003 (creation, Level 8) for /home/sentinel-admin/sentinel-v03-controlled-test.txt. Relationship to the ~18:51:56 screenshot observation not established. |
 | 31 Oct 2026, 23:27:05.164 | Wazuh alert JSON record: Rule 100004 (deletion, Level 8) for the same file. Relationship to the ~18:51:56 screenshot observation not established. |
 | 2 Nov 2026 (separate session; exact times not recorded) | Controlled lifecycle test on dedicated file sentinel-v03-final-test.txt: creation ("added", Rule 100003, Level 8), modification ("modified", Rule 100002, Level 8), deletion ("deleted", Rule 100004, Level 8), all for the same path. |
@@ -190,12 +190,12 @@ On 11 Oct the dashboard showed 19 matching events, including the controlled even
 
 ### Finding 5 — Manager-side FIM configuration; endpoint configuration unverified
 
-The committed screenshot evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png shows /var/ossec/etc/ossec.conf on SENTINEL-WAZUH with `<disabled>no</disabled>`, `<scan_on_start>yes</scan_on_start>`, `<alert_new_files>yes</alert_new_files>` and `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`.
+The committed screenshot [evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png) shows /var/ossec/etc/ossec.conf on SENTINEL-WAZUH with `<disabled>no</disabled>`, `<scan_on_start>yes</scan_on_start>`, `<alert_new_files>yes</alert_new_files>` and `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`.
 
 - This is manager-side evidence. It does not establish the effective FIM configuration on SENTINEL-LINUX01.
 - The listed directories do not include /home. That does not prove the endpoint is not monitoring /home; its configuration may be local or centrally managed and has not been inspected in this document.
 - The /home alerts in Findings 1–3 and 7 show such events from Agent 002 reached the manager, which is consistent with /home being monitored on the endpoint; the mechanism is unidentified.
-- An endpoint screenshot, v0.3-e14-endpoint-syscheck-configuration.png, is also committed. Its contents were not reviewed for this document update and are not relied on here, so the endpoint's effective configuration remains unverified in this document.
+- An endpoint screenshot, [v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png), is also committed. Its contents were not reviewed for this document update and are not relied on here, so the endpoint's effective configuration remains unverified in this document.
 - The manager screenshot filename contains "e14", which appears inconsistent with the endpoint screenshot's "e14" label. This is flagged for later evidence-index reconciliation; the file has not been renamed.
 
 ### Finding 6 — Reviewed custom rule definitions; detection scope is broad and requires tuning
@@ -289,7 +289,7 @@ Tested to date (limited): a single controlled creation, modification and deletio
 
 Remaining:
 
-- Verify the effective FIM configuration on SENTINEL-LINUX01, including review of the committed endpoint screenshot (v0.3-e14-endpoint-syscheck-configuration.png).
+- Verify the effective FIM configuration on SENTINEL-LINUX01, including review of the committed endpoint screenshot ([v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png)).
 - Compare the active deployed copy of the custom rules with the reviewed definitions, and establish which rules were loaded on each test date.
 - Review built-in Rules 550, 553 and 554.
 - Export raw JSON alert records for 16 Oct, 26 Oct and 2 Nov where available, and keep them distinct from the committed 31 Oct alert JSON set.
