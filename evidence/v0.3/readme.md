@@ -2,15 +2,17 @@
 
 ## FIM detection evidence for CASE-001: modification, creation, and deletion
 
-This directory is the evidence index for the SENTINEL v0.3 SOC investigation checkpoint. It covers endpoint file metadata, Wazuh File Integrity Monitoring (FIM) events, custom Rules `100002`, `100003` and `100004`, built-in alerts from the October 16 tests, the November 2 controlled lifecycle validation, and FIM configuration evidence from the endpoint and the manager.
+This directory is the evidence index for the SENTINEL v0.3 SOC investigation checkpoint. It covers endpoint file metadata, Wazuh File Integrity Monitoring (FIM) events, custom Rules `100002`, `100003` and `100004`, built-in alerts from the October 16 tests, the November 2 controlled lifecycle validation, FIM configuration evidence from the endpoint and the manager, and a November 3 read-only check of the on-disk Rule `100002` definition.
 
 The evidence supports the specific results described below. It does not establish complete FIM coverage, repeatable detection, or a comprehensive endpoint forensic assessment. The full timeline, technical findings, severity classification, limitations and follow-up actions are in [CASE-001](../../investigations/CASE-001.md); this README does not duplicate them.
 
 ## Status
 
-- SENTINEL v0.3 is in progress.
-- Evidence reconciliation for the reviewed CASE-001 scope is closed. The broader CASE-001 investigation and detection-engineering work remain open.
+- The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete. This does not mean CASE-001 is resolved.
+- Evidence reconciliation for the reviewed CASE-001 scope is closed. CASE-001 remains open overall, and the broader investigation and detection-engineering work remain open.
 - One controlled creation, modification and deletion lifecycle validation on a dedicated test file was recorded on November 2, 2026. It is a single session, not a regression suite.
+- Endpoint (E14) and manager (E15) Syscheck configuration screenshots are committed. Both show local configuration only.
+- A read-only check on November 3, 2026 confirmed the on-disk Rule `100002` definition and that `wazuh-analysisd` was running. It does not verify the in-memory rule or the configuration loaded on October 16.
 - No containment, eradication, or recovery exercise has been completed.
 
 ## How to Read This Evidence
@@ -18,6 +20,7 @@ The evidence supports the specific results described below. It does not establis
 - **Direct evidence:** a screenshot or record directly showing an alert, configuration or event.
 - **Supporting evidence:** context that does not independently establish a detection result.
 - **Screenshots are not raw alert exports.** They show only what is visibly captured. Findings that rest on reviewed source records (the October 16 timestamps and the absence of Rule `100002`) are marked as such.
+- **Terminal screenshots are not raw alert JSON or source records.** The October 31 and November 2 results rest on terminal screenshots. Raw alert JSON or source records are not committed in this directory for October 11 (not recovered), October 31 or November 2. The October 16 source records were reviewed but are not claimed to be committed.
 - The absence of Rule `100002` from the October 16 records is an **observation**, not a confirmed detection failure. Its cause is unresolved.
 
 ### Severity terms
@@ -45,8 +48,8 @@ The October entries are separate testing milestones, not one end-to-end lifecycl
 
 - **October 11 and 26:** Rule `100002` detected modification events. October 26 shows two alerts from consecutive modifications of one file; they are not two independent tests.
 - **October 16:** creation produced built-in Rule `554` (Level 5) and deletion produced built-in Rule `553` (Level 7). Custom Rule `100002` was absent from both reviewed records; the reason is unresolved. These are not custom-rule validations.
-- **October 31:** Rule `100003` (creation) and Rule `100004` (deletion) were observed at Level 8, at approximately 18:51:56 IST, with paths under the `snap/firmware-updater` application configuration directory. These are observed detections. Whether the events were deliberately triggered or ordinary application activity has not been established.
-- **November 2:** a controlled lifecycle test on the dedicated file `/home/sentinel-admin/sentinel-v03-final-test.txt` showed Rule `100003` (creation), Rule `100002` (modification) and Rule `100004` (deletion), each at Level 8. This is one controlled session covering three event types on one file. It is not a repeatability test, a regression suite, or evidence of complete coverage, and it is kept separate from the October 31 observations.
+- **October 31:** Rule `100003` (creation) and Rule `100004` (deletion) were observed at Level 8, at approximately 18:51:56 IST, with paths under the `snap/firmware-updater` application configuration directory. These are observed detections. Whether the events were deliberately triggered or ordinary application activity has not been established, and no trigger, process attribution or root cause is established.
+- **November 2:** a controlled lifecycle test on the dedicated file `/home/sentinel-admin/sentinel-v03-final-test.txt` showed Rule `100003` (creation), Rule `100002` (modification) and Rule `100004` (deletion), each at Level 8. This is one controlled session covering three event types on one dedicated file. It is not a repeatability test, a regression suite, or evidence of complete coverage, and it is kept separate from the October 31 observations.
 
 ---
 
@@ -58,18 +61,18 @@ The October entries are separate testing milestones, not one end-to-end lifecycl
 | E02 | [`v0.3-case001-fim-filtered-events.png`](screenshots/v0.3-case001-fim-filtered-events.png) | Supporting (investigation) | Filtered FIM events reviewed in CASE-001 | Event-review stage |
 | E03 | [`v0.3-case001-rule-550-event-details.png`](screenshots/v0.3-case001-rule-550-event-details.png) | Direct (detection) | Built-in Rule `550` integrity-checksum-change alert | Built-in detection path |
 | E04 | [`v0.3-custom-rule-100002.png`](screenshots/v0.3-custom-rule-100002.png) | Direct (detection) | Custom Level 8 alert, Oct 11 modification test | `100002` modification |
-| E05 | [`v0.3-custom-rule-100002-dashboard-json.png`](screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Direct (alert JSON / event fields) | Event fields for the Oct 11 alert | `100002` modification |
+| E05 | [`v0.3-custom-rule-100002-dashboard-json.png`](screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Direct (alert JSON / event fields) | Event fields for the Oct 11 alert (screenshot, not a raw record) | `100002` modification |
 | E06 | [`v0.3-oct16-creation-rule-554.png`](screenshots/v0.3-oct16-creation-rule-554.png) | Direct (detection) | Built-in "File added to the system" alert | Oct 16 creation, Rule `554` |
 | E07 | [`v0.3-oct16-creation-file-path.png`](screenshots/v0.3-oct16-creation-file-path.png) | Supporting (event field) | Test-file path on the creation event | Oct 16 creation |
 | E08 | [`v0.3-oct16-detection-rule-553.png`](screenshots/v0.3-oct16-detection-rule-553.png) | Direct (detection) | Built-in "File deleted" alert | Oct 16 deletion, Rule `553` |
 | E09 | [`v0.3-oct16-detection-file-path.png`](screenshots/v0.3-oct16-detection-file-path.png) | Supporting (event field) | Test-file path on the deletion event | Oct 16 deletion |
 | E10 | [`v0.2-oct26-controlled-modification-source-alerts-new.png`](../v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png) | Direct (detection) | Terminal output of two Level 8 `100002` alerts (stored in `evidence/v0.2/`; existing directory spelling preserved) | `100002` modification, Oct 26 |
-| E11 | [`v0.3-rule-100002-definition.png`](screenshots/v0.3-rule-100002-definition.png) | Supporting (rule configuration) | Reported configuration of custom Rule `100002` | Rule logic context |
+| E11 | [`v0.3-rule-100002-definition.png`](screenshots/v0.3-rule-100002-definition.png) | Supporting (rule configuration) | Custom Rule `100002` definition (screenshot); on-disk definition checked Nov 3, see Section 7 | Rule logic context |
 | E12 | [`v0.3-fim-rule-100002-investigation-github.png`](screenshots/v0.3-fim-rule-100002-investigation-github.png) | Supporting (investigation) | How the report appears on GitHub; not proof of detection | Documentation |
 | E13 | [`v0.3-fim-lifecycle-custom-detections.png`](screenshots/v0.3-fim-lifecycle-custom-detections.png) | Direct (detection) | Terminal screenshot of Rules `100003` and `100004` alerts, Oct 31 | `100003` creation; `100004` deletion |
 | E14 | [`v0.3-e14-endpoint-syscheck-configuration.png`](screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Direct (endpoint configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01 (endpoint), Syscheck settings | Endpoint Syscheck configuration, including `/home` real-time monitoring |
 | E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings | Manager-side configuration only; not endpoint evidence |
-| E16 | [`v0.3-fim-full-lifecycle-custom-rules.png`](screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Direct (detection) | Terminal screenshot of Rules `100003`, `100002` and `100004` alerts for the dedicated test file, Nov 2 controlled lifecycle test | `100003` creation; `100002` modification; `100004` deletion, Nov 2 |
+| E16 | [`v0.3-fim-full-lifecycle-custom-rules.png`](screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Direct (detection) | Terminal screenshot of Rules `100003`, `100002` and `100004` alerts for the dedicated test file, one Nov 2 controlled lifecycle session | `100003` creation; `100002` modification; `100004` deletion, Nov 2 |
 
 > **Filename note:** The deletion screenshots (E08, E09) keep their existing `detection` filenames. Descriptive text uses "deletion". No operational-recovery screenshots are indexed in this directory.
 
@@ -125,7 +128,7 @@ The October entries are separate testing milestones, not one end-to-end lifecycl
 
 The screenshots are visual references for the alerts and paths. The absence of Rule `100002` rests on review of the source records, not on the screenshots alone.
 
-> **Observation, not a conclusion:** the reason for `100002` being absent is unresolved. No root cause, detection failure or malicious activity is established. These results apply to the reviewed records only. They are historical and are not custom-rule validations. The November 2 lifecycle test (section 5A) does not explain them.
+> **Observation, not a conclusion:** the reason for `100002` being absent is unresolved. No root cause, detection failure or malicious activity is established. These results apply to the reviewed records only. They are historical and are not custom-rule validations. The November 2 lifecycle test (section 5A) and the November 3 on-disk check (section 7) do not explain them.
 
 ---
 
@@ -155,7 +158,7 @@ The screenshots are visual references for the alerts and paths. The absence of R
 - The paths are in an application configuration directory. The screenshot does not show whether the events were deliberately triggered or ordinary application activity.
 - The alerts are **not repeatable controlled tests**. No trigger, process attribution or root cause is established.
 - Each rule is evidenced by a single event in a terminal screenshot. Raw alert records are not committed.
-- This does not convert the October 16 observations into custom-rule validations, and `100002` is not claimed to handle creation or deletion. Why `100003`/`100004` were observed on October 31 when `554`/`553` appeared on October 16 is unresolved.
+- This does not convert the October 16 observations into custom-rule validations, and `100002` is not claimed to handle creation or deletion. Why `100003`/`100004` were observed on October 31 when `554`/`553` appeared on October 16 is unresolved; no explanation is established.
 
 ---
 
@@ -169,11 +172,12 @@ The screenshots are visual references for the alerts and paths. The absence of R
 | Modification | modified | `100002` | `8` | Same path |
 | Deletion | deleted | `100004` | `8` | Same path |
 
-- **Test file:** a dedicated test file, created, modified and deleted in one controlled session.
-- **Observed:** the terminal output shows each lifecycle event matched by its corresponding custom rule at Level 8 for the same file path (E16).
-- **Scope:** one controlled lifecycle on one file, covering three event types. It is not a repeatability test, a regression suite, or evidence of complete coverage, and it does not show other paths, file types or sizes.
+- **Test file:** one dedicated test file, created, modified and deleted in one controlled session.
+- **Observed:** the terminal screenshot shows each lifecycle event matched by its corresponding custom rule at Level 8 for the same file path (E16).
+- **Scope:** one controlled lifecycle session on one dedicated file, covering three event types. It is not a repeatability test, a regression suite, or evidence of complete coverage, and it does not show other paths, file types or sizes.
 - **Separation:** this is a separate session from the October 31 observations (application configuration path, trigger not established) and from the October 16 built-in-rule results. It does not convert either into a validation and does not explain why `100002` was absent from the reviewed October 16 records.
-- **Records:** exact alert timestamps are not recorded here, and raw alert records for November 2 are not committed.
+- **Records:** the evidence is a terminal screenshot, not a raw alert JSON or source record. Exact alert timestamps are not recorded here, and raw alert records for November 2 are not committed.
+- **Alert level vs. case classification:** Level 8 is the alert level assigned by each rule definition. It is distinct from the CASE-001 administrative classification (see Severity terms).
 
 ---
 
@@ -233,7 +237,7 @@ Limits:
 
 The screenshot (E11) provides supporting evidence of the custom rule definition.
 
-**November 3 configuration verification:** a read-only check of `/var/ossec/etc/rules/local_rules.xml` on SENTINEL-WAZUH confirmed the following on-disk definition:
+**November 3 configuration verification (on-disk definition and service state).** A read-only check of `/var/ossec/etc/rules/local_rules.xml` on SENTINEL-WAZUH confirmed the following **on-disk** definition:
 
 ```xml
 <rule id="100002" level="8">
@@ -244,13 +248,21 @@ The screenshot (E11) provides supporting evidence of the custom rule definition.
 </rule>
 ```
 
+Confirmed:
+
 - **Rule ID and level:** `100002`, Level `8`.
 - **Parent rule:** `<if_sid>550</if_sid>`.
 - **File condition:** `^/home/`.
-- **Analysis engine:** `wazuh-analysisd` was confirmed running during the November 3 check.
+- **Analysis engine state:** `wazuh-analysisd` was running during the November 3 check.
 - **Configuration chronology:** the on-disk rule file modification time preceded the analysis engine's start time. This is consistent with the engine starting after the file was modified.
+- **Method:** the check was read-only; no configuration change or restart was performed. It is recorded here as a maintainer-run check; no screenshot of it is indexed in this directory.
 
-**Limits:** this verifies the on-disk definition and service state on November 3. It does not independently prove the exact rule definition loaded in memory, establish which definition was loaded during the historical October 16 tests, or explain why Rule `100002` was absent from the reviewed October 16 records. The definitions of Rules `100003` and `100004` are not covered by screenshots in this directory.
+**Not verified:**
+
+- The exact rule definition **loaded in memory** by the analysis engine. The chronology above is consistent with, but does not prove, the engine having loaded this definition. The active rule version is therefore not claimed as definitively verified.
+- Which rule definition and which Syscheck configuration were loaded during the historical October 16 tests.
+- Why Rule `100002` was absent from the reviewed October 16 records. The `<if_sid>550</if_sid>` dependency is not established as the cause.
+- The definitions of Rules `100003` and `100004`, which are not covered by any screenshot in this directory.
 
 ---
 
@@ -265,19 +277,20 @@ The screenshot (E11) provides supporting evidence of the custom rule definition.
 
 ## Evidence Limitations
 
-- **November 2:** the controlled lifecycle result rests on a terminal screenshot (E16). It is one session on one file; exact timestamps are not recorded and raw alert records are not committed. It does not show repeatability or complete coverage, and it does not explain the October 16 results.
+- **November 2:** the controlled lifecycle result rests on a terminal screenshot (E16), not a raw alert JSON or source record. It is one session on one dedicated file; exact timestamps are not recorded and raw alert records are not committed. It does not show repeatability or complete coverage, and it does not explain the October 16 results.
 - **October 31:** the custom creation and deletion findings rely on a terminal screenshot. Raw alert records are not committed.
 - **October 16:** findings rest on reviewed historical source records; screenshots are visual references.
 - **October 11:** the original source log was unavailable during the later review.
 - **Configuration screenshots:** endpoint (E14) and manager (E15) evidence have different purposes and are kept separate. Both show local configuration files as captured. They do not establish which configuration was loaded during the October 16 tests, and E15 does not show endpoint `/home` monitoring.
+- **Rule definition:** the November 3 check verified the on-disk Rule `100002` definition and that `wazuh-analysisd` was running. It does not prove the in-memory rule definition or the definition loaded on October 16, and it is not covered by an indexed screenshot.
 - **Attribution:** the `snap/firmware-updater` paths and other background events have not been independently attributed to a process.
 - **Coverage:** creation and deletion have each been observed for limited paths only (the October paths and the single November 2 test file); other directories, multiple files and repeated events remain untested. Modification was tested for its respective test files only.
 - No false-positive or false-negative testing is documented here.
 
 ## Remaining Work
 
-- Review the active definitions of Rules `100002`, `100003` and `100004` and built-in Rules `550`, `553`, `554`; confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16.
-- Explain the differences between the October 16 and October 31 observations.
+- Verify the loaded (in-memory) definition of Rule `100002`, and review the on-disk and loaded definitions of Rules `100003` and `100004` and built-in Rules `550`, `553`, `554`. Confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16.
+- Investigate the differences between the October 16 and October 31 observations; no explanation is established.
 - Export raw alert records for October 16, 26, 31 and November 2 where available.
 - Develop repeatable creation, modification and deletion tests using dedicated test files, building on the single November 2 lifecycle session.
 - Develop false-positive and false-negative test cases; review noisy FIM events.
@@ -287,7 +300,7 @@ The screenshot (E11) provides supporting evidence of the custom rule definition.
 
 ## Scope Statement
 
-These screenshots document specific detection observations and investigation checkpoints. CASE-001 evidence reconciliation is closed for the reviewed scope; the broader investigation and detection-engineering work remain open. They are not evidence that every detection scenario has been tested, that FIM coverage is complete, or that the SENTINEL SOC workflow is finished. The November 2 result is a single controlled lifecycle session on one file, not a regression suite. A FIM alert alone does not indicate malicious activity, and no malicious indicators were identified in the reviewed events. SENTINEL v0.3 remains in progress, and the broader CASE-001 investigation remains open.
+These screenshots document specific detection observations and investigation checkpoints. CASE-001 evidence reconciliation is closed for the reviewed scope; the broader investigation and detection-engineering work remain open. They are not evidence that every detection scenario has been tested, that FIM coverage is complete, or that the SENTINEL SOC workflow is finished. The November 2 result is a single controlled lifecycle session on one dedicated file, not a regression suite. The November 3 check verified the on-disk Rule `100002` definition and service state only. A FIM alert alone does not indicate malicious activity, and no malicious indicators were identified in the reviewed events. The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete, but CASE-001 remains open overall, and the broader investigation and detection-engineering work remain open.
 
 ---
 
