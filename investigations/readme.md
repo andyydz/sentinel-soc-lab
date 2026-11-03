@@ -68,7 +68,7 @@ RESPONSE / IMPROVEMENT
 
 ## Investigation States
 
-**v0.3 — SOC Investigation (in progress)**
+**v0.3 — SOC Investigation (phase milestone complete)**
 
 CASE-001 remains open overall. Evidence reconciliation for the reviewed CASE-001 scope is closed: the controlled modification tests (11 and 26 October 2026) are recorded, the 16 October creation/deletion observations have been reconciled against the reviewed source records, and the 31 October custom creation/deletion alerts are recorded as observations. Background configuration and cache changes were observed in the 11 October review, but process-level attribution for every event was not established.
 
@@ -278,6 +278,7 @@ No complete detection coverage or finished SOC workflow is claimed.
 - ✅ Investigation methodology and directory structure are documented.
 - ✅ SENTINEL-WAZUH and SENTINEL-LINUX01 provide the telemetry foundation for the current investigation workflow.
 - ✅ CASE-001 is documented in [`investigations/CASE-001.md`](CASE-001.md) and [`investigations/fim-rule-100002-investigation.md`](fim-rule-100002-investigation.md); supporting evidence is under [`evidence/v0.3/`](../evidence/v0.3/) and [`evidence/v0.2/`](../evidence/v0.2/) (26 October screenshot, linked above).
+- ✅ SENTINEL v0.3 documentation and evidence phase milestone: complete. This does not mean CASE-001 is resolved: CASE-001 remains open overall (evidence reconciliation for the reviewed scope is closed), and the broader investigation and detection-engineering work remain outstanding.
 - ✅ Historical modification observations (11 and 26 October 2026): custom Rule 100002 detected the controlled file modifications tested (tested scenarios only; the 26 October result is two consecutive modifications of one file).
 - ✅ Historical built-in creation/deletion observations (16 October): the creation and deletion records were reviewed; built-in Rules 554 (Level 5) and 553 (Level 7) were observed, and Rule 100002 was absent from both records. The cause is unresolved and this is not a confirmed detection failure.
 - ✅ Custom creation/deletion observations (31 October 2026): custom Rules 100003 (creation) and 100004 (deletion) were observed and documented at Level 8 in a single terminal screenshot, under an application configuration path. Their behavior is not fully validated or shown to be repeatable, and the events are not established as deliberate or controlled tests.
