@@ -50,7 +50,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 
 **v0.1 — Foundation: complete.** Wazuh deployed, Kali and Linux01 deployed, isolated network established, agent enrolled and communicating.
 
-**v0.2 — Telemetry & Initial Detection Engineering: in progress.** v0.2 remains in progress. The original infrastructure and initial FIM setup are documented, and custom Rule `100002` has fired in the controlled modification scenarios tested. Creation/deletion coverage and repeatable regression testing remain unresolved.
+**v0.2 — Telemetry & Initial Detection Engineering: in progress.** v0.2 remains in progress. The original infrastructure and initial FIM setup are documented, and custom Rule `100002` has fired in the controlled modification scenarios tested. Broader creation/deletion coverage and repeatable regression testing remain unresolved.
 
 Key findings (October 2026):
 - **Modification:** Rule `100002` (Level 8) fired on controlled modifications on 11 Oct (supported by screenshots; the original source log was not recovered) and 26 Oct (two alerts from consecutive modifications of one file, not two independent test cases).
@@ -61,7 +61,12 @@ These results do not establish complete FIM coverage, measured detection rates, 
 
 **SCA observation (29 Oct 2026).** The [SCA baseline report](evidence/v0.2/sca-baseline.md) records a single Wazuh dashboard observation using built-in Wazuh functionality. It is not a custom SENTINEL detection, a remediation exercise, proof of compliance or improved posture, or a detection-engineering milestone.
 
-**v0.3 — SOC Investigation: in progress.** CASE-001 evidence reconciliation for the reviewed scope is closed. The case itself and the broader investigation remain open, with no root cause, attribution, or malicious activity established and no containment, eradication, or recovery exercised. See [CASE-001](investigations/CASE-001.md).
+**v0.3 — SOC Investigation: phase milestone complete.** The v0.3 project phase and its planned documentation and evidence milestone are complete. This does not mean CASE-001 is resolved: the case remains open, and CASE-001 evidence reconciliation for the reviewed scope is closed. Unresolved investigation and broader detection-engineering work remain follow-up tasks. No root cause, attribution, or malicious activity is established, and no containment, eradication, or recovery has been exercised. See [CASE-001](investigations/CASE-001.md) and the [v0.3 evidence index](evidence/v0.3/readme.md).
+
+v0.3 additions (2–3 November 2026):
+- **Controlled lifecycle validation (2 Nov):** in one controlled session on SENTINEL-LINUX01, a single dedicated file, `/home/sentinel-admin/sentinel-v03-final-test.txt`, was created, modified and deleted. Creation matched custom Rule `100003`, modification matched `100002`, and deletion matched `100004`, each at Level 8 ([screenshot](evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)). This is one controlled lifecycle session on one dedicated file. It is not a regression suite or repeatability test and does not establish comprehensive FIM coverage. Raw 2 November alert JSON records are not committed. It does not explain the 16 Oct observations or retroactively validate the 31 Oct observations.
+- **Configuration evidence (committed):** [E14](evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) shows the SENTINEL-LINUX01 endpoint's local Syscheck configuration: real-time monitoring of `/home`, startup scanning enabled, and a 43,200-second scheduled scan frequency. [E15](evidence/v0.3/screenshots/v0.3-e15-manager-syscheck-configuration.png) shows the SENTINEL-WAZUH manager's Syscheck configuration only. E15 is not evidence of endpoint `/home` monitoring; E14 supports that. Both show local configuration files as captured; neither independently proves which configuration was loaded during the 16 Oct tests.
+- **Rule `100002` on-disk verification (3 Nov):** a read-only check on SENTINEL-WAZUH confirmed the on-disk definition in `/var/ossec/etc/rules/local_rules.xml` (Level 8, parent Rule `550`, file condition `^/home/`) and that `wazuh-analysisd` was running. The rule file's modification time preceded the analysis engine's start time. This is consistent with the engine starting after the file was modified, but it does not prove the exact in-memory rule definition or the configuration loaded on 16 Oct. No configuration changes or restart were performed.
 
 ---
 
@@ -71,13 +76,19 @@ These results do not establish complete FIM coverage, measured detection rates, 
 |---|---|---|
 | v0.1 | Foundation — infrastructure, network, Wazuh deployment | Complete |
 | v0.2 | Telemetry and detection engineering — FIM and custom Rule `100002` | In progress |
-| v0.3 | SOC investigation — CASE-001 and FIM investigation | In progress |
+| v0.3 | SOC investigation — CASE-001 and FIM investigation | Complete (phase milestone and documentation/evidence deliverables; CASE-001 remains open) |
 | v0.4 | Incident response | Planned |
 | v0.5 | Purple-team measurement | Planned |
 | v0.6 | Attack DNA and mutation testing | Planned |
 | Future | Custom SENTINEL console over Wazuh; Windows/AD endpoint | Planned |
 
-Not yet in place: a repeatable regression suite, false-positive/false-negative analysis, measured detection rates, broader telemetry (auth, process execution), project-level MITRE ATT&CK mapping, and everything in v0.4 and later.
+Outstanding work (not yet in place):
+- Investigation of the 16 Oct discrepancy and of the differences between the 16 and 31 Oct observations.
+- Verification of historical loaded configurations and in-memory rule behavior.
+- Broader false-positive/false-negative testing, a repeatable regression suite, and detection tuning with validation of its effectiveness.
+- Measured detection rates and comprehensive FIM coverage.
+- Broader telemetry (auth, process execution), threat hunting, additional cases, and project-level MITRE ATT&CK mapping.
+- A containment, eradication, or recovery exercise, and everything in v0.4 and later.
 
 ---
 
@@ -92,7 +103,7 @@ Not yet in place: a repeatable regression suite, false-positive/false-negative a
 | **v0.2 reports** | [Infrastructure and telemetry foundation](evidence/v0.2/infrastructure-and-telemetry-foundation.md) · [Wazuh–Linux01 integration](evidence/v0.2/wazuh-linux01-integration.md) · [SCA baseline](evidence/v0.2/sca-baseline.md) |
 | **Project** | [Security policy](SECURITY.md) · [Changelog](CHANGELOG.md) |
 
-Not every source record is committed. The reviewed 16 October alert records came from the Wazuh runtime log, and the repository does not claim to contain an exported copy.
+Not every source record is committed. The reviewed 16 October alert records came from the Wazuh runtime log, and the repository does not claim to contain an exported copy. Raw alert records for 31 October and 2 November are likewise not committed; those results rest on terminal screenshots.
 
 ---
 
