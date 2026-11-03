@@ -67,8 +67,8 @@ The October entries are separate testing milestones, not one end-to-end lifecycl
 | E11 | [`v0.3-rule-100002-definition.png`](screenshots/v0.3-rule-100002-definition.png) | Supporting (rule configuration) | Reported configuration of custom Rule `100002` | Rule logic context |
 | E12 | [`v0.3-fim-rule-100002-investigation-github.png`](screenshots/v0.3-fim-rule-100002-investigation-github.png) | Supporting (investigation) | How the report appears on GitHub; not proof of detection | Documentation |
 | E13 | [`v0.3-fim-lifecycle-custom-detections.png`](screenshots/v0.3-fim-lifecycle-custom-detections.png) | Direct (detection) | Terminal screenshot of Rules `100003` and `100004` alerts, Oct 31 | `100003` creation; `100004` deletion |
-| E14 | `[PENDING EVIDENCE: filename not supplied; repository presence not verified]` | Direct (endpoint configuration), pending | Local `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01, reviewed by the maintainer | Endpoint Syscheck configuration, including `/home` |
-| E15 | `[PENDING EVIDENCE: filename not supplied; photograph not committed]` | Direct (manager configuration), pending | `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH | Manager-side configuration only; not endpoint evidence |
+| E14 | [`v0.3-e14-endpoint-syscheck-configuration.png`](screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Direct (endpoint configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01 (endpoint), Syscheck settings | Endpoint Syscheck configuration, including `/home` real-time monitoring |
+| E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings | Manager-side configuration only; not endpoint evidence |
 | E16 | [`v0.3-fim-full-lifecycle-custom-rules.png`](screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Direct (detection) | Terminal screenshot of Rules `100003`, `100002` and `100004` alerts for the dedicated test file, Nov 2 controlled lifecycle test | `100003` creation; `100002` modification; `100004` deletion, Nov 2 |
 
 > **Filename note:** The deletion screenshots (E08, E09) keep their existing `detection` filenames. Descriptive text uses "deletion". No operational-recovery screenshots are indexed in this directory.
@@ -179,13 +179,15 @@ The screenshots are visual references for the alerts and paths. The absence of R
 
 ## 6. FIM Configuration Evidence (E14, E15)
 
-The two configuration screenshots come from different hosts and serve different purposes. Neither substitutes for the other. **Endpoint `/home` monitoring is attributed only to E14.** Manager-side settings (E15) are not evidence of endpoint coverage.
+The two configuration screenshots come from different hosts and serve different purposes. Neither substitutes for the other. **Endpoint `/home` monitoring is attributed only to E14.** Manager-side settings (E15) are not evidence of endpoint coverage. Both screenshots show local configuration files as captured; neither establishes which configuration was loaded during the historical October 16 tests.
 
 ### Endpoint configuration: SENTINEL-LINUX01 (E14)
 
-**Status:** reviewed by the maintainer; **pending evidence**. The final repository filename has not been supplied and presence in the repository is unverified, so no link is given.
+**Status:** committed. Evidence file: [`screenshots/v0.3-e14-endpoint-syscheck-configuration.png`](screenshots/v0.3-e14-endpoint-syscheck-configuration.png)
 
-The reviewed screenshot shows the local `/var/ossec/etc/ossec.conf` with these visible Syscheck settings:
+![E14: Endpoint Syscheck configuration, SENTINEL-LINUX01](screenshots/v0.3-e14-endpoint-syscheck-configuration.png)
+
+The screenshot shows the endpoint's local `/var/ossec/etc/ossec.conf` with these visible Syscheck settings:
 
 ```xml
 <syscheck>
@@ -207,11 +209,21 @@ Limits: this is the endpoint's *local* configuration as visible in the screensho
 
 ### Manager configuration: SENTINEL-WAZUH (E15)
 
-**Status:** **pending evidence**. The photograph has not been committed and no filename has been supplied, so no link is given.
+**Status:** committed. Evidence file: [`screenshots/v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png)
 
-The October 31 manager-side screenshot of `/var/ossec/etc/ossec.conf` shows `<disabled>no</disabled>`, `<scan_on_start>yes</scan_on_start>`, `<alert_new_files>yes</alert_new_files>` and `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`.
+![E15: Manager Syscheck configuration, SENTINEL-WAZUH](screenshots/v0.3-e15-manager-syscheck-configuration.png)
 
-- This is **manager-side** evidence only. It lists no `/home` directory and must **not** be read as evidence for or against `/home` monitoring on the endpoint.
+The screenshot shows the manager's local `/var/ossec/etc/ossec.conf` with these visible settings:
+
+- `<disabled>no</disabled>`
+- `<scan_on_start>yes</scan_on_start>`
+- `<alert_new_files>yes</alert_new_files>`
+- `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`
+
+Limits:
+
+- This is **manager-side** evidence only. It lists no `/home` directory and must **not** be read as evidence for or against `/home` monitoring on the endpoint. Endpoint `/home` monitoring is shown only by E14.
+- It is the manager's local configuration as visible in the screenshot. It does not establish which configuration was loaded during the October 16 tests or why `100002` was absent on October 16.
 
 ---
 
@@ -219,10 +231,26 @@ The October 31 manager-side screenshot of `/var/ossec/etc/ossec.conf` shows `<di
 
 ![Rule 100002 definition](screenshots/v0.3-rule-100002-definition.png)
 
-- **Reported dependency:** described as using `<if_sid>550</if_sid>`, tying it to events matched by built-in Rule `550`.
-- **Reported path condition:** a match on `/home/`; exact matching behavior is unverified.
-- **Limits:** it does not establish which definition was loaded during the October 16 tests, and the active configuration has not been re-verified here. The reported dependency is not established as the cause of `100002` being absent on October 16.
-- The definitions of Rules `100003` and `100004` are not covered by any screenshot in this directory.
+The screenshot (E11) provides supporting evidence of the custom rule definition.
+
+**November 3 configuration verification:** a read-only check of `/var/ossec/etc/rules/local_rules.xml` on SENTINEL-WAZUH confirmed the following on-disk definition:
+
+```xml
+<rule id="100002" level="8">
+  <if_sid>550</if_sid>
+  <field name="file">^/home/</field>
+  <description>SENTINEL: File integrity modification detected in monitored home directory.</description>
+  <group>sentinel_fim,</group>
+</rule>
+```
+
+- **Rule ID and level:** `100002`, Level `8`.
+- **Parent rule:** `<if_sid>550</if_sid>`.
+- **File condition:** `^/home/`.
+- **Analysis engine:** `wazuh-analysisd` was confirmed running during the November 3 check.
+- **Configuration chronology:** the on-disk rule file modification time preceded the analysis engine's start time. This is consistent with the engine starting after the file was modified.
+
+**Limits:** this verifies the on-disk definition and service state on November 3. It does not independently prove the exact rule definition loaded in memory, establish which definition was loaded during the historical October 16 tests, or explain why Rule `100002` was absent from the reviewed October 16 records. The definitions of Rules `100003` and `100004` are not covered by screenshots in this directory.
 
 ---
 
@@ -241,15 +269,14 @@ The October 31 manager-side screenshot of `/var/ossec/etc/ossec.conf` shows `<di
 - **October 31:** the custom creation and deletion findings rely on a terminal screenshot. Raw alert records are not committed.
 - **October 16:** findings rest on reviewed historical source records; screenshots are visual references.
 - **October 11:** the original source log was unavailable during the later review.
-- **Configuration screenshots:** endpoint (E14) and manager (E15) evidence have different purposes and are kept separate. E14 shows local configuration only.
-- **Pending evidence:** E14 and E15 are indexed as pending. Their findings rest on maintainer review and cannot be checked by a reader until the screenshots are committed and linked.
+- **Configuration screenshots:** endpoint (E14) and manager (E15) evidence have different purposes and are kept separate. Both show local configuration files as captured. They do not establish which configuration was loaded during the October 16 tests, and E15 does not show endpoint `/home` monitoring.
 - **Attribution:** the `snap/firmware-updater` paths and other background events have not been independently attributed to a process.
 - **Coverage:** creation and deletion have each been observed for limited paths only (the October paths and the single November 2 test file); other directories, multiple files and repeated events remain untested. Modification was tested for its respective test files only.
 - No false-positive or false-negative testing is documented here.
 
 ## Remaining Work
 
-- Review the active definitions of Rules `100002`, `100003` and `100004` and built-in Rules `550`, `553`, `554`; confirm which rule version was loaded on October 16.
+- Review the active definitions of Rules `100002`, `100003` and `100004` and built-in Rules `550`, `553`, `554`; confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16.
 - Explain the differences between the October 16 and October 31 observations.
 - Export raw alert records for October 16, 26, 31 and November 2 where available.
 - Develop repeatable creation, modification and deletion tests using dedicated test files, building on the single November 2 lifecycle session.
