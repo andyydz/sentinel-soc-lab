@@ -12,6 +12,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 
 ---
 
+
 ## Architecture
 
 ```text
