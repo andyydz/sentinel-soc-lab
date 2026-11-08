@@ -2,6 +2,7 @@
 
 > Does your detection still work when the attacker changes tactics?
 
+
 SENTINEL is a controlled virtual SOC lab (VirtualBox + Wazuh + Kali + an Ubuntu endpoint) built to practice and evidence a full defensive engineering workflow, not just install security tools.
 
 ```
