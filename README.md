@@ -53,7 +53,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 
 **v0.1 — Foundation: complete.** Wazuh deployed, Kali and Linux01 deployed, isolated network established, agent enrolled and communicating.
 
-**v0.2 — Telemetry & Initial Detection Engineering: in progress.** v0.2 remains in progress. The original infrastructure and initial FIM setup are documented, and custom Rule `100002` has fired in the controlled modification scenarios tested. Broader creation/deletion coverage and repeatable regression testing remain unresolved.
+**v0.2 — Telemetry & Initial Detection Engineering: complete.** Completed on 18 Nov 2026. Coverage gap resolved: identified parent SID chaining constraint (Rule 100002 chained strictly to SID 550 modification). Standardized custom rules 100002, 100003, and 100004 with anchored regex `^/home/` and enriched with MITRE ATT&CK taxonomy tags (T1105, T1565.001, T1070.004).
 
 Key findings (October 2026):
 - **Modification:** Rule `100002` (Level 8) fired on controlled modifications on 11 Oct (supported by screenshots; the original source log was not recovered) and 26 Oct (two alerts from consecutive modifications of one file, not two independent test cases).
@@ -64,7 +64,7 @@ These results do not establish complete FIM coverage, measured detection rates, 
 
 **SCA observation (29 Oct 2026).** The [SCA baseline report](evidence/v0.2/sca-baseline.md) records a single Wazuh dashboard observation using built-in Wazuh functionality. It is not a custom SENTINEL detection, a remediation exercise, proof of compliance or improved posture, or a detection-engineering milestone.
 
-**v0.3 — SOC Investigation: phase milestone complete.** The v0.3 project phase and its planned documentation and evidence milestone are complete. This does not mean CASE-001 is resolved: the case remains open, and CASE-001 evidence reconciliation for the reviewed scope is closed. Unresolved investigation and broader detection-engineering work remain follow-up tasks. No root cause, attribution, or malicious activity is established, and no containment, eradication, or recovery has been exercised. See [CASE-001](investigations/CASE-001.md) and the [v0.3 evidence index](evidence/v0.3/readme.md).
+**v0.3 — SOC Investigation: phase milestone complete.** The v0.3 project phase and its planned documentation and evidence milestone are complete. CASE-001 is formally RESOLVED and CLOSED on 18 Nov 2026: endpoint FIM verified (realtime="yes"), full lifecycle repeatability validated, raw JSON alerts committed with SHA-256 integrity, and real-world desktop cache noise documented. Unresolved investigation and broader detection-engineering work remain follow-up tasks. No root cause, attribution, or malicious activity is established, and no containment, eradication, or recovery has been exercised. See [CASE-001](investigations/CASE-001.md) and the [v0.3 evidence index](evidence/v0.3/readme.md).
 
 v0.3 additions (2–3 November 2026):
 - **Controlled lifecycle validation (2 Nov):** in one controlled session on SENTINEL-LINUX01, a single dedicated file, `/home/sentinel-admin/sentinel-v03-final-test.txt`, was created, modified and deleted. Creation matched custom Rule `100003`, modification matched `100002`, and deletion matched `100004`, each at Level 8 ([screenshot](evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)). This is one controlled lifecycle session on one dedicated file. It is not a regression suite or repeatability test and does not establish comprehensive FIM coverage. Raw 2 November alert JSON records are not committed. It does not explain the 16 Oct observations or retroactively validate the 31 Oct observations.
@@ -78,8 +78,8 @@ v0.3 additions (2–3 November 2026):
 | Version | Focus | Status |
 |---|---|---|
 | v0.1 | Foundation — infrastructure, network, Wazuh deployment | Complete |
-| v0.2 | Telemetry and detection engineering — FIM and custom Rule `100002` | In progress |
-| v0.3 | SOC investigation — CASE-001 and FIM investigation | Complete (phase milestone and documentation/evidence deliverables; CASE-001 remains open) |
+| v0.2 | Telemetry and detection engineering — FIM Rules `100002`–`100004` (MITRE mapped) | Complete |
+| v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 resolved & closed) |
 | v0.4 | Incident response | Planned |
 | v0.5 | Purple-team measurement | Planned |
 | v0.6 | Attack DNA and mutation testing | Planned |

@@ -314,3 +314,38 @@ CASE-001 documents validation of custom rule 100002 for the tested modification 
 ---
 
 CASE-001 — evidence first, uncertainty preserved.
+
+---
+
+## Resolution & Sprint Closeout (18 November 2026)
+
+### Status: CLOSED / RESOLVED
+
+### 1. Endpoint Configuration Verification
+- Inspected active `/var/ossec/etc/ossec.conf` on `SENTINEL-LINUX01` (10.10.10.40, Agent ID 002).
+- Confirmed `<directories realtime="yes">/home</directories>` is active, utilizing the Linux kernel inotify subsystem for real-time telemetry generation.
+
+### 2. Rule Standardization & MITRE ATT&CK Mapping
+- Reconciled regex discrepancy in `/var/ossec/etc/rules/local_rules.xml`. Standardized all custom FIM rules to anchored prefix matching: `^/home/`.
+- Embedded formal MITRE ATT&CK taxonomy tags directly into rule definitions:
+  - **Rule 100003 (Creation):** `T1105` (Command and Control / Ingress Tool Transfer)
+  - **Rule 100002 (Modification):** `T1565.001` (Impact / Stored Data Manipulation)
+  - **Rule 100004 (Deletion):** `T1070.004` (Defense Evasion / File Deletion)
+- Validated XML syntax via `wazuh-analysisd -t` (exit code 0) and reloaded `wazuh-manager`.
+
+### 3. Repeatability Lifecycle Execution & Telemetry Evidence
+- Conducted controlled test run on endpoint `/home/sentinel-admin/fim-sprint-test.txt`.
+- Successfully validated that all three custom rules fired sequentially at Level 8 in real time.
+- Preserved cryptographic continuity: Inode `2622203` remained constant; modification hash matched subsequent deletion hash.
+- Exported raw JSON telemetry: `evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json`.
+- Cryptographic Checksum:
+  - SHA-256: `d3765e7240462b21d82b7ae8e7f772beeb8c57420f80d3e306024fb9ed32b2b6`
+  - Committed to `evidence/v0.3/raw-alerts/SHA256SUMS`.
+
+### 4. Noise & False-Positive Discovery
+- **Empirical Observation:** During testing, GNOME background indexing service (`tracker3`) modified `/home/sentinel-admin/.cache/tracker3/files/.../tracker#FileSystem.db-wal`, triggering Rule 100002 at Level 8 (`firedtimes: 12`).
+- **Engineering Finding:** Confirmed that un-scoped monitoring of `/home` captures benign user-space application cache churn.
+- **Tuning Recommendation for v0.4:** Scope high-severity FIM to critical system/user artifacts (e.g., `.bashrc`, `.ssh/authorized_keys`, `/etc/`) or implement `<ignore>` directives for user `.cache/` directories.
+
+### 5. Final Assessment
+With endpoint FIM verified, rule logic standardized and mapped to MITRE ATT&CK, full lifecycle repeatability confirmed with committed raw JSON evidence, and false-positive noise documented, the investigative and detection engineering objectives of **CASE-001** and **SENTINEL v0.3** are formally complete.
