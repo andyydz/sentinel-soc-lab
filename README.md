@@ -80,9 +80,10 @@ v0.3 additions (2–3 November 2026):
 | v0.1 | Foundation — infrastructure, network, Wazuh deployment | Complete |
 | v0.2 | Telemetry and detection engineering — FIM Rules `100002`–`100004` (MITRE mapped) | Complete |
 | v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 resolved & closed) |
-| v0.4 | Incident response | Planned |
-| v0.5 | Purple-team measurement | Planned |
-| v0.6 | Attack DNA and mutation testing | Planned |
+| v0.4 | Windows Sysmon replay detection — Rules `100100`–`100140` (`CASE-002`) | Complete |
+| v0.5 | Incident response | Planned |
+| v0.6 | Purple-team measurement | Planned |
+| v0.7 | Attack DNA and mutation testing | Planned |
 | Future | Custom SENTINEL console over Wazuh; Windows/AD endpoint | Planned |
 
 Outstanding work (not yet in place):
@@ -91,7 +92,7 @@ Outstanding work (not yet in place):
 - Broader false-positive/false-negative testing, a repeatable regression suite, and detection tuning with validation of its effectiveness.
 - Measured detection rates and comprehensive FIM coverage.
 - Broader telemetry (auth, process execution), threat hunting, additional cases, and project-level MITRE ATT&CK mapping.
-- A containment, eradication, or recovery exercise, and everything in v0.4 and later.
+- A containment, eradication, or recovery exercise, and everything in v0.5 and later.
 
 ---
 
@@ -100,9 +101,9 @@ Outstanding work (not yet in place):
 | Area | Links |
 |---|---|
 | **Methodology** | [Detection engineering](docs/05-detection-engineering.md) · [Incident response](docs/06-incident-response.md) · [Testing and metrics](docs/07-testing-and-metrics.md) |
-| **Investigations** | [CASE-001](investigations/CASE-001.md) · [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) · [Investigations guide](investigations/readme.md) |
+| **Investigations** | [CASE-001](investigations/CASE-001.md) · [CASE-002](investigations/CASE-002.md) · [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) · [Investigations guide](investigations/readme.md) |
 | **Detections** | [Detections guide](detections/readme.md) |
-| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) |
+| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [v0.4 Sysmon replay](evidence/sysmon-replay/) |
 | **v0.2 reports** | [Infrastructure and telemetry foundation](evidence/v0.2/infrastructure-and-telemetry-foundation.md) · [Wazuh–Linux01 integration](evidence/v0.2/wazuh-linux01-integration.md) · [SCA baseline](evidence/v0.2/sca-baseline.md) |
 | **Project** | [Security policy](SECURITY.md) · [Changelog](CHANGELOG.md) |
 
