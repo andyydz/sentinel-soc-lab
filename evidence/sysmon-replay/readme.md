@@ -15,6 +15,3 @@
 | [v0.4-03-sha256-integrity-check-part1.png](screenshots/v0.4-03-sha256-integrity-check-part1.png) | SHA-256 OK + rule split (1/2) |
 | [v0.4-03-sha256-integrity-check-part2.png](screenshots/v0.4-03-sha256-integrity-check-part2.png) | SHA-256 OK + rule split (2/2) |
 | [v0.4-04-wazuh-dashboard-sysmon.png](screenshots/v0.4-04-wazuh-dashboard-sysmon.png) | Wazuh Dashboard (7 hits) |
-| [v0.4-03-sha256-integrity-check-part1.png](screenshots/v0.4-03-sha256-integrity-check-part1.png) | SHA-256 OK + rule split (1/2) |
-| [v0.4-03-sha256-integrity-check-part2.png](screenshots/v0.4-03-sha256-integrity-check-part2.png) | SHA-256 OK + rule split (2/2) |
-| [v0.4-04-wazuh-dashboard-sysmon.png](screenshots/v0.4-04-wazuh-dashboard-sysmon.png) | Wazuh Dashboard (7 hits) |
