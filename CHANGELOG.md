@@ -26,6 +26,14 @@ The project's guiding question is: does your detection still work when the attac
 
 [Unreleased]
 
+### Windows Sysmon Telemetry Replay & Attack Detection (v0.4 milestone)
+
+- **Telemetry replay:** replayed Windows Sysmon `.evtx` captures (Event IDs 1, 3, 10, 11) via `SENTINEL-LINUX01` using `python-evtx` NDJSON conversion and `wazuh-logcollector` ingestion (`json` format).
+- **Detections validated:** custom ruleset `sentinel_sysmon_replay_rules.xml` (`100100+`). Validated 7 distinct attack alerts: Rule `100110` (Level 12, `T1059.003`), Rule `100111` (Level 10, `T1059.005`), Rule `100112` (Level 13, `T1003.001`/`T1218.011`), Rule `100140` (Level 10, `T1003.001`), Rule `100131` (Level 12, `T1003.001`/`T1218.011`), Rule `100120` (Level 8, `T1059.001`/`T1105`), and Rule `100130` (Level 14, `T1003.001`).
+- **Noise filtering:** base structural rules (`100100`-`100104`, Level 0) suppressed alert noise for 3 benign `services.exe -> svchost.exe` process creates.
+- **Evidence preserved:** raw alert events committed to `evidence/sysmon-replay/sysmon_alerts_raw.json` with SHA-256 `b53473fd6340ec17365fec9cbbc1403e445523322c4c84ae28e40882995d7a59`. Full investigation write-up in `investigations/CASE-002.md`.
+- **Scope & limitations:** validates parser, decoder, and rule logic against replayed EVTX logs; does not validate live kernel driver (`SysmonDrv.sys`) telemetry on bare-metal Windows.
+
 ## Architecture and infrastructure
 
 - **Decision:** replaced the original Windows-first architecture with a Linux-first initial endpoint. The Windows VM (SENTINEL-WIN01) hit repeated deployment/boot issues that made it unsuitable as a dependency for v0.1. This is recorded as an infrastructure/deployment issue, not an attributed technical root cause. Windows and Active Directory are deferred to future expansion.
