@@ -1,3 +1,4 @@
+
 # SENTINEL — SOC Lab
 
 > Does your detection still work when the attacker changes tactics?
