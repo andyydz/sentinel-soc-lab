@@ -90,7 +90,7 @@ v0.3 additions (2–3 November 2026):
 | v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 resolved & closed) |
 | v0.4 | Windows Sysmon Replay & Cross-Platform Detection — CASE-002 | Complete |
 | v0.5 | Incident Response | Planned |
-| v0.6 | Purple-Team Measurement | Planned |
+| v0.6 | Purple-Team Measurement — controlled FIM, Sysmon & SSH suites | Complete |
 | v0.7 | Attack DNA & Mutation Testing | Planned |
 | Future | Custom SENTINEL console over Wazuh; live Windows/AD endpoint | Planned |
 
@@ -111,7 +111,7 @@ Outstanding work (not yet in place):
 | **Methodology** | [Detection engineering](docs/05-detection-engineering.md) · [Incident response](docs/06-incident-response.md) · [Testing and metrics](docs/07-testing-and-metrics.md) |
 | **Investigations** | [CASE-001](investigations/CASE-001.md) · [CASE-002](investigations/CASE-002.md) · [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) · [Investigations guide](investigations/readme.md) |
 | **Detections** | [Detections guide](detections/readme.md) · [Sysmon replay ruleset](detections/sentinel_sysmon_replay_rules.xml) |
-| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) |
+| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) · [v0.5 index](evidence/v0.5/readme.md) · [v0.6 index](evidence/v0.6/readme.md) · [v0.6 metrics](metrics/v0.6-purple-team-measurement.md) |
 | **v0.2 reports** | [Infrastructure and telemetry foundation](evidence/v0.2/infrastructure-and-telemetry-foundation.md) · [Wazuh–Linux01 integration](evidence/v0.2/wazuh-linux01-integration.md) · [SCA baseline](evidence/v0.2/sca-baseline.md) |
 | **Project** | [Security policy](SECURITY.md) · [Changelog](CHANGELOG.md) |
 
