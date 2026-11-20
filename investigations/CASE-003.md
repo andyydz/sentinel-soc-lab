@@ -34,6 +34,10 @@ Wazuh evaluated telemetry against `sentinel_ssh_bruteforce_rules.xml`, triggerin
 
 ---
 
+### Detection & Noise-Control Rationale
+- **Trigger:** `100200` (Lvl 5) matches `sshd` auth failures (`5710`/`5716`); `100201` (Lvl 10) escalates on `6+` failures in `60s` (`same_srcip`).
+- **Noise control:** `frequency=6` + `same_srcip` suppresses Lvl 10 alerts on 1-2 admin typos.
+
 ## 3. Automation vs. Manual SOC Analysis Boundary
 
 | Investigation Activity | Execution Layer | Mechanism / Responsibility |
@@ -41,8 +45,8 @@ Wazuh evaluated telemetry against `sentinel_ssh_bruteforce_rules.xml`, triggerin
 | **Severity Triage & Filtering** | **Automated (Python CLI)** | `python-soc-automation` applied `--min-level 8`, suppressing 21 Level 5 events to surface Rule `100201`. |
 | **Evidence Integrity Check** | **Automated (Hashing)** | Verified raw JSON alert bytes match recorded SHA-256 (`16d3ce...`). |
 | **Log Forensic Unmasking** | **Manual (SOC Analyst)** | Extracted target username `sentinel-probe` from syslog `full_log`. |
-| **Blast Radius & Persistence** | **Manual (SOC Analyst)** | Audited `/var/log/auth.log` (0 accepted logins) and `/etc/passwd`. |
-| **Containment Action** | **Manual (Human Decision)** | Implemented IP blocklist rule on host firewall. |
+| **Blast Radius & Persistence** | **Manual (SOC Analyst)** | Reviewed raw alerts (0 accepted sessions) and documented endpoint verify commands. |
+| **Containment Action** | **Manual (Human Decision)** | Documented IP drop procedure (no persistent block left active). |
 
 ---
 
@@ -50,8 +54,8 @@ Wazuh evaluated telemetry against `sentinel_ssh_bruteforce_rules.xml`, triggerin
 
 - **Preparation:** Active rules `100200` & `100201` on manager; agent `002` shipping `/var/log/auth.log`.
 - **Detection & Analysis:** Rule `100201` escalation at `13:55:11 IST`. Python triage CLI filtered noise; manual log audit confirmed 0 successful sessions.
-- **Containment:** Adversary IP drop applied on `SENTINEL-LINUX01` (`sudo iptables -I INPUT 1 -s 10.10.10.20 -p tcp --dport 22 -j DROP` or `sudo ufw deny from 10.10.10.20 to any port 22`).
-- **Eradication:** Verified no rogue accounts in `/etc/passwd` and confirmed 0 accepted logins in `/var/log/auth.log`.
+- **Containment:** Documented source-scoped containment on `SENTINEL-LINUX01` (keeps `sshd` up for admins; not left active): (`sudo iptables -I INPUT 1 -s 10.10.10.20 -p tcp --dport 22 -j DROP` or `sudo ufw deny from 10.10.10.20 to any port 22`).
+- **Eradication:** 0 accepted-login alerts observed; post-incident verify via `grep Accepted /var/log/auth.log`, `grep sentinel-probe /etc/passwd`, and `iptables -L INPUT -n`.
 - **Recovery:** Confirmed SSH service is responsive and healthy for authorized users.
 - **Lessons Learned:** Hardening: disable password authentication (`PasswordAuthentication no`), transition to SSH keys, and evaluate automated Wazuh active response.
 

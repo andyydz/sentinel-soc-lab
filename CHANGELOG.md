@@ -19,8 +19,8 @@ The project's guiding question is: does your detection still work when the attac
 - **Verified on disk only:** a read-only check on 3 November 2026 confirmed the on-disk Rule "100002" definition and that "wazuh-analysisd" was running. The in-memory rule version is not verified.
 - **Documented:** CASE-001, an evidence-backed investigation. Evidence reconciliation for the reviewed scope is closed; the overall case remains open.
 - **Unresolved:** Rule "100002" was absent from the reviewed 16 October creation and deletion records, which showed built-in Rules "554" and "553". The reason is unknown; this is not a confirmed detection miss.
-- **Not done:** detection rate, false-positive/false-negative measurement, repeatable regression testing, broader creation/deletion coverage, complete FIM coverage, and any containment, eradication, or recovery exercise. v0.5–v0.7 are planned.
-- **Project status:** v0.1 complete; v0.3 complete; v0.4 Sysmon replay detection (CASE-002) complete; v0.7 planned.
+- **Not done:** detection rate, false-positive/false-negative measurement, repeatable regression testing, broader creation/deletion coverage, complete FIM coverage, v0.7 is planned.
+- **Project status:** v0.1–v0.6 complete (CASE-001–003 + v0.6 purple-team metrics); v0.7 planned.
 
 ---
 
@@ -120,7 +120,7 @@ Five separate dated evidence sets. They represent distinct observations or contr
 - v0.4 — Windows Sysmon Replay Detection (Complete — CASE-002): validated Rules 100110-100140 on replayed EVTX telemetry.
 - v0.5 — Incident Response & SSH Brute-Force Triage (Complete — CASE-003): validated SSH rules 100200/100201 against Hydra simulation from SENTINEL-KALI, utilizing automated CLI triage and NIST SP 800-61r2 containment.
 
-- v0.6 — Purple-Team Validation (Planned): detection coverage, detection rate and time, response time, false-positive/false-negative analysis, regression testing, before/after comparison.
+- v0.6 — Purple-Team Measurement (Complete — metrics/v0.6-purple-team-measurement.md): detection coverage, detection rate and time, response time, false-positive/false-negative analysis, regression testing, before/after comparison.
 - v0.7 — Attack DNA & Mutation (Planned): attack-chain representation, controlled attack variation, detection resilience testing, failure analysis, retesting against modified attacker behavior.
 
 **Future expansion:** Windows and Active Directory endpoints (deferred from the core path), and a custom SENTINEL console on top of Wazuh (incident visualization, detection timelines, MITRE ATT&CK mapping, metrics, Attack DNA visualization, case reporting). Not currently implemented.
