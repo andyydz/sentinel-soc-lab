@@ -85,7 +85,7 @@ Three `.evtx` samples were converted by `evtx_to_wazuh.py` into **12 NDJSON reco
 
 Before replay, the ruleset was loaded and checked with `wazuh-logtest`.
 
-![Ruleset validation in wazuh-logtest](../evidence/sysmon-replay/screenshots/v0.4-01-ruleset-validation-logtest.png.png)
+![Ruleset validation in wazuh-logtest](../evidence/sysmon-replay/screenshots/v0.4-01-ruleset-validation-logtest.png)
 
 *Figure 1 — `wazuh-logtest` validation of the custom Sysmon ruleset.*
 
