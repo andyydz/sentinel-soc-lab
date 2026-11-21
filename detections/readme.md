@@ -129,3 +129,12 @@ Note: the Testing & Metrics document currently records the Rule 100002 validatio
 - **SSH frequency/window check (`sentinel_ssh_bruteforce_rules.xml`):** Verified in a stateful `wazuh-logtest` session that six sequential SSH authentication failures (`100200`, Level 5) from `10.10.10.20` within `60s` trigger `100201` (Level 10, `T1110`/`T1110.001`).
 - **Validation boundary:** `wazuh-analysisd -t` and `wazuh-manager` reload succeeded on `SENTINEL-WAZUH`; live endpoint FIM re-verification on `SENTINEL-LINUX01` remains a controlled test step before claiming live suppression effectiveness.
 
+## v0.8 Live Endpoint Verification (2026-11-21, Agent 002)
+
+- **Controlled probe lifecycle (`sentinel-linux01`, Agent `002`):** Created, modified, and deleted `/home/sentinel-admin/.v08-check/probe.txt` and confirmed live alerts on `SENTINEL-WAZUH`:
+  - `100003` (`fim_create`, Level 8) at `2026-11-21T11:39:20.241+0530`
+  - `100002` (`fim_modify`, Level 8) at `2026-11-21T11:39:22.462+0530`
+  - `100004` (`fim_delete`, Level 8) at `2026-11-21T11:39:24.483+0530`
+- **Group & path check:** All three probe alerts carried `sentinel_fim` with `sshd` absent, and hidden dot-directory monitoring remained active without adding VMs.
+- **Residual desktop noise noted:** `/home/sentinel-admin/.config/dconf/user` still triggered `100002` (`2026-11-21T11:39:16.756+0530`), recorded as normal desktop session activity rather than an intrusion indicator.
+
