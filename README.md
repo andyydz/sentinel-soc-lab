@@ -1,27 +1,103 @@
-
-# SENTINEL — SOC Lab
+# SENTINEL — Evidence-Driven SOC Detection, Investigation and Response Lab
 
 > Does your detection still work when the attacker changes tactics?
 
+SENTINEL is a personal SOC engineering lab built with Wazuh, VirtualBox, Linux, Kali Linux and Python. It focuses on developing custom detections, investigating security alerts, analysing replayed Windows Sysmon telemetry and validating detection behaviour through controlled testing.
 
-SENTINEL is a controlled virtual SOC lab (VirtualBox + Wazuh + Kali + an Ubuntu endpoint) built to practice and evidence a full defensive engineering workflow, not just install security tools.
+The project is organised around this evidence-driven workflow:
 
 ```
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
 ```
 
-Each stage is meant to be demonstrated with real evidence before the next is trusted. A detection isn't "done" because a rule exists. It's done once it's been tested, the result recorded, and the result holds up.
+Not every stage has been fully exercised. Simulation, detection, investigation and measurement are evidenced for selected, controlled cases. Response is documented and planned, but a fully evidenced containment, eradication and recovery exercise remains outstanding. The intent is that each stage is demonstrated with real evidence before it is relied on. A detection is not "done" because a rule exists. It is done once it has been tested, the result recorded, and the result holds up. See [Scope and Limitations](#scope-and-limitations).
+
+It is a Linux-first learning and engineering environment, not a production SOC. Windows telemetry is tested through pre-recorded Sysmon `.evtx` event replay, converted and replayed through the Linux endpoint. There is currently no live Windows endpoint or Active Directory environment.
+
+**Primary focus:** Wazuh detection engineering, SOC alert investigation, Linux security monitoring, Python-assisted triage and evidence-based testing.
 
 ---
 
+## What makes this project different?
 
+SENTINEL is not a replacement for Wazuh, Microsoft Sentinel or an enterprise SIEM. It uses Wazuh as its monitoring and detection platform and focuses on the engineering work around it.
+
+The project goes beyond deploying an agent and viewing alerts:
+
+- **Detection engineering:** custom Wazuh rules for FIM, SSH authentication and replayed Sysmon telemetry.
+- **Investigation:** case-based analysis that distinguishes observed events from confirmed conclusions.
+- **Telemetry engineering:** Python-assisted conversion and ingestion of Windows Sysmon event data into the Linux-based lab.
+- **Testing and reliability:** controlled simulations, rule validation, noise suppression and documented limitations.
+- **Evidence and measurement:** investigation reports, screenshots, raw alert records and controlled test results.
+
+The objective is to understand how detections behave, investigate their results and identify where they need improvement, not simply to show that a SIEM is running. The emphasis is on understanding why an alert fired, validating the underlying detection logic, examining false-positive behaviour and documenting investigation conclusions—not simply collecting alerts from a monitoring platform.
+
+---
+
+## Contents
+
+- [What makes this project different?](#what-makes-this-project-different)
+- [Start here](#start-here)
+- [Technology stack](#technology-stack)
+- [What this demonstrates](#what-this-demonstrates)
+- [Architecture](#architecture)
+- [Detections](#detections)
+- [Milestone history](#milestone-history)
+- [Testing and Metrics](#testing-and-metrics)
+- [Python tooling](#python-tooling)
+- [Scope and Limitations](#scope-and-limitations)
+- [Documentation and Evidence](#documentation-and-evidence)
+- [Security & Safety](#security--safety)
+
+---
+
+## Start here
+
+If you have a few minutes, these show the most:
+
+| What | Where |
+|---|---|
+| Windows Sysmon replay investigation (7 selected replay detections, 3 benign events suppressed) | [CASE-002](investigations/CASE-002.md) |
+| SSH brute-force investigation and response planning | [CASE-003](investigations/CASE-003.md) |
+| FIM investigation with an unresolved discrepancy documented openly | [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) |
+| Detection rules and how they are organised | [Detections guide](detections/readme.md) |
+| Controlled measurement results and their caveats | [v0.6 purple-team measurement](metrics/v0.6-purple-team-measurement.md) |
+| Where the evidence lives | [Evidence guide](evidence/readme.md) |
+
+---
+
+## Technology stack
+
+| Area | Used |
+|---|---|
+| Virtualisation | Oracle VirtualBox (isolated lab network, NAT on the Wazuh VM) |
+| Security monitoring platform | Wazuh 4.14.8 — manager, dashboard, agent, custom rules, File Integrity Monitoring and SCA (built-in, observation only) |
+| Operating systems | Ubuntu 24.04 (manager), Ubuntu 24.04.5 LTS (endpoint), Kali Linux 2026.2 (adversary emulation) |
+| Windows telemetry | Pre-recorded Sysmon `.evtx` captures, replayed as JSON through a Wazuh `<localfile>` |
+| Scripting | Python ([`scripts/evtx_to_wazuh.py`](scripts/evtx_to_wazuh.py)) |
+| Project hygiene | Git/GitHub, SHA-256 checksums on committed alert records, written investigation reports |
+
+---
+
+## What this demonstrates
+
+- Deploying and connecting a Wazuh manager, dashboard and Linux agent in an isolated lab network.
+- Writing and tuning custom Wazuh rules (FIM, SSH authentication, Sysmon replay) and understanding rule parent/child chaining.
+- Investigating alerts and documenting what is and is not established, including an unresolved discrepancy that is left open rather than explained away.
+- Ingesting and normalising Windows Sysmon telemetry through a Python converter and a dedicated ruleset.
+- Running small controlled tests, recording results, and being explicit about their limits.
+- Keeping evidence traceable: screenshots, raw alert records, checksums, and a note on what is *not* committed.
+
+---
 
 ## Architecture
+
+The lab uses an isolated VirtualBox network (`10.10.10.0/24`) for communication between the lab systems. The Wazuh VM additionally uses NAT connectivity for outbound access.
 
 ```text
                         INTERNET
                             |
-                           NAT
+                           NAT   (Wazuh VM only)
                             |
                    +----------------+
                    | SENTINEL-WAZUH |
@@ -30,6 +106,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
                             |
                      SENTINEL-LAB
                      10.10.10.0/24
+                     (isolated network)
                             |
                  +----------+----------+
                  |                     |
@@ -39,85 +116,167 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
         +---------------+     +------------------+
 ```
 
+`10.10.10.30` is not in use. It was allocated to an earlier Windows endpoint (SENTINEL-WIN01) that was dropped after repeated boot/deployment failures. No live Windows, Sysmon or Active Directory endpoint exists in the lab; that is future work.
+
 | Host | Role |
 |---|---|
 | SENTINEL-WAZUH (`10.10.10.10`) | Ubuntu 24.04, Wazuh 4.14.8 — manager and dashboard. |
 | SENTINEL-KALI (`10.10.10.20`) | Kali Linux 2026.2 — controlled adversary-emulation VM used for simulated SSH authentication testing ([CASE-003](investigations/CASE-003.md)). |
-| SENTINEL-LINUX01 (`10.10.10.40`, Agent ID `002`) | Ubuntu 24.04.5 LTS, Wazuh Agent 4.14.8 — monitored endpoint with real-time File Integrity Monitoring (FIM) on `/home`. Also the replay endpoint for the v0.4 Windows Sysmon telemetry. |
-| SENTINEL-LAB (`10.10.10.0/24`) | Isolated internal network; NAT provides outbound access. |
+| SENTINEL-LINUX01 (`10.10.10.40`, Agent ID `002`) | Ubuntu 24.04.5 LTS, Wazuh Agent 4.14.8 — monitored endpoint with real-time File Integrity Monitoring (FIM) on `/home`. Also the replay endpoint for the Windows Sysmon telemetry ([CASE-002](investigations/CASE-002.md)). |
 
-> An earlier Windows endpoint (SENTINEL-WIN01) was dropped after repeated boot/deployment failures. There is still no live Windows, Sysmon, or Active Directory endpoint in the lab; that is future work. Windows detection coverage in v0.4 comes from replayed Sysmon `.evtx` telemetry processed on SENTINEL-LINUX01 (see [CASE-002](investigations/CASE-002.md)).
-
----
-
-## Current Status
-
-**v0.1 — Foundation: complete.** Wazuh deployed, Kali and Linux01 deployed, isolated network established, agent enrolled and communicating.
-
-**v0.2 — Telemetry & Initial Detection Engineering: complete.** Completed on 18 Nov 2026. Coverage gap resolved: identified parent SID chaining constraint (Rule 100002 chained strictly to SID 550 modification). Standardized custom rules 100002, 100003, and 100004 with anchored regex `^/home/` and enriched with MITRE ATT&CK taxonomy tags (T1105, T1565.001, T1070.004).
-
-Key findings (October 2026):
-- **Modification:** Rule `100002` (Level 8) fired on controlled modifications on 11 Oct (supported by screenshots; the original source log was not recovered) and 26 Oct (two alerts from consecutive modifications of one file, not two independent test cases).
-- **Creation and deletion (16 Oct):** the reviewed records showed built-in Rules `554` and `553`, and Rule `100002` was absent. The reason is unresolved. No root cause is claimed, and this is not labeled a confirmed detection failure.
-- **Custom creation/deletion rules (31 Oct, observation only):** custom Rule `100003` (creation, Level 8) and custom Rule `100004` (deletion, Level 8) appeared in one terminal screenshot: [`evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png`](evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png). These are observations, not validated controlled tests. Raw alert records, process attribution, and root cause are not established. This is separate from the 16 Oct built-in Rule `554`/`553` records and from the 11/26 Oct Rule `100002` modification results, and it does not explain the Rule `100002` absence above.
-
-These results do not establish complete FIM coverage, measured detection rates, or malicious activity. Details: [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md).
-
-**SCA observation (29 Oct 2026).** The [SCA baseline report](evidence/v0.2/sca-baseline.md) records a single Wazuh dashboard observation using built-in Wazuh functionality. It is not a custom SENTINEL detection, a remediation exercise, proof of compliance or improved posture, or a detection-engineering milestone.
-
-**v0.3 — SOC Investigation: phase milestone complete.** The v0.3 project phase and its planned documentation and evidence milestone are complete. For CASE-001, evidence reconciliation for the reviewed scope is closed (endpoint FIM configuration verified with realtime="yes" in E14, single-file lifecycle behavior observed on 2 Nov, committed JSON alerts with SHA-256 checksums, and background/cache noise noted), while broader investigation and detection-engineering work remain open. No root cause, attribution, or malicious activity is established, and no containment, eradication, or recovery has been exercised. See [CASE-001](investigations/CASE-001.md) and the [v0.3 evidence index](evidence/v0.3/readme.md).
-
-v0.3 additions (2–3 November 2026):
-- **Controlled lifecycle validation (2 Nov):** in one controlled session on SENTINEL-LINUX01, a single dedicated file, `/home/sentinel-admin/sentinel-v03-final-test.txt`, was created, modified, and deleted. Creation matched custom Rule `100003`, modification matched `100002`, and deletion matched `100004`, each at Level 8 ([screenshot](evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)). This was one controlled lifecycle session on one dedicated file. It is not a regression suite or repeatability test, and it does not establish comprehensive FIM coverage. Raw 2 November alert JSON records are not committed. The session does not explain the 16 Oct observations or retroactively validate the 31 Oct observations.
-- **Configuration evidence (committed):** [E14](evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) shows the SENTINEL-LINUX01 endpoint's local Syscheck configuration: real-time monitoring of `/home`, startup scanning enabled, and a 43,200-second scheduled scan frequency. [E15](evidence/v0.3/screenshots/v0.3-e15-manager-syscheck-configuration.png) shows only the SENTINEL-WAZUH manager's Syscheck configuration; it is not evidence of endpoint `/home` monitoring, which E14 supports. Both show local configuration files as captured, and neither independently proves which configuration was loaded during the 16 Oct tests.
-- **Rule `100002` on-disk verification (3 Nov):** a read-only check on SENTINEL-WAZUH confirmed the on-disk definition in `/var/ossec/etc/rules/local_rules.xml` (Level 8, parent Rule `550`, file condition `^/home/`) and that `wazuh-analysisd` was running. The rule file's modification time preceded the analysis engine's start time, which is consistent with the engine starting after the file was modified. It does not prove the exact in-memory rule definition or the configuration loaded on 16 Oct. No configuration changes or restart were performed.
-
-**v0.4 — Windows Sysmon Replay & Cross-Platform Detection: complete.** Completed on 19 Nov 2026. On SENTINEL-LINUX01 (Agent ID `002`), `evtx_to_wazuh.py` converted 3 pre-recorded Windows Sysmon `.evtx` captures into 12 NDJSON records (24 lines replayed), which were ingested through a `json` `<localfile>`. SENTINEL-WAZUH evaluated them against a dedicated ruleset, `/var/ossec/etc/rules/sentinel_sysmon_replay_rules.xml` (`100100–100140`). See [CASE-002](investigations/CASE-002.md).
-- **Noise suppression:** 3 benign `services.exe → svchost.exe` events were classified under Level 0 Rule `100101` (base rules `100100–100104`), and no alerts were emitted for them.
-- **Detections:** all 7 attack rules fired (`100110`, `100111`, `100112`, `100120`, `100130`, `100131`, `100140`) at Levels 8–14, covering process creation, script execution, `comsvcs.dll` MiniDump credential dumping, PowerShell network egress, and `lsass.exe` / `rundll32.exe` process access.
-- **Evidence:** 7 raw alert records in [`evidence/sysmon-replay/sysmon_alerts_raw.json`](evidence/sysmon-replay/sysmon_alerts_raw.json), SHA-256 `b53473fd6340ec17365fec9cbbc1403e445523322c4c84ae28e40882995d7a59`.
-- **Baseline integrity:** `local_rules.xml` (`100001–100004`, including FIM Rule `100002`) was not modified.
-- **Scope boundary:** this validated replayed `.evtx` telemetry on Linux, not a live Windows host or the Sysmon kernel driver (`SysmonDrv.sys`). The replay approach was used because of VM storage constraints. It does not establish detection rates, false-negative rates, or broad technique coverage.
+Windows detection coverage comes from replayed Sysmon `.evtx` telemetry processed on SENTINEL-LINUX01, not from a monitored Windows host.
 
 ---
 
-## Roadmap
+## Detections
+
+| Family | Rule IDs | Detection intent | Rule file |
+|---|---|---|---|
+| File Integrity Monitoring | `100002` (modification), `100003` (creation), `100004` (deletion) | Alert on file changes under `/home` (anchored regex `^/home/`). `100002` is chained to built-in parent Rule `550`. | [`detections/local_rules.xml`](detections/local_rules.xml) |
+| SSH authentication | `100200` (authentication failure), `100201` (repeated-failure escalation) | Detect failed SSH logins and escalate repeated failures. | [`detections/sentinel_ssh_bruteforce_rules.xml`](detections/sentinel_ssh_bruteforce_rules.xml) |
+| Sysmon replay | Base rules `100100–100104`; attack rules `100110`, `100111`, `100112`, `100120`, `100130`, `100131`, `100140` | Evaluate replayed Sysmon events: process creation, script execution, `comsvcs.dll` MiniDump-related activity, PowerShell network egress, and `lsass.exe` / `rundll32.exe` process access. Level 0 Rule `100101` suppresses benign `services.exe → svchost.exe` events. | [`detections/sentinel_sysmon_replay_rules.xml`](detections/sentinel_sysmon_replay_rules.xml) |
+
+More detail: [Detections guide](detections/readme.md) · [Detection engineering](docs/05-detection-engineering.md).
+
+**How to read these alerts.** A rule firing is detection intent meeting observed telemetry. It is not a confirmed finding. A file modification, creation or deletion does not by itself show tampering, payload delivery or defence evasion. A PowerShell network connection does not show a file transfer. `lsass.exe` access does not show successful credential dumping, and a dump-like file does not show a successful LSASS dump. Investigation findings are recorded separately in the case files.
+
+**MITRE ATT&CK.** Where ATT&CK references appear in the detection documentation, they describe detection intent or observed indicators. Generic file events do not independently establish any ATT&CK technique, and no tag in this repository should be read as a confirmed attack technique. Project-level ATT&CK mapping is future work.
+
+---
+
+## Milestone history
+
+Status wording used in this README:
+
+- **Complete** — the documented scope of the milestone was finished.
+- **Implemented and merged on `main`** — the work is in the main branch; additional validation or retesting may still be outstanding.
 
 | Version | Focus | Status |
 |---|---|---|
 | v0.1 | Foundation — infrastructure, network, Wazuh deployment | Complete |
-| v0.2 | Telemetry and detection engineering — FIM Rules `100002`–`100004` (MITRE mapped) | Complete |
-| v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 evidence reconciliation closed; investigation open) |
-| v0.4 | Windows Sysmon Replay & Cross-Platform Detection — CASE-002 | Complete |
-| v0.5 | Incident Response — SSH brute-force IR & triage (`CASE-003`) | Complete |
-| v0.6 | Purple-Team Measurement — controlled FIM, Sysmon & SSH suites | Complete |
-| v0.7 | Attack DNA & Mutation Testing (`CASE-004`) | Complete (transcripts restored & checksums verified) |
-| v0.8 | FIM group isolation, tuning & Agent 002 probe | Merged on `main` (noise-suppression retest pending) |
-| v0.9 | Sysmon JSON replay ingestion & triage integration (`v0.9.1` cleanup) | Merged on `main` (replay-based; live Windows agent out-of-scope) |
+| v0.2 | Telemetry and detection engineering — FIM Rules `100002`–`100004` | Complete — 18 Nov 2026; documentation and evidence reconciled retroactively (see below) |
+| v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 evidence reconciliation closed; investigation remains open) |
+| v0.4 | Windows Sysmon replay and cross-platform detection — CASE-002 | Complete — 19 Nov 2026 |
+| v0.5 | SSH brute-force detection and triage — CASE-003 | Complete |
+| v0.6 | Controlled purple-team measurement and testing | Complete |
+| v0.7 | Mutation testing, logtest validation and reliability investigation — CASE-004 | Complete |
+| v0.8 | FIM group isolation, noise reduction and tuning (including an Agent 002 probe) | Implemented and merged on `main`; noise-suppression retest pending |
+| v0.9 | Sysmon JSON replay ingestion and Python-assisted triage integration | Implemented and merged on `main`; replay-based, live Windows agent out of scope |
+| v0.9.1 | Subsequent documentation, detection-inventory and metrics/status alignment | Documentation and alignment milestone |
 | Future | Custom SENTINEL console over Wazuh; live Windows/AD endpoint | Planned |
 
-Outstanding work (not yet in place):
-- Investigation of the 16 Oct discrepancy and of the differences between the 16 and 31 Oct observations.
-- Verification of historical loaded configurations and in-memory rule behavior.
-- Broader false-positive/false-negative testing, a repeatable regression suite, and detection tuning with validation of its effectiveness.
-- Measured detection rates and comprehensive FIM and Sysmon coverage.
-- Live Windows endpoint telemetry (real Sysmon driver and Wazuh Windows agent), auth telemetry, threat hunting, additional cases, and project-level MITRE ATT&CK mapping.
-- A fully evidenced containment, eradication, and recovery exercise remains outstanding (`CASE-003` documents SSH brute-force investigation and response planning rather than a complete executed IR lifecycle).
+Dates for v0.5–v0.9.1 are not restated here; see the [Changelog](CHANGELOG.md) and each evidence index.
+
+### v0.1–v0.3 — Foundation and FIM investigation (summary)
+
+- **v0.1:** Wazuh infrastructure, isolated network and Linux agent deployment ([evidence](evidence/v0.1/)).
+- **v0.2:** custom FIM Rules `100002`–`100004`, completed 18 Nov 2026. Its documentation and evidence reconciliation were completed retroactively, after some v0.3 work; dates are kept as recorded.
+- **v0.3:** CASE-001 evidence reconciliation is closed for the reviewed scope. The broader FIM investigation remains open.
+- **Unresolved discrepancy (16 Oct):** the reviewed creation and deletion records showed built-in Rules `554` and `553`, and Rule `100002` was absent. The reason is unresolved. No root cause is claimed, and this is not labelled a confirmed detection failure.
+- **Controlled lifecycle test (2 Nov):** the creation, modification and deletion of one dedicated file matched custom Rules `100003`, `100002` and `100004`. This was one session on one file, not a repeatability test.
+- **Configuration evidence:** [E14](evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) is the endpoint's Syscheck configuration. [E15](evidence/v0.3/screenshots/v0.3-e15-manager-syscheck-configuration.png) is the manager's configuration only.
+
+The full chronology, evidence and limitations are in [CASE-001](investigations/CASE-001.md), the [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) and the [v0.2 evidence index](evidence/v0.2/readme.md).
+
+### v0.4 — Windows Sysmon replay and cross-platform detection (19 Nov 2026)
+
+On SENTINEL-LINUX01 (Agent ID `002`), `evtx_to_wazuh.py` converted 3 pre-recorded Windows Sysmon `.evtx` captures into 12 NDJSON records (24 lines replayed), which were ingested through a `json` `<localfile>`. SENTINEL-WAZUH evaluated them against a dedicated ruleset, `/var/ossec/etc/rules/sentinel_sysmon_replay_rules.xml` (`100100–100140`). See [CASE-002](investigations/CASE-002.md).
+
+- **Noise suppression:** 3 benign `services.exe → svchost.exe` events were classified under Level 0 Rule `100101` (base rules `100100–100104`), and no alerts were emitted for them.
+- **Detections:** all 7 selected replay detections fired (`100110`, `100111`, `100112`, `100120`, `100130`, `100131`, `100140`) at Levels 8–14, covering process creation, script execution, `comsvcs.dll` MiniDump-related activity, PowerShell network egress, and `lsass.exe` / `rundll32.exe` process access. These are replayed samples evaluated against rules. They are not seven confirmed attacks.
+- **Evidence:** 7 raw alert records in [`evidence/sysmon-replay/sysmon_alerts_raw.json`](evidence/sysmon-replay/sysmon_alerts_raw.json), SHA-256 `b53473fd6340ec17365fec9cbbc1403e445523322c4c84ae28e40882995d7a59` (also in [`sysmon_alerts_raw.sha256`](evidence/sysmon-replay/sysmon_alerts_raw.sha256); replay notes in the [Sysmon replay readme](evidence/sysmon-replay/readme.md)).
+- **Baseline integrity:** `local_rules.xml` (`100001–100004`, including FIM Rule `100002`) was not modified.
+- **Scope boundary:** this validated replayed `.evtx` telemetry on Linux, not a live Windows host or the Sysmon kernel driver (`SysmonDrv.sys`). The replay approach was used because of VM storage constraints. The original `.evtx` captures are referenced in the documentation but are not committed to this repository.
+
+### v0.5 — SSH brute-force detection and triage
+
+Kali was used to generate controlled, simulated SSH authentication failures against the lab. Custom rules `100200` (authentication failure) and `100201` (repeated-failure escalation) were written and investigated. [CASE-003](investigations/CASE-003.md) documents the SSH brute-force investigation and response planning. It does not document an executed containment, eradication and recovery lifecycle. Evidence: [v0.5 index](evidence/v0.5/readme.md) · [Incident response](docs/06-incident-response.md).
+
+### v0.6 — Controlled purple-team measurement and testing
+
+Controlled FIM, Sysmon replay and SSH test suites with recorded results. Summary and caveats are in [Testing and Metrics](#testing-and-metrics). Evidence: [v0.6 index](evidence/v0.6/readme.md) · [measurement report](metrics/v0.6-purple-team-measurement.md).
+
+### v0.7 — Mutation testing, logtest validation and reliability investigation
+
+[CASE-004](investigations/CASE-004.md) covers variations of earlier test activity ("mutations"), checked against rules with Wazuh logtest, and a reliability investigation. Earlier roadmap notes called this work "Attack DNA". Terminal transcripts for this work were restored; checksum handling for them is documented with the evidence. Evidence: [v0.7 evidence folder](evidence/v0.7/).
+
+### v0.8 — FIM group isolation, noise reduction and tuning
+
+Changes to isolate FIM monitoring by agent group, reduce FIM noise and tune the configuration, including a probe of Agent `002`. Implemented and merged on `main`. The retest that would show whether noise suppression works after tuning is still pending.
+
+### v0.9 — Sysmon JSON replay ingestion and Python-assisted triage integration
+
+Extends the v0.4 replay approach with JSON ingestion and Python-assisted triage of the resulting alerts. Implemented and merged on `main`. Still replay-based; a live Windows agent is out of scope. Evidence: [v0.9 index](evidence/v0.9/readme.md) · [Python tooling](#python-tooling).
+
+### v0.9.1 — Documentation, detection inventory and metrics/status alignment
+
+A subsequent milestone that aligned documentation, the detection inventory and metrics/status wording across the repository. It adds no new detection or telemetry capability.
 
 ---
 
-## Documentation & Evidence
+## Testing and Metrics
+
+The v0.6 controlled measurement ([report](metrics/v0.6-purple-team-measurement.md), [evidence](evidence/v0.6/readme.md)) produced these results:
+
+| Test | Result |
+|---|---|
+| FIM lifecycle (create / modify / delete) | 3/3 selected events detected |
+| Sysmon replay | 7/7 selected replay detections fired |
+| Benign Sysmon events | 3 suppressed (no alerts) |
+| `/tmp` negative controls (outside the monitored path) | 0/3 FIM alerts, as expected |
+| SSH threshold / sliding-window behaviour | Investigated; see the report for what was observed |
+
+**These are small, controlled samples.** They are not enterprise detection rates, not general detection accuracy, not production false-positive rates, and not proof of complete coverage. They show that selected, pre-planned test cases behaved as intended in this lab.
+
+These measurements describe the v0.6 test baseline. They should not be interpreted as post-v0.8 tuning results; the dedicated post-tuning noise-suppression retest remains pending.
+
+**Clock skew.** The endpoint and manager clocks were not synchronised, which affected some timing measurements. Negative time deltas appear in that data. A negative delta is a clock artefact and must not be read as detection latency. Only positive deltas from correctly synchronised clocks would be valid latency figures, and the report should be read with that in mind.
+
+Methodology: [Testing and metrics](docs/07-testing-and-metrics.md).
+
+---
+
+## Python tooling
+
+- **[`scripts/evtx_to_wazuh.py`](scripts/evtx_to_wazuh.py)** — in this repository. Converts pre-recorded Windows Sysmon `.evtx` captures into NDJSON records that Wazuh ingests through a `json` `<localfile>` on SENTINEL-LINUX01 (used in v0.4 and extended in v0.9).
+- **[Python SOC Automation Engine](https://github.com/andyydz/python-soc-automation)** — a separate repository, maintained independently (Wazuh alert parsing and triage logic). The v0.9 triage work connects replay output to Python-assisted triage; see the [v0.9 index](evidence/v0.9/readme.md) for what was actually run. It is not a production Wazuh integration.
+
+---
+
+## Scope and Limitations
+
+What this lab is: a small, isolated, Linux-first environment used for controlled experiments and documented investigations.
+
+What is not in place:
+
+- **No live Windows endpoint** is monitored by the lab, and **no Active Directory** environment exists. Windows Sysmon telemetry is replayed from pre-recorded captures. The real Sysmon driver and a Wazuh Windows agent are future work, as is live Windows telemetry validation.
+- **No production SOC claims.** Results come from small controlled samples (see [Testing and Metrics](#testing-and-metrics)). They do not establish detection rates, false-negative rates, or comprehensive FIM, SSH or Sysmon coverage.
+- **Broader FP/FN testing and a repeatable regression suite** are not in place. Detection tuning exists (v0.8), but the post-tuning noise-suppression retest is still pending.
+- **Open FIM questions:** the 16 Oct discrepancy (built-in Rules `554`/`553` seen, Rule `100002` absent) and the differences between the 16 and 31 Oct observations are not resolved. Historical loaded configuration and in-memory rule behaviour are not verified.
+- **Response is documented, not fully exercised.** Three levels are kept apart in this repository:
+  1. a *documented procedure* (for example, in [Incident response](docs/06-incident-response.md));
+  2. a *manually investigated alert* (for example, [CASE-003](investigations/CASE-003.md));
+  3. an *action actually executed and supported by evidence*.
+
+  A fully evidenced containment, eradication and recovery exercise has not been carried out.
+- **Detections do not prove malicious activity.** Alerts and any ATT&CK references describe detection intent and observed indicators (see [Detections](#detections)).
+- **Not every source record is committed.** The reviewed 16 October alert records came from the Wazuh runtime log, and the repository does not claim to contain an exported copy. Raw alert records for 31 October and 2 November are likewise not committed; those results rest on terminal screenshots. The original `.evtx` captures are not committed. The v0.4 raw alerts are committed with a recorded SHA-256.
+- **Other future work:** auth telemetry beyond the SSH work, threat hunting, additional cases, project-level MITRE ATT&CK mapping, and a custom SENTINEL console over Wazuh.
+
+---
+
+## Documentation and Evidence
 
 | Area | Links |
 |---|---|
-| **Methodology** | [Detection engineering](docs/05-detection-engineering.md) · [Incident response](docs/06-incident-response.md) · [Testing and metrics](docs/07-testing-and-metrics.md) |
+| **Methodology** | [Detection engineering](docs/05-detection-engineering.md) · [Incident response](docs/06-incident-response.md) · [Testing and metrics](docs/07-testing-and-metrics.md) · [`docs/` folder (files 01–08)](docs/) |
 | **Investigations** | [CASE-001](investigations/CASE-001.md) · [CASE-002](investigations/CASE-002.md) · [CASE-003](investigations/CASE-003.md) · [CASE-004](investigations/CASE-004.md) · [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) · [Investigations guide](investigations/readme.md) |
-| **Detections** | [Detections guide](detections/readme.md) · [Sysmon replay ruleset](detections/sentinel_sysmon_replay_rules.xml) |
-| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) · [v0.5 index](evidence/v0.5/readme.md) · [v0.6 index](evidence/v0.6/readme.md) · [v0.7 evidence](evidence/v0.7/) · [v0.9 index](evidence/v0.9/readme.md) · [v0.6 metrics](metrics/v0.6-purple-team-measurement.md) |
+| **Detections** | [Detections guide](detections/readme.md) · [FIM rules](detections/local_rules.xml) · [SSH rules](detections/sentinel_ssh_bruteforce_rules.xml) · [Sysmon replay ruleset](detections/sentinel_sysmon_replay_rules.xml) |
+| **Scripts** | [`evtx_to_wazuh.py`](scripts/evtx_to_wazuh.py) |
+| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) · [v0.5 index](evidence/v0.5/readme.md) · [v0.6 index](evidence/v0.6/readme.md) · [v0.7 evidence](evidence/v0.7/) · [v0.9 index](evidence/v0.9/readme.md) |
+| **Metrics** | [v0.6 purple-team measurement](metrics/v0.6-purple-team-measurement.md) |
 | **v0.2 reports** | [Infrastructure and telemetry foundation](evidence/v0.2/infrastructure-and-telemetry-foundation.md) · [Wazuh–Linux01 integration](evidence/v0.2/wazuh-linux01-integration.md) · [SCA baseline](evidence/v0.2/sca-baseline.md) |
 | **Project** | [Security policy](SECURITY.md) · [Changelog](CHANGELOG.md) |
-
-Not every source record is committed. The reviewed 16 October alert records came from the Wazuh runtime log, and the repository does not claim to contain an exported copy. Raw alert records for 31 October and 2 November are likewise not committed; those results rest on terminal screenshots. The v0.4 raw alerts are committed with a recorded SHA-256.
 
 ---
 
