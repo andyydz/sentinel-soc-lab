@@ -45,24 +45,20 @@ Each project version gets its own evidence directory, kept separate so the proje
 
 ---
 
-## 4. Version-Specific Evidence
+## 4. Version & Replay Evidence Directories
 
-| Version | Focus |
+| Directory / Scope | Focus & Status |
 |---|---|
-| v0.1 | Foundation and infrastructure evidence (e.g., Wazuh Dashboard agent status, agent service status, network verification, infrastructure verification) |
-| v0.2 | *(Future)* Linux telemetry and initial detection evidence |
-| v0.3 | *(Future)* SOC investigation evidence |
-| v0.4 | *(Future)* Incident response evidence |
-| v0.5 | *(Future)* Purple-team testing, measurement, and validation evidence |
-| v0.6 | *(Future)* Attack DNA, mutation, and detection-resilience evidence |
+| `v0.1/` | Foundation and infrastructure evidence (Wazuh manager/agent baseline and connectivity) |
+| `v0.2/` | Linux telemetry and initial detection engineering evidence |
+| `v0.3/` | FIM lifecycle validation and `CASE-001` investigation evidence |
+| `sysmon-replay/` | Replayed Windows Sysmon JSON/EVTX ingestion and detection alerts (`CASE-002`) |
+| `v0.5/` | SSH brute-force incident response and triage evidence (`CASE-003`) |
+| `v0.6/` | Purple-team measurement and controlled test evidence |
+| `v0.7/` | Attack DNA and mutation testing evidence (`CASE-004`) |
+| `v0.9/` | Sysmon JSON replay ingestion & triage integration artifacts (replay-based; live Windows agent out-of-scope) |
 
-Only v0.1 currently contains real evidence. No future-version evidence is claimed to exist.
-
----
-
-## 5. Current v0.1 State
-
-**Current project phase:** v0.1 — Foundation.
+Evidence scope boundaries are documented alongside each milestone in `README.md`, `CHANGELOG.md`, and the corresponding `CASE-001` through `CASE-004` records.
 
 The repository currently contains actual v0.1 infrastructure evidence, which may include the Wazuh Agent running, the Dashboard showing the agent as active, and final infrastructure verification artifacts. No attack, detection, investigation, response, or mutation evidence exists yet — none is claimed here.
 
