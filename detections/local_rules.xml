@@ -12,37 +12,44 @@
     <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
   </rule>
 
-  <!-- Rule 100002: File modification -->
+</group>
+
+<group name="local,syscheck,sentinel_fim,">
+
+  <!-- Rule 100002: File modification (excludes tracker3 & nautilus DB churn; preserves hidden dot-paths) -->
   <rule id="100002" level="8">
     <if_sid>550</if_sid>
     <field name="file">^/home/</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
     <description>SENTINEL: File integrity modification detected in monitored home directory.</description>
     <mitre>
       <id>T1565.001</id>
     </mitre>
-    <group>sentinel_fim,</group>
+    <group>fim_modify,sentinel_fim,</group>
   </rule>
 
   <!-- Rule 100003: File creation -->
   <rule id="100003" level="8">
     <if_sid>554</if_sid>
     <field name="file">^/home/</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
     <description>SENTINEL: New file created in monitored home directory.</description>
     <mitre>
       <id>T1105</id>
     </mitre>
-    <group>sentinel_fim,</group>
+    <group>fim_create,sentinel_fim,</group>
   </rule>
 
   <!-- Rule 100004: File deletion -->
   <rule id="100004" level="8">
     <if_sid>553</if_sid>
     <field name="file">^/home/</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
     <description>SENTINEL: File deleted from monitored home directory.</description>
     <mitre>
       <id>T1070.004</id>
     </mitre>
-    <group>sentinel_fim,</group>
+    <group>fim_delete,sentinel_fim,</group>
   </rule>
 
 </group>

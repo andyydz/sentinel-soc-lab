@@ -121,3 +121,11 @@ Note: the Testing & Metrics document currently records the Rule 100002 validatio
 - Any rule change resets that detection's status to "implemented" until a controlled retest is documented. This includes any change made to resolve the open Rule 100002 questions above.
 - This README is updated whenever a detection changes status; the Testing & Metrics document is updated in the same commit.
 - Evidence is never edited retroactively; a changed result is recorded as a new test.
+
+## v0.8 Reliability Tuning Notes (Configured & Manager-Validated)
+
+- **FIM group isolation (`detections/local_rules.xml`):** Moved custom FIM rules `100002` (modify, `T1565.001`), `100003` (create, `T1105`), and `100004` (delete, `T1070.004`) out of the `sshd` group block into `<group name="local,syscheck,sentinel_fim,">` so FIM alerts no longer inherit `sshd`.
+- **Surgical noise exclusion vs. hidden-path coverage:** Added negated PCRE2 `file` conditions on `100002`–`100004` to filter `^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)` based on `v0.7` raw alert telemetry (`evidence/v0.7/fim_mutation_alerts_raw.json`), while deliberately preserving hidden dot-directory/file monitoring (such as `/home/sentinel-admin/.v07-hidden-dir/.v07-payload.sh`).
+- **SSH frequency/window check (`sentinel_ssh_bruteforce_rules.xml`):** Verified in a stateful `wazuh-logtest` session that six sequential SSH authentication failures (`100200`, Level 5) from `10.10.10.20` within `60s` trigger `100201` (Level 10, `T1110`/`T1110.001`).
+- **Validation boundary:** `wazuh-analysisd -t` and `wazuh-manager` reload succeeded on `SENTINEL-WAZUH`; live endpoint FIM re-verification on `SENTINEL-LINUX01` remains a controlled test step before claiming live suppression effectiveness.
+
