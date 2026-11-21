@@ -20,7 +20,7 @@ The project's guiding question is: does your detection still work when the attac
 - **Documented:** CASE-001, an evidence-backed investigation. Evidence reconciliation for the reviewed scope is closed; the overall case remains open.
 - **Unresolved:** Rule "100002" was absent from the reviewed 16 October creation and deletion records, which showed built-in Rules "554" and "553". The reason is unknown; this is not a confirmed detection miss.
 - **Not done:** live Windows/Active Directory telemetry, full automated regression suite, and exhaustive false-positive/false-negative benchmarks across all paths.
-- **Project status:** v0.1–v0.7 complete (CASE-001–004 + v0.6 purple-team metrics; v0.7 logtest transcripts restored and checksum-verified); v0.8 planned.
+- **Project status:** v0.1–v0.7 complete (CASE-001–004 + v0.6 purple-team metrics; v0.7 logtest transcripts restored and checksum-verified); v0.8 (FIM group isolation/Agent 002 probe) and v0.9 (Sysmon JSON replay ingestion & evidence) merged on main; post-tuning noise suppression retest and live Windows agent telemetry remain pending/out-of-scope.
 
 ---
 
