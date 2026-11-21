@@ -1,5 +1,50 @@
+# CASE-004 Suite C — SSH Sub-Threshold & Benign Publickey Login (wazuh-logtest single session)
+Date (IST): 2026-11-21 11:23:25 +0530
 
+=== INPUTS (4 events in single stateful wazuh-logtest session) ===
+Nov 20 22:05:01 sentinel-linux01 sshd[4101]: Failed password for invalid user admin from 10.10.10.20 port 51201 ssh2
+Nov 20 22:05:03 sentinel-linux01 sshd[4102]: Failed password for invalid user root from 10.10.10.20 port 51202 ssh2
+Nov 20 22:05:05 sentinel-linux01 sshd[4103]: Failed password for invalid user ops from 10.10.10.20 port 51203 ssh2
+Nov 20 22:05:10 sentinel-linux01 sshd[4104]: Accepted publickey for sentinal-admin from 10.10.10.20 port 51204 ssh2
 
-
-
-
+=== WAZUH-LOGTEST OUTPUT ===
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '100200'
+	level: '5'
+	description: 'SENTINEL SSH: Authentication failure observed on monitored host.'
+	groups: '['local', 'syslog', 'sshd', 'sentinel_ssh_bruteforce', 'authentication_failed', 'sentinel_ssh_bruteforce']'
+	mitre.id: '['T1110']'
+	mitre.tactic: '['Credential Access']'
+	mitre.technique: '['Brute Force']'
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '100200'
+	level: '5'
+	description: 'SENTINEL SSH: Authentication failure observed on monitored host.'
+	groups: '['local', 'syslog', 'sshd', 'sentinel_ssh_bruteforce', 'authentication_failed', 'sentinel_ssh_bruteforce']'
+	mitre.id: '['T1110']'
+	mitre.tactic: '['Credential Access']'
+	mitre.technique: '['Brute Force']'
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '100200'
+	level: '5'
+	description: 'SENTINEL SSH: Authentication failure observed on monitored host.'
+	groups: '['local', 'syslog', 'sshd', 'sentinel_ssh_bruteforce', 'authentication_failed', 'sentinel_ssh_bruteforce']'
+	mitre.id: '['T1110']'
+	mitre.tactic: '['Credential Access']'
+	mitre.technique: '['Brute Force']'
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '5715'
+	level: '3'
+	description: 'sshd: authentication success.'
+	groups: '['syslog', 'sshd', 'authentication_success']'
+	mitre.id: '['T1078', 'T1021']'
+	mitre.tactic: '['Defense Evasion', 'Persistence', 'Privilege Escalation', 'Initial Access', 'Lateral Movement']'
+	mitre.technique: '['Valid Accounts', 'Remote Services']'

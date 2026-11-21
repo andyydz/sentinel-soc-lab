@@ -292,3 +292,6 @@ No complete detection coverage or finished SOC workflow is claimed.
 - ⬜ Threat hunting and additional investigation cases remain planned; future investigations should receive unique case IDs and follow the evidence-first principles described in this guide.
 - ⬜ Attack Mutation is not implemented.
 - ⬜ No containment, eradication, or recovery exercise has been completed.
+- [CASE-002.md](CASE-002.md) — Windows Sysmon `.evtx` replay and rule validation (`100100–100140`).
+- [CASE-003.md](CASE-003.md) — SSH brute-force detection, triage, and response documentation (`100200–100201`).
+- [CASE-004.md](CASE-004.md) — Attack mutation, evasion testing, and benign noise filtering (`v0.7`).
