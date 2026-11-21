@@ -11,8 +11,16 @@ Design methodology is covered in `../docs/05-detection-engineering.md`; test res
 | ID | Detection | Status | Scenario and evidence basis |
 |---|---|---|---|
 | — | Wazuh custom Rule 100002 (Level 8): FIM file-modification alert on monitored paths | Validated (modification scenarios tested only) | Controlled modifications of `/home/sentinel-admin/sentinel-fim-validation.txt` (11 October 2026) and `/home/sentinel-admin/sentinel-v02-mod-test.txt` (26 October 2026); expected Level 8 alerts observed |
-| — | Wazuh custom Rule 100003 (Level 8): FIM file-creation alert | Observed, not validated through controlled testing | Alert observed on 31 October 2026 (~18:51:56 IST) under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/`; trigger origin not established |
-| — | Wazuh custom Rule 100004 (Level 8): FIM file-deletion alert | Observed, not validated through controlled testing | Alert observed on 31 October 2026 (~18:51:56 IST) under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/`; trigger origin not established |
+| — | Wazuh custom Rule 100003 (Level 8): FIM file-creation alert | Controlled lifecycle test (2 Nov) + prior 31 Oct observation | Controlled lifecycle test recorded on `/home/sentinel-admin/sentinel-v03-final-test.txt` (2 Nov); prior 31 Oct alert under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/` had unestablished trigger origin |
+| — | Wazuh custom Rule 100004 (Level 8): FIM file-deletion alert | Controlled lifecycle test (2 Nov) + prior 31 Oct observation | Controlled lifecycle test recorded on `/home/sentinel-admin/sentinel-v03-final-test.txt` (2 Nov); prior 31 Oct alert under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/` had unestablished trigger origin |
+
+### Consolidated Detection Inventory
+
+| Family | Rules | Telemetry | Validation & Scope Notes |
+|---|---|---|---|
+| Linux FIM | `100002`–`100004` (`detections/local_rules.xml`) | Wazuh Syscheck (`SENTINEL-LINUX01`) | Controlled lifecycle and v0.8 group/noise updates; post-tuning noise retest pending |
+| SSH | `100200`–`100201` | Linux auth logs (`SENTINEL-KALI` tests) | Controlled brute-force/threshold checks (`CASE-003` / `v0.7`) |
+| Windows Sysmon | `100100`–`100140` (`detections/sentinel_sysmon_replay_rules.xml`) | Replayed Sysmon JSON/EVTX | Selected behavioral detections validated on replay data (`CASE-002` / `v0.9`); not live Windows agent |
 
 Implementation details (Rule 100002):
 
@@ -21,7 +29,7 @@ Implementation details (Rule 100002):
 - Test record and investigation: `../investigations/CASE-001.md` and `../investigations/fim-rule-100002-investigation.md`
 - Evidence directories: `../evidence/v0.3/` (earlier pipeline evidence: `../evidence/v0.2/`)
 
-The definitions of Rules 100003 and 100004 have not been reviewed for this README, and their configuration location and matching behavior are not documented here.
+Custom FIM rules `100002`–`100004` are maintained in `detections/local_rules.xml` (`<group name="local,syscheck,sentinel_fim,">`) and Sysmon replay rules `100100`–`100140` in `detections/sentinel_sysmon_replay_rules.xml`.
 
 **Confirmed validation scope (Rule 100002, modification only):**
 
@@ -67,7 +75,7 @@ What "validated" does not mean here:
 - Systematic false-negative testing: not yet performed. The absence of Rule 100002 from the two reviewed records is an open question, not a measured miss rate.
 - Repeatable regression testing: not yet established. Individual tests and observations are not a regression suite.
 - Tuning: not performed. The reported `/home/` matching scope remains an area for further noise evaluation.
-- MITRE ATT&CK mapping: planned, none exists yet.
+- MITRE ATT&CK mapping: documented as candidate/contextual mappings in rule files, detection docs, and investigation records (not standalone proof of malicious intent).
 
 No portable rule artifact has been committed to this directory, and no per-detection subdirectory (e.g., `DET-001/`) exists yet. Both are planned once the detection content matures past single-scenario validation.
 

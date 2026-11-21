@@ -102,7 +102,7 @@ Outstanding work (not yet in place):
 - Broader false-positive/false-negative testing, a repeatable regression suite, and detection tuning with validation of its effectiveness.
 - Measured detection rates and comprehensive FIM and Sysmon coverage.
 - Live Windows endpoint telemetry (real Sysmon driver and Wazuh Windows agent), auth telemetry, threat hunting, additional cases, and project-level MITRE ATT&CK mapping.
-- A containment, eradication, or recovery exercise, and everything in v0.5 and later.
+- A fully evidenced containment, eradication, and recovery exercise remains outstanding (`CASE-003` documents SSH brute-force investigation and response planning rather than a complete executed IR lifecycle).
 
 ---
 

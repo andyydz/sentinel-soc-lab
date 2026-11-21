@@ -29,7 +29,7 @@ The project's guiding question is: does your detection still work when the attac
 ### Windows Sysmon Telemetry Replay & Attack Detection (v0.4 milestone)
 
 - **Telemetry replay:** replayed Windows Sysmon `.evtx` captures (Event IDs 1, 3, 10, 11) via `SENTINEL-LINUX01` using `python-evtx` NDJSON conversion and `wazuh-logcollector` ingestion (`json` format).
-- **Detections validated:** custom ruleset `sentinel_sysmon_replay_rules.xml` (`100100+`). Validated 7 distinct attack alerts: Rule `100110` (Level 12, `T1059.003`), Rule `100111` (Level 10, `T1059.005`), Rule `100112` (Level 13, `T1003.001`/`T1218.011`), Rule `100140` (Level 10, `T1003.001`), Rule `100131` (Level 12, `T1003.001`/`T1218.011`), Rule `100120` (Level 8, `T1059.001`/`T1105`), and Rule `100130` (Level 14, `T1003.001`).
+- **Detections validated:** custom ruleset `sentinel_sysmon_replay_rules.xml` (`100100+`). Validated 7 distinct attack alerts: Rule `100110` (Level 12, `T1059.003`), Rule `100111` (Level 10, `T1059.005`), Rule `100112` (Level 13, `T1003.001`/`T1218.011`), Rule `100140` (Level 10, `T1003.001`), Rule `100131` (Level 12, `T1003.001`/`T1218.011`), Rule `100120` (Level 8, `T1059.001`; candidate `T1105`), and Rule `100130` (Level 14, `T1003.001`).
 - **Noise filtering:** base structural rules (`100100`-`100104`, Level 0) suppressed alert noise for 3 benign `services.exe -> svchost.exe` process creates.
 - **Evidence preserved:** raw alert events committed to `evidence/sysmon-replay/sysmon_alerts_raw.json` with SHA-256 `b53473fd6340ec17365fec9cbbc1403e445523322c4c84ae28e40882995d7a59`. Full investigation write-up in `investigations/CASE-002.md`.
 - **Scope & limitations:** validates parser, decoder, and rule logic against replayed EVTX logs; does not validate live kernel driver (`SysmonDrv.sys`) telemetry on bare-metal Windows.
@@ -122,7 +122,7 @@ Five separate dated evidence sets. They represent distinct observations or contr
 
 - v0.6 — Purple-Team Measurement (Complete — metrics/v0.6-purple-team-measurement.md): detection coverage, detection rate and time, response time, false-positive/false-negative analysis, regression testing, before/after comparison.
 - v0.7 — Attack DNA & Mutation (Complete — CASE-004): hidden-path FIM testing, benign cache/desktop noise observation, Sysmon `#24` mutation testing, SSH sub-threshold/publickey checks, and `wazuh-logtest` transcript restoration.
-- v0.8 — Reliability Tuning, Triage & Flagship Polish (Planned): FIM group/rule cleanup, SSH threshold boundary testing, noise vs. hidden-path tuning, and documentation/evidence consistency.
+- v0.8 & v0.9 — FIM Group Isolation, Noise/Hidden-Path Tuning, SSH Checks & Sysmon Replay (`v0.9.1` cleanup): Complete and merged on `main` (post-tuning noise-suppression retest and live Windows endpoint telemetry remain pending/out-of-scope).
 
 **Future expansion:** Windows and Active Directory endpoints (deferred from the core path), and a custom SENTINEL console on top of Wazuh (incident visualization, detection timelines, MITRE ATT&CK mapping, metrics, Attack DNA visualization, case reporting). Not currently implemented.
 

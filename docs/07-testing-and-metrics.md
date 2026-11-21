@@ -108,7 +108,7 @@ No controlled attack scenario, response action, or repeatable regression/mutatio
 | Mean Time to Detect (MTTD) | Time between activity occurring and a detection firing | Not measured |
 | Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured — response capability not yet implemented |
 | Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **confirmed to fire for the documented controlled modification scenarios only**. Creation and deletion by Rule 100002: not validated — reviewed records show built-in Rules 554 and 553 with Rule 100002 absent; open coverage question. Rules 100003 (creation) and 100004 (deletion): **observed once each on 31 October 2026, not validated** — trigger origin unestablished, definitions not reviewed, and not counted as controlled test executions. No false-positive/false-negative suite, repeatable regression suite, or tuning result exists. |
-| MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Planned — no mappings exist yet |
+| MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Candidate/contextual mappings documented in rule/detection/case files; replay/test scope boundaries apply |
 
 No numerical values are reported above, because there isn't yet enough test data to support a rate or trend, and none are calculated from the October records. The 31 October observations are not used to calculate any rate. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
 
