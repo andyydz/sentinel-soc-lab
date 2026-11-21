@@ -37,6 +37,16 @@ These validate the tested modification scenarios only. They do not establish com
 - The paths are in an application configuration directory. Whether the events were deliberately triggered or ordinary application activity has not been established, and no process attribution or root cause exists.
 - These are **observed alerts**, not controlled-test validations. They show that each rule fired in the observed instance only; they do not establish repeatability, behavior for other paths or file types, or complete FIM coverage.
 - The 11 October and 26 October modification tests, the 16 October built-in-rule observations, and the 31 October custom-rule observations were separate sessions. They do not constitute one end-to-end lifecycle test. Rule 100002 is not claimed to handle creation or deletion.
+## 2. Sysmon Replay Ruleset (`sentinel_sysmon_replay_rules.xml`)
+
+Defined in `sentinel_sysmon_replay_rules.xml` (`100100`–`100140`) and exercised via Sysmon replay telemetry (`CASE-002` and `v0.9` JSON ingestion):
+
+- **Base filters (`100100`–`100104`, Level 0):** Match `Microsoft-Windows-Sysmon` JSON events for EID 1 (`100101`), EID 3 (`100102`), EID 10 (`100103`), and EID 11 (`100104`) without generating alerts.
+- **Candidate behavioral detections (`100110`, `100111`, `100112`, `100120`, `100130`, `100131`, `100140`):** Mapped to candidate MITRE ATT&CK techniques (`T1059.003`/`T1059.001`, `T1059.005`, `T1003.001`/`T1218.011`, `T1105`) as triage hypotheses from replayed Sysmon fields—not standalone proof of confirmed malicious execution or complete post-exploitation activity.
+- **Scope boundary:** Validated on replayed telemetry ingested through `SENTINEL-LINUX01` (`Agent 002`) into `SENTINEL-WAZUH`, not a live Windows endpoint or live `SysmonDrv.sys` kernel stream.
+
+---
+
 **16 October 2026 reviewed records** (`/home/sentinel-admin/sentinel-audit-test.txt`):
 
 | Event | Rule shown in reviewed record | Timestamp | Rule 100002 |

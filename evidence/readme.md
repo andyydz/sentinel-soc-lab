@@ -30,13 +30,15 @@ This directory preserves **what actually happened**, not what the project intend
 
 ```
 evidence/
-├── README.md
+├── readme.md
+├── sysmon-replay/
 ├── v0.1/
 ├── v0.2/
 ├── v0.3/
-├── v0.4/
 ├── v0.5/
-└── v0.6/
+├── v0.6/
+├── v0.7/
+└── v0.9/
 ```
 
 Each project version gets its own evidence directory, kept separate so the project's evolution can be reconstructed later.
