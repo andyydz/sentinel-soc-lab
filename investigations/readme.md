@@ -269,7 +269,7 @@ Open detection-engineering work includes:
 
 No complete detection coverage or finished SOC workflow is claimed.
 
-> Attack DNA and Attack Mutation are not currently implemented in SENTINEL. A future use of this directory may be to record how attacker behavior and detection performance change under mutation.
+> Attack DNA and Attack Mutation exercises are recorded in [`CASE-004.md`](CASE-004.md) (`v0.7`, transcripts restored and checksums verified). Broader mutation coverage and repeatability remain open.
 
 ---
 
@@ -290,7 +290,7 @@ No complete detection coverage or finished SOC workflow is claimed.
 - ⬜ Broader false-positive/false-negative testing, repeatable regression testing, detection tuning, and validation of tuning effectiveness remain outstanding. No detection rates or comprehensive FIM coverage have been established.
 - ⬜ Process attribution and trigger for the 31 October events remain unestablished.
 - ⬜ Threat hunting and additional investigation cases remain planned; future investigations should receive unique case IDs and follow the evidence-first principles described in this guide.
-- ⬜ Attack Mutation is not implemented.
+- ✅ Attack DNA & Mutation baseline (`CASE-004.md` / `v0.7`) is recorded; broader mutation benchmarks remain open.
 - ⬜ No containment, eradication, or recovery exercise has been completed.
 - [CASE-002.md](CASE-002.md) — Windows Sysmon `.evtx` replay and rule validation (`100100–100140`).
 - [CASE-003.md](CASE-003.md) — SSH brute-force detection, triage, and response documentation (`100200–100201`).

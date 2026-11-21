@@ -170,10 +170,11 @@ None of the items above are treated as implemented until they are actually valid
 | v0.1 | Foundation | Requirements, Architecture |
 | v0.2 | Detection Engineering & Linux Telemetry | Detection Engineering, Testing & Matrices |
 | v0.3 | SOC Investigation | Incident Response, Testing & Matrices |
-| v0.4 | Incident Response | Incident Response |
-| v0.5 | Purple-Team Measurement & Validation | Testing & Matrices, Lessons & Failures |
-| v0.6 | Attack DNA & Mutation | Detection Engineering, Testing & Matrices |
-| v1.0 | Integrated SENTINEL | All documents, consolidated |
+| v0.4 | Windows Sysmon Replay & Cross-Platform Detection (`CASE-002`) | Detection Engineering, Incident Response |
+| v0.5 | Incident Response — SSH brute-force IR & triage (`CASE-003`) | Incident Response, Testing & Metrics |
+| v0.6 | Purple-Team Measurement | Testing & Metrics, Lessons & Failures |
+| v0.7 | Attack DNA & Mutation Testing (`CASE-004`) | Detection Engineering, Testing & Metrics |
+| v0.8–v0.9 | FIM isolation/tuning & Sysmon JSON replay (`v0.9.1` cleanup) | Detection Engineering, Incident Response |
 
 Documentation evolves alongside implementation — a document is updated when the underlying capability actually changes, not ahead of it.
 
@@ -211,9 +212,11 @@ evidence/
 ├── v0.1/
 ├── v0.2/
 ├── v0.3/
-├── v0.4/
+├── v0.4/ (see sysmon-replay/)
 ├── v0.5/
-└── v0.6/
+├── v0.6/
+├── v0.7/
+└── v0.9/
 ```
 
 Evidence may include screenshots, Wazuh alerts, logs, test results, detection configurations, investigation notes, incident timelines, metrics, and before/after comparisons. Secrets, credentials, private keys, VM disks, and sensitive raw telemetry are never committed.
@@ -344,8 +347,6 @@ The documentation exists to make that proof understandable, reproducible, eviden
 - 07 Testing & Matrices
 - 08 Lessons & Failures
 
-**Current project phase:** v0.1 — Foundation
-
-**Next implementation focus:** v0.2 — Linux Telemetry & Detection Engineering
+**Current milestone state:** `v0.1`–`v0.7` complete (`CASE-001`–`CASE-004`); `v0.8` and `v0.9` (`v0.9.1` cleanup) merged on `main` (post-tuning noise-suppression retest and live Windows agent telemetry remain pending/out-of-scope)
 
 This file is an **index and navigation guide** for the SENTINEL engineering documentation. It does not invent implementation results, does not claim planned functionality is complete, and does not duplicate the detailed contents of the individual documents.
