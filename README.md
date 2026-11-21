@@ -42,7 +42,7 @@ Each stage is meant to be demonstrated with real evidence before the next is tru
 | Host | Role |
 |---|---|
 | SENTINEL-WAZUH (`10.10.10.10`) | Ubuntu 24.04, Wazuh 4.14.8 — manager and dashboard. |
-| SENTINEL-KALI (`10.10.10.20`) | Kali Linux 2026.2 — intended for controlled adversary emulation. No Kali-driven attack is documented as executed yet. |
+| SENTINEL-KALI (`10.10.10.20`) | Kali Linux 2026.2 — controlled adversary-emulation VM used for simulated SSH authentication testing ([CASE-003](investigations/CASE-003.md)). |
 | SENTINEL-LINUX01 (`10.10.10.40`, Agent ID `002`) | Ubuntu 24.04.5 LTS, Wazuh Agent 4.14.8 — monitored endpoint with real-time File Integrity Monitoring (FIM) on `/home`. Also the replay endpoint for the v0.4 Windows Sysmon telemetry. |
 | SENTINEL-LAB (`10.10.10.0/24`) | Isolated internal network; NAT provides outbound access. |
 
@@ -87,11 +87,12 @@ v0.3 additions (2–3 November 2026):
 |---|---|---|
 | v0.1 | Foundation — infrastructure, network, Wazuh deployment | Complete |
 | v0.2 | Telemetry and detection engineering — FIM Rules `100002`–`100004` (MITRE mapped) | Complete |
-| v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 resolved & closed) |
+| v0.3 | SOC investigation — CASE-001 and FIM lifecycle validation | Complete (CASE-001 evidence reconciliation closed; investigation open) |
 | v0.4 | Windows Sysmon Replay & Cross-Platform Detection — CASE-002 | Complete |
 | v0.5 | Incident Response — SSH brute-force IR & triage (`CASE-003`) | Complete |
 | v0.6 | Purple-Team Measurement — controlled FIM, Sysmon & SSH suites | Complete |
-| v0.7 | Attack DNA & Mutation Testing (`CASE-004`) | Complete |
+| v0.7 | Attack DNA & Mutation Testing (`CASE-004`) | Complete (transcripts restored & checksums verified) |
+| v0.8 | Reliability Tuning, Triage & Flagship Polish | Next / Planned |
 | Future | Custom SENTINEL console over Wazuh; live Windows/AD endpoint | Planned |
 
 Outstanding work (not yet in place):
@@ -111,7 +112,7 @@ Outstanding work (not yet in place):
 | **Methodology** | [Detection engineering](docs/05-detection-engineering.md) · [Incident response](docs/06-incident-response.md) · [Testing and metrics](docs/07-testing-and-metrics.md) |
 | **Investigations** | [CASE-001](investigations/CASE-001.md) · [CASE-002](investigations/CASE-002.md) · [CASE-003](investigations/CASE-003.md) · [CASE-004](investigations/CASE-004.md) · [Rule 100002 investigation](investigations/fim-rule-100002-investigation.md) · [Investigations guide](investigations/readme.md) |
 | **Detections** | [Detections guide](detections/readme.md) · [Sysmon replay ruleset](detections/sentinel_sysmon_replay_rules.xml) |
-| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) · [v0.5 index](evidence/v0.5/readme.md) · [v0.6 index](evidence/v0.6/readme.md) · [v0.6 metrics](metrics/v0.6-purple-team-measurement.md) |
+| **Evidence** | [Evidence guide](evidence/readme.md) · [v0.1](evidence/v0.1/) · [v0.2 index](evidence/v0.2/readme.md) · [v0.3 index](evidence/v0.3/readme.md) · [Sysmon replay (v0.4)](evidence/sysmon-replay/) · [v0.5 index](evidence/v0.5/readme.md) · [v0.6 index](evidence/v0.6/readme.md) · [v0.7 evidence](evidence/v0.7/) · [v0.6 metrics](metrics/v0.6-purple-team-measurement.md) |
 | **v0.2 reports** | [Infrastructure and telemetry foundation](evidence/v0.2/infrastructure-and-telemetry-foundation.md) · [Wazuh–Linux01 integration](evidence/v0.2/wazuh-linux01-integration.md) · [SCA baseline](evidence/v0.2/sca-baseline.md) |
 | **Project** | [Security policy](SECURITY.md) · [Changelog](CHANGELOG.md) |
 

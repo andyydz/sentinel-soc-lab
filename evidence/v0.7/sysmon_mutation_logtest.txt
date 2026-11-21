@@ -1,3 +1,25 @@
+# CASE-004 Suite B — Sysmon Mutation & Benign Suppression (wazuh-logtest)
+Date (IST): 2026-11-21 11:23:24 +0530
 
+=== INPUT ===
+{"win":{"system":{"providerName":"Microsoft-Windows-Sysmon","eventID":"1","channel":"Microsoft-Windows-Sysmon/Operational","computer":"MSEDGEWIN10"},"eventdata":{"image":"C:\\Windows\\System32\\rundll32.exe","commandLine":"rundll32.exe C:\\Windows\\System32\\comsvcs.dll, #24 4868 C:\\Users\\Public\\out.bin","parentImage":"C:\\Windows\\System32\\explorer.exe","user":"MSEDGEWIN10\\IEUser"}}}
+=== WAZUH-LOGTEST OUTPUT ===
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '100101'
+	level: '0'
+	description: 'EID1'
+	groups: '['sentinel', 'sysmon', 'windows']'
 
+=== INPUT ===
+{"win":{"system":{"providerName":"Microsoft-Windows-Sysmon","eventID":"1","channel":"Microsoft-Windows-Sysmon/Operational","computer":"MSEDGEWIN10"},"eventdata":{"image":"C:\\Windows\\System32\\conhost.exe","commandLine":"\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1","parentImage":"C:\\Windows\\System32\\svchost.exe","user":"NT AUTHORITY\\SYSTEM"}}}
+=== WAZUH-LOGTEST OUTPUT ===
+**Phase 1: Completed pre-decoding.
+**Phase 2: Completed decoding.
+**Phase 3: Completed filtering (rules).
+	id: '100101'
+	level: '0'
+	description: 'EID1'
+	groups: '['sentinel', 'sysmon', 'windows']'
 
