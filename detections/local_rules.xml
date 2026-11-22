@@ -20,7 +20,7 @@
   <rule id="100002" level="8">
     <if_sid>550</if_sid>
     <field name="file">^/home/</field>
-    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db(?:-(?:shm|wal))?$|\.config/dconf/user$|\.config/tiling-assistant/(?:\.goutputstream-|tiledSessionRestore\.json)|\.local/share/gnome-shell/(?:\.goutputstream-|application_state))</field>
     <description>SENTINEL: File integrity modification detected in monitored home directory.</description>
     <mitre>
       <id>T1565.001</id>
@@ -32,7 +32,7 @@
   <rule id="100003" level="8">
     <if_sid>554</if_sid>
     <field name="file">^/home/</field>
-    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db(?:-(?:shm|wal))?$|\.config/dconf/user$|\.config/tiling-assistant/(?:\.goutputstream-|tiledSessionRestore\.json)|\.local/share/gnome-shell/(?:\.goutputstream-|application_state))</field>
     <description>SENTINEL: New file created in monitored home directory.</description>
     <mitre>
       <id>T1105</id>
@@ -44,7 +44,7 @@
   <rule id="100004" level="8">
     <if_sid>553</if_sid>
     <field name="file">^/home/</field>
-    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db-(?:shm|wal)$)</field>
+    <field name="file" type="pcre2" negate="yes">^/home/[^/]+/(\.cache/tracker3/|\.local/share/nautilus/tags/meta\.db(?:-(?:shm|wal))?$|\.config/dconf/user$|\.config/tiling-assistant/(?:\.goutputstream-|tiledSessionRestore\.json)|\.local/share/gnome-shell/(?:\.goutputstream-|application_state))</field>
     <description>SENTINEL: File deleted from monitored home directory.</description>
     <mitre>
       <id>T1070.004</id>
