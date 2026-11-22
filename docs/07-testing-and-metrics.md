@@ -39,6 +39,8 @@ Observe actual results → Compare outcomes → Record evidence → Fix and rete
 
 ## 2. Current Testing Evidence
 
+**Scope of this section:** The evidence below covers the October 2026 FIM testing and CASE-001 only. Controlled testing in other cases — CASE-002 (Windows Sysmon `.evtx` replay and custom detection-rule validation), CASE-003 (controlled SSH password-guessing simulation, detection, Python triage and manual investigation) and CASE-004 (controlled FIM, Sysmon mutation/evasion and SSH threshold testing) — is documented separately. Those results are not merged into the October evidence tables here, and statements below about what has or has not been tested apply to the FIM/CASE-001 scope unless they say otherwise.
+
 **Environment:**
 
 | Component | Details |
@@ -83,34 +85,36 @@ Full detail is documented in `investigations/CASE-001.md` and `investigations/fi
 
 **Rule 550 dependency and rule configuration (unresolved):** a read-only inspection of the on-disk `local_rules.xml` on SENTINEL-WAZUH showed Rule 100002 at Level 8, group `sentinel_fim`, with parent `<if_sid>550</if_sid>` and a `file` field condition containing `/home/`. The parent dependency is relevant context, but this is not a root-cause analysis. The inspection shows the file as it was at inspection time; it does not establish which version the running manager had loaded during the historical tests. The exact matching semantics of the `/home/` condition remain unverified. The rule has not been changed. This inspection covers Rule 100002 only; the definitions of Rules 100003 and 100004 are not documented here.
 
-**Evidence reconciliation:** CASE-001 evidence reconciliation is closed for the reviewed scope. That closure covers the evidence reviewed; the broader investigation remains open, and SENTINEL v0.3 is not complete.
+**Evidence reconciliation:** CASE-001 was closed on 18 November 2026 for the reviewed scope, and the SENTINEL v0.3 evidence milestone is complete. That closure covers the evidence reviewed in that scope. It does not resolve the historical discrepancies described in this document (including the unresolved Rule 100002 creation and deletion question), and it does not establish comprehensive FIM coverage. Historical discrepancies and broader detection-engineering tasks remain separate follow-up work (Section 6).
 
 **Scope of results:**
 
 - Nothing here establishes complete FIM coverage of the configured `/home` scope. A configured monitoring scope does not guarantee that every change under the path is detected.
 - The 16 October records do **not** confirm creation or deletion coverage for Rule 100002.
 - The 31 October observations do **not** validate Rules 100003 or 100004.
-- Nothing yet confirms behavior under false-positive conditions (legitimate activity within the `/home` scope).
-- Nothing yet confirms behavior under false-negative conditions beyond the scenarios above.
+- Nothing in the October evidence documented here confirms behavior under false-positive conditions (legitimate activity within the `/home` scope).
+- Nothing in the October evidence documented here confirms behavior under false-negative conditions beyond the scenarios above.
 - The 11, 16 and 26 October events were controlled lab actions. The 31 October alerts are observations of unestablished origin. None of these records, by themselves, establishes malicious activity.
 
-No controlled attack scenario, response action, or repeatable regression/mutation test has been executed as part of the documented testing to date. The broader investigation and response-engineering work remain open (Section 6).
+Within the historical CASE-001/October FIM testing scope documented in this section, no controlled attack scenario, response action, or repeatable regression/mutation test was executed. This statement is limited to that scope: controlled attack, mutation and detection testing in CASE-002, CASE-003 and CASE-004 is documented separately and is not summarized here. Response-engineering and broader detection-engineering work remain outstanding as follow-up work, separate from the CASE-001 closure (Section 6).
 
 ---
 
 ## 3. Metrics Framework
 
+The statuses below describe the October FIM/CASE-001 evidence documented in this file. They are not project-wide statements: results from CASE-002, CASE-003 and CASE-004 are documented in those cases and are not counted in this table.
+
 | Metric | What it measures | Status |
 |---|---|---|
 | Detection Rate / Coverage | Successful detections ÷ applicable test executions | Not measured — the documented modification alerts are recorded events, not a defined set of applicable test executions; the 16 October reviewed records and the 31 October observations are not counted; no rate is calculated |
 | Missed Detections | Malicious test activity that should have triggered a detection but didn't | Not measured — the absence of Rule 100002 from the reviewed creation and deletion records is an open coverage question, not a confirmed miss |
-| False-Positive Rate | Legitimate activity incorrectly flagged ÷ applicable benign events tested | Not measured — no false-positive testing performed yet |
+| False-Positive Rate | Legitimate activity incorrectly flagged ÷ applicable benign events tested | Not measured in the FIM/CASE-001 evidence documented here — no false-positive testing is documented in this file |
 | Mean Time to Detect (MTTD) | Time between activity occurring and a detection firing | Not measured |
-| Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured — response capability not yet implemented |
-| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **confirmed to fire for the documented controlled modification scenarios only**. Creation and deletion by Rule 100002: not validated — reviewed records show built-in Rules 554 and 553 with Rule 100002 absent; open coverage question. Rules 100003 (creation) and 100004 (deletion): **observed once each on 31 October 2026, not validated** — trigger origin unestablished, definitions not reviewed, and not counted as controlled test executions. No false-positive/false-negative suite, repeatable regression suite, or tuning result exists. |
+| Mean Time to Respond (MTTR) | Time between a confirmed detection and a response action | Not measured in the FIM/CASE-001 scope — no response action or response-time measurement is documented here; broader response engineering remains outstanding |
+| Detection-Rule Validation Status | Whether a specific rule has passed its full test lifecycle (not just syntax check) | Rule 100002: **confirmed to fire for the documented controlled modification scenarios only**. Creation and deletion by Rule 100002: not validated — reviewed records show built-in Rules 554 and 553 with Rule 100002 absent; open coverage question. Rules 100003 (creation) and 100004 (deletion): **observed once each on 31 October 2026, not validated** — trigger origin unestablished, definitions not reviewed, and not counted as controlled test executions. Within the October FIM/CASE-001 evidence documented here, no false-positive/false-negative suite, repeatable FIM regression suite, or FIM tuning result is documented. |
 | MITRE ATT&CK Coverage | Proportion of relevant techniques with a validated, mapped detection | Candidate/contextual mappings documented in rule/detection/case files; replay/test scope boundaries apply |
 
-No numerical values are reported above, because there isn't yet enough test data to support a rate or trend, and none are calculated from the October records. The 31 October observations are not used to calculate any rate. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
+No numerical values are reported above, because the October FIM/CASE-001 evidence documented here is not enough to support a rate or trend, and none are calculated from the October records. The 31 October observations are not used to calculate any rate. As more scenarios are tested, this table will be populated with real figures — never estimated or interpolated ones.
 
 ---
 
@@ -148,20 +152,22 @@ A few distinctions matter enough to call out directly:
 
 ## 6. Future Plans
 
+**Already completed in other cases (documented separately; not part of the October FIM evidence above and not repeated here):** CASE-002 (Windows Sysmon `.evtx` replay and custom detection-rule validation), CASE-003 (controlled SSH password-guessing simulation, detection, Python triage and manual investigation) and CASE-004 (controlled FIM, Sysmon mutation/evasion and SSH threshold testing). Authentication activity, process execution and attack mutation/evasion have therefore already been tested in those cases; the items below are the work that remains.
+
 The following are planned and **not yet completed**:
 
 - Verifying the manager's current active rule configuration, and determining whether the historical loaded configuration for the earlier tests can be reconstructed; the historical state may not be recoverable, in which case it remains unconfirmed
 - Verifying the field-condition matching behavior of the `/home/` condition, and reviewing built-in Rules 550, 553, and 554
 - Investigating the custom-rule creation and deletion coverage question — whether Rule 100002 is intended to cover those events, and why it was absent from the reviewed records — without presuming a cause
 - Reviewing the definitions and matching behavior of custom Rules 100003 and 100004 (read-only), followed by dedicated controlled creation and deletion tests using dedicated test files, with explicit expected outcomes written in advance, before assigning either rule validated status
-- Repeatable, documented creation, modification, and deletion test procedures, with expected results written in advance, so they can serve as regression tests
+- Repeatable, documented FIM creation, modification, and deletion test procedures, with expected results written in advance, so they can serve as FIM regression tests
 - False-positive testing against legitimate activity and false-negative testing against controlled scenarios expected to trigger the custom FIM rules within the configured /home scope.
 - Tuning the custom FIM rules based on the above, only after review and approval, and retesting after any change
-- Completing the broader CASE-001 investigation and response-engineering work, which remain open
-- Broader telemetry sources: authentication activity and process execution
-- Repeatable, documented detection test scenarios beyond the FIM tests performed so far
-- MITRE ATT&CK mapping for implemented detections
-- Purple-team testing (red/blue/purple loop) and attack mutation testing
-- Before-and-after comparisons following detection tuning, once a detection has actually been tuned
+- Response-engineering work, which remains outstanding as follow-up separate from the closed CASE-001 investigation
+- Broader telemetry coverage beyond the authentication (SSH) and process-execution (Sysmon) testing already documented in CASE-002 and CASE-003
+- Further repeatable, documented detection test scenarios beyond those already documented in CASE-001 through CASE-004
+- Completing and validating MITRE ATT&CK mappings for implemented detections, building on the candidate/contextual mappings already documented
+- A fuller purple-team cycle (red/blue/purple loop) and further attack mutation scenarios, beyond the controlled FIM, Sysmon mutation/evasion and SSH threshold testing already documented in CASE-004
+- Before-and-after comparisons following detection tuning, where applicable and once a detection has actually been tuned
 
-These are labeled planned or unresolved because none of them have produced a documented result yet — this section exists so the roadmap stays visible without being mistaken for current capability.
+These remaining items are labeled planned or unresolved because they have not yet produced a documented result — this section exists so the roadmap stays visible without being mistaken for current capability. Completed work in other cases is listed above and is not part of this roadmap.
