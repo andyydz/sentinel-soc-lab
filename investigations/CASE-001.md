@@ -1,351 +1,337 @@
-# CASE-001 — FIM Detection Validation and Evidence Reconciliation
+# CASE-001: FIM Detection Validation and Evidence Reconciliation
+
+## 1. Case Overview
 
 | Field | Value |
 |---|---|
 | Case ID | CASE-001 |
-| Project | SENTINEL — SOC Lab |
-| Version | v0.3 — SOC Investigation |
-| Status | Evidence reconciliation for the reviewed CASE-001 scope: Closed. Broader investigation, detection-engineering work and SENTINEL v0.3 work: Open / in progress |
-| Severity | Low |
-| Detection Source | Wazuh File Integrity Monitoring (FIM) |
-| Custom Rules | 100002 (modification), 100003 (creation), 100004 (deletion) |
+| Project | SENTINEL: SOC Lab |
+| Version | v0.3: SOC Investigation |
+| Detection source | Wazuh File Integrity Monitoring (FIM) |
+| Custom rules | 100002 (modification), 100003 (creation), 100004 (deletion) |
 | Endpoint | SENTINEL-LINUX01 (10.10.10.40), Agent ID 002 |
+| Case classification | **Low** (administrative) |
 
-> Severity note: Case severity Low is an administrative investigation classification for this case's reviewed scope. It is not the severity level assigned to an individual Wazuh alert. The custom detections discussed here generated Level 8 alerts, while the October 16 built-in alerts were Levels 5 and 7.
+### Status
 
----
+| Item | Status |
+|---|---|
+| CASE-001 investigation | **Closed**, per the 18 November 2026 closeout (Section 7). |
+| Evidence reconciliation, reviewed scope | **Closed.** |
+| SENTINEL v0.3 milestone | **Complete**, per the 18 November 2026 closeout. |
+| Post-closeout follow-up work (engineering, validation and historical evidence recovery) | **Partly implemented after closeout; remainder open.** Not a prerequisite for closure (Sections 10 and 11). |
+| Post-closeout developments (v0.6, v0.8, v0.9) | Documented separately. **Not part of CASE-001 evidence** (Section 10). |
 
-## Executive Summary
-
-This case reviewed Wazuh FIM detections on SENTINEL-LINUX01 across five dates: four in October 2026 and one in November 2026.
-
-- Modification (100002, Level 8): fired for the controlled test on 11 October, and 26 October terminal output showed two further alerts from consecutive modifications of one test file.
-- Creation/deletion, 16 October (historical): the reviewed records showed built-in Rule 554 (Level 5) for creation and 553 (Level 7) for deletion. 100002 was absent from both reviewed records, which is consistent with its parent-rule design (it chains from Rule 550, modification, not 554/553) and is not necessarily a detection failure. Whether the 100002 definition was deployed and loaded on 16 October, and whether custom Rules 100003 and 100004 were, is unknown. These were not custom-rule validations.
-- Creation/deletion, 31 October (separate observation): a terminal screenshot showed custom Rule 100003 (creation) and 100004 (deletion), both Level 8, under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/. Whether these were deliberately triggered or ordinary application activity is not established. Separately committed 31 October Wazuh alert JSON records show Rule 100003 (creation) and 100004 (deletion), both Level 8, for /home/sentinel-admin/sentinel-v03-controlled-test.txt; their relationship to the screenshot observation is not established.
-- Full lifecycle, 2 November (controlled validation): a dedicated test file, /home/sentinel-admin/sentinel-v03-final-test.txt, was created, modified and deleted. Terminal evidence shows custom Rule 100003 (creation, "added"), 100002 (modification, "modified") and 100004 (deletion, "deleted"), each at Level 8, all for the same file path. sudo /var/ossec/bin/wazuh-analysisd -t was also run and returned exit code 0.
-
-> These observations do not establish repeatable detection, detection or false-positive/false-negative rates, complete FIM coverage, creation or deletion handling by 100002, or that the endpoint is free from threats. The 2 November result is a single controlled session on one file and is not a completed regression suite. It does not explain the 16 October results.
-
-### Detection-Validation Summary
-
-| Custom Rule | Event | Observed Result | Evidence Basis |
-|---|---|---|---|
-| 100002 | Modification | Level 8 alerts on October 11 and 26 | Existing screenshots and terminal evidence |
-| 100003 | Creation | Level 8 alert on October 31 (observation; trigger origin not established) | Terminal screenshot |
-| 100004 | Deletion | Level 8 alert on October 31 (observation; trigger origin not established) | Terminal screenshot |
-| 100003 | Creation ("added") | Level 8 alert on November 2 (controlled test, sentinel-v03-final-test.txt) | Terminal screenshot |
-| 100002 | Modification ("modified") | Level 8 alert on November 2 (same file) | Terminal screenshot |
-| 100004 | Deletion ("deleted") | Level 8 alert on November 2 (same file) | Terminal screenshot |
-
-The October observations span separate sessions and do not represent one end-to-end lifecycle test or a repeatable regression suite. The October 31 creation and deletion events occurred under an application configuration path; deliberate test attribution has not been established. The November 2 results are a separate, controlled lifecycle session on a dedicated test file; they do not convert the October 16 or October 31 observations into validations. Raw alert JSON for November 2 is not committed.
+> The 18 November closeout is authoritative and supersedes the earlier "open / in progress" wording. Closure applies to the reviewed CASE-001 scope. It does not mean that subsequent detection engineering or tuning is complete.
+>
+> The Low classification is administrative for this case's reviewed scope. It is not the level of any Wazuh alert. The custom rules generate Level 8 alerts; the 16 October built-in alerts were Levels 5 and 7.
 
 ---
 
-## Objective
+## 2. Executive Summary
 
-- Review custom FIM rules 100002, 100003 and 100004 against the modification, creation and deletion events observed.
-- Reconcile earlier reported results against reviewed source records.
-- Record the 2 November controlled lifecycle validation alongside, and distinct from, the October historical findings.
-- Document noise, limitations, and follow-up detection-engineering work.
+Wazuh FIM detections on SENTINEL-LINUX01 were reviewed across separate sessions on 11, 16, 26 and 31 October and 2 and 18 November 2026.
+
+- **Modification (100002):** Level 8 alerts on 11 and 26 October.
+- **16 October (historical):** the reviewed records show built-in Rules 554 (creation, Level 5) and 553 (deletion, Level 7), with 100002 absent. Not custom-rule validations (Finding 2).
+- **31 October:** two separate evidence sets for Rules 100003 and 100004 (screenshot and JSON); their relationship is not established.
+- **2 November:** one controlled lifecycle session (screenshot): 100003, 100002, 100004 at Level 8 on one dedicated file.
+- **18 November:** one separate controlled lifecycle session (raw JSON): the same three rules at Level 8 on a different dedicated file, plus endpoint configuration verification, rule standardization with MITRE ATT&CK tags, and observed benign FIM noise.
+
+- **After closeout:** later FIM sessions and tuning (v0.6, v0.8) and Sysmon and triage work (v0.9) are summarized in Section 10. They are not CASE-001 evidence.
+
+No malicious indicators were identified in the reviewed events. A FIM alert alone does not indicate malicious activity. The results do not establish detection rates, false-positive/false-negative rates, complete FIM coverage, or repeatability across paths, file types and sizes. See Limitations (Section 9).
 
 ---
 
-## Environment and Scope
+## 3. Environment and Scope
 
 | Component | Details |
 |---|---|
-| Wazuh Manager | SENTINEL-WAZUH — 10.10.10.10 |
-| Wazuh Agent | SENTINEL-LINUX01 — 10.10.10.40, Agent ID 002 |
-| Wazuh Version | 4.14.8 |
-| Custom rules | 100002 (modification), 100003 (creation), 100004 (deletion); all Level 8, group sentinel_fim |
-| Modification test file (11 Oct) | /home/sentinel-admin/sentinel-fim-validation.txt |
-| Creation/deletion test file (16 Oct) | /home/sentinel-admin/sentinel-audit-test.txt |
-| Modification test file (26 Oct) | /home/sentinel-admin/sentinel-v02-mod-test.txt |
-| Observed paths (31 Oct, screenshot) | Under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/ (origin not established) |
-| File in 31 Oct alert JSON records | /home/sentinel-admin/sentinel-v03-controlled-test.txt (creation and deletion alert records; relationship to the screenshot observation not established) |
-| Lifecycle test file (2 Nov) | /home/sentinel-admin/sentinel-v03-final-test.txt (dedicated test file; creation, modification and deletion) |
-| Test session (2 Nov) | Controlled FIM lifecycle validation on SENTINEL-LINUX01; separate session from all October dates |
-| Configuration check (2 Nov) | sudo /var/ossec/bin/wazuh-analysisd -t returned exit code 0 |
+| Wazuh Manager | SENTINEL-WAZUH, 10.10.10.10 |
+| Wazuh Agent | SENTINEL-LINUX01, 10.10.10.40, Agent ID 002 |
+| Wazuh version | 4.14.8 |
+| Custom rules | 100002, 100003, 100004; Level 8; group `sentinel_fim` |
 
-Scope: the controlled tests of 11, 16 and 26 October, the 31 October observed alerts, the 2 November controlled lifecycle validation, the reviewed alert records, and related FIM events. Operational events are recorded separately and are not detection evidence.
+Scope: the controlled tests of 11, 16 and 26 October; the 31 October observations; the controlled lifecycle sessions of 2 and 18 November; the reviewed alert records; and related FIM events. Operational events (Section 8) are not detection evidence.
 
 ---
 
-## Evidence
+## 4. Evidence Inventory
+
+### 4.1 Evidence sets (kept separate; not merged)
+
+| Date | Rules | File | Evidence | Notes |
+|---|---|---|---|---|
+| 11 Oct | 100002 | `/home/sentinel-admin/sentinel-fim-validation.txt` | Screenshots | Original alert log not recovered |
+| 16 Oct | 554, 553 (built-in) | `/home/sentinel-admin/sentinel-audit-test.txt` | Reviewed source records | No repository evidence path listed |
+| 26 Oct | 100002 ×2 | `/home/sentinel-admin/sentinel-v02-mod-test.txt` | Terminal screenshot | Consecutive modifications of one file; not two independent tests |
+| 31 Oct (A) | 100003, 100004 | Under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/` | Terminal screenshot | Trigger origin not established |
+| 31 Oct (B) | 100003, 100004 | `/home/sentinel-admin/sentinel-v03-controlled-test.txt` | Raw alert JSON | Creation and deletion only; relationship to (A) not established |
+| 2 Nov | 100003, 100002, 100004 | `/home/sentinel-admin/sentinel-v03-final-test.txt` | Terminal screenshot | One controlled session; no raw JSON committed |
+| 18 Nov | 100003, 100002, 100004 | `/home/sentinel-admin/fim-sprint-test.txt` | Raw alert JSON | One controlled session |
+
+### 4.2 Files
 
 | Evidence | Purpose |
 |---|---|
-| [v0.3-fim-full-lifecycle-custom-rules.png](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Rules 100003, 100002 and 100004 alerts for the dedicated test file (2 Nov) |
-| [v0.3-fim-lifecycle-custom-detections.png](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png) | Rules 100003 and 100004 alerts (31 Oct) |
-| [sentinel-v03-creation-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-creation-alert.json) | 31 Oct Wazuh alert JSON record: Rule 100003, Level 8, timestamp 2026-10-31T22:56:46.988+0530, file /home/sentinel-admin/sentinel-v03-controlled-test.txt. This is a Wazuh alert record, not an original Syscheck input log. It is a 31 Oct record, not a 2 Nov record |
-| [sentinel-v03-deletion-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-deletion-alert.json) | 31 Oct Wazuh alert JSON record: Rule 100004, Level 8, timestamp 2026-10-31T23:27:05.164+0530, file /home/sentinel-admin/sentinel-v03-controlled-test.txt. This is a Wazuh alert record, not an original Syscheck input log. It is a 31 Oct record, not a 2 Nov record |
-| [SHA256SUMS](../evidence/v0.3/raw-alerts/SHA256SUMS) | Checksum manifest for the 31 Oct alert JSON records. Hashes were not independently recomputed for this document |
-| [v0.3-custom-rule-100002.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002.png) | Rule 100002 validation (11 Oct) |
-| [v0.3-custom-rule-100002-dashboard-json.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Alert JSON and event fields (11 Oct) |
+| [v0.3-custom-rule-100002.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002.png) | Rule 100002 alert (11 Oct) |
+| [v0.3-custom-rule-100002-dashboard-json.png](../evidence/v0.3/screenshots/v0.3-custom-rule-100002-dashboard-json.png) | Alert event fields (11 Oct) |
 | [v0.3-case001-fim-filtered-events.png](../evidence/v0.3/screenshots/v0.3-case001-fim-filtered-events.png) | Filtered FIM event view |
 | [v0.3-case001-rule-550-event-details.png](../evidence/v0.3/screenshots/v0.3-case001-rule-550-event-details.png) | Built-in Rule 550 event details |
 | [v0.3-case001-endpoint-file-metadata.png](../evidence/v0.3/screenshots/v0.3-case001-endpoint-file-metadata.png) | Endpoint file metadata |
-| [v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png) | Manager-side syscheck configuration on SENTINEL-WAZUH (not endpoint configuration). Committed. The "e14" in the filename appears inconsistent with the endpoint screenshot's "e14" label; flagged for later evidence-index reconciliation; not renamed |
-| [v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Endpoint syscheck configuration screenshot, committed. Its contents were not reviewed for this document update and are not relied on here |
 | [v0.2-oct26-controlled-modification-source-alerts-new.png](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png) | Two Rule 100002 alerts (26 Oct); existing v0.2 directory spelling preserved |
+| [v0.3-fim-lifecycle-custom-detections.png](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png) | Rules 100003 and 100004 (31 Oct, set A) |
+| [sentinel-v03-creation-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-creation-alert.json) | 31 Oct (B): Rule 100003, Level 8, `2026-10-31T22:56:46.988+0530` |
+| [sentinel-v03-deletion-alert.json](../evidence/v0.3/raw-alerts/sentinel-v03-deletion-alert.json) | 31 Oct (B): Rule 100004, Level 8, `2026-10-31T23:27:05.164+0530` |
+| [v0.3-fim-full-lifecycle-custom-rules.png](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Rules 100003, 100002, 100004 (2 Nov) |
+| [fim-lifecycle-evidence.json](../evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json) | Three Wazuh alert records (18 Nov); Section 7 |
+| [SHA256SUMS](../evidence/v0.3/raw-alerts/SHA256SUMS) | Manifest covering the three raw alert JSON files. Not recomputed for this document |
+| [v0.3-e15-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e15-manager-syscheck-configuration.png) | **E15:** manager-side syscheck configuration (SENTINEL-WAZUH). Not proof of endpoint monitoring |
+| [v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | **E14:** endpoint syscheck configuration (SENTINEL-LINUX01) |
 
-### 2 November — full lifecycle, custom rules 100003, 100002, 100004
+The raw JSON files are Wazuh alert records, not original Syscheck input logs. E14 is endpoint configuration evidence and E15 is manager configuration evidence; both filenames were confirmed against the repository tree. No files were renamed.
 
 [![FIM full lifecycle custom rules, 2 November](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)
 
-### 31 October — observed creation/deletion (not a controlled test)
-
 [![FIM lifecycle custom detections, 31 October](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png)](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png)
 
-### Evidence basis
+### 4.3 Corrections to earlier documentation
 
-- 11 Oct: the original alert log could not be recovered during the 26 Oct review; the existing evidence images support the result.
-- 16 Oct: results rest on reviewed source records; no repository evidence path is listed.
-- 26 Oct: two Rule 100002 alerts from consecutive modifications of one file; not independent test cases.
-- 31 Oct: a terminal screenshot, plus two committed Wazuh alert JSON records (creation, Rule 100003; deletion, Rule 100004) and a SHA256SUMS manifest, listed in the Evidence table. The JSON records are Wazuh alert records, not original Syscheck input logs, and they are separate from the 2 Nov evidence. They concern /home/sentinel-admin/sentinel-v03-controlled-test.txt at 22:56:46.988 and 23:27:05.164 (+0530), whereas the screenshot shows paths under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/ at ~18:51:56; the relationship between the two sets is not established. The evidence does not establish how the screenshot events were triggered or repeatability. Checksums were not independently recomputed for this document.
-- 2 Nov: a terminal screenshot showing Rules 100003 (added), 100002 (modified) and 100004 (deleted), each Level 8, for the same dedicated test-file path, plus the reported exit code 0 from wazuh-analysisd -t. No raw JSON alert records for 2 Nov have been committed. The screenshot does not show repeatability, and the exit-code result is a command outcome reported for this session, not a committed artifact.
-- 31 Oct manager configuration: a screenshot of ossec.conf syscheck configuration on SENTINEL-WAZUH is committed ([v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). It shows manager-side configuration, not endpoint configuration (see Finding 5).
-
-### Corrections and Evidence-Quality Notes
-
-These are documentation and evidence-quality notes, not security incidents.
-
-1. An earlier version stated 100002 fired for the 16 Oct creation (11:40:06.105). This was unsupported and corrected to the reviewed Rule 554 record (11:40:06.007).
-2. The 31 Oct creation and deletion events in the screenshot are observations, not confirmed deliberate tests.
-3. The manager configuration screenshot is not endpoint configuration evidence.
-4. The v0.2 directory spelling (screenschots) is preserved; a rename requires a coordinated update and has not been approved.
-5. The manager configuration screenshot is committed ([evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). Its filename contains "e14", which appears inconsistent with the endpoint screenshot's "e14" label; flagged for later evidence-index reconciliation. It has not been renamed.
-6. The 2 Nov controlled lifecycle validation is recorded separately and is not merged with the 31 Oct observations, which used a different path and have no established trigger.
-7. The committed 31 Oct alert JSON records (file sentinel-v03-controlled-test.txt; 22:56:46.988 and 23:27:05.164 +0530) differ in path and time from the 31 Oct screenshot observation (application configuration path; ~18:51:56). They are recorded separately and not reconciled here. They are not 2 Nov records.
+1. An earlier version stated 100002 fired for the 16 Oct creation (11:40:06.105). This was unsupported and was corrected to the reviewed Rule 554 record (11:40:06.007).
+2. The 31 Oct screenshot events are observations, not confirmed deliberate tests.
+3. The v0.2 directory spelling (`screenschots`) is preserved; renaming requires a coordinated update and has not been approved.
 
 ---
 
-## Investigation Timeline
+## 5. Investigation Timeline
 
 All times IST (+0530) where recorded.
 
 | Date / time | Event |
 |---|---|
-| 11 Oct 2026, ~20:24–20:30 | Reviewed FIM events and Rule 550 details; modified sentinel-fim-validation.txt. Rule 100002 alert at 2026-10-11T20:25:14.746+0530. Additional home-directory events observed. |
-| 16 Oct 2026, 11:40:06.007 | Controlled creation of sentinel-audit-test.txt. Built-in Rule 554 (Level 5); 100002 absent from the reviewed record. |
-| 16 Oct 2026, 12:31:32.819 | Controlled deletion of the same file. Built-in Rule 553 (Level 7); 100002 absent from the reviewed record. |
-| 26 Oct 2026, 21:38:27.910 | sentinel-v02-mod-test.txt modified; Rule 100002 (Level 8); 0 → 23 bytes. |
-| 26 Oct 2026, 21:38:48.473 | Same file modified again; Rule 100002 (Level 8); 23 → 61 bytes. |
-| 31 Oct 2026, ~18:51:56 | Terminal screenshot showed Rule 100004 (deletion, Level 8) and 100003 (creation, Level 8), each with a path under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/. Trigger, individual timestamps and order not established. |
-| 31 Oct 2026 | Manager-side ossec.conf syscheck configuration on SENTINEL-WAZUH; screenshot committed ([v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png)). |
-| 31 Oct 2026, 22:56:46.988 | Wazuh alert JSON record: Rule 100003 (creation, Level 8) for /home/sentinel-admin/sentinel-v03-controlled-test.txt. Relationship to the ~18:51:56 screenshot observation not established. |
-| 31 Oct 2026, 23:27:05.164 | Wazuh alert JSON record: Rule 100004 (deletion, Level 8) for the same file. Relationship to the ~18:51:56 screenshot observation not established. |
-| 2 Nov 2026 (separate session; exact times not recorded) | Controlled lifecycle test on dedicated file sentinel-v03-final-test.txt: creation ("added", Rule 100003, Level 8), modification ("modified", Rule 100002, Level 8), deletion ("deleted", Rule 100004, Level 8), all for the same path. |
-| 2 Nov 2026 (exact time not recorded) | Command: sudo /var/ossec/bin/wazuh-analysisd -t; reported exit code 0. |
+| 11 Oct, ~20:24–20:30 | Reviewed FIM events and Rule 550 details; modified `sentinel-fim-validation.txt`. Rule 100002 alert at `2026-10-11T20:25:14.746+0530`. |
+| 16 Oct, 11:40:06.007 | Controlled creation of `sentinel-audit-test.txt`. Built-in Rule 554 (Level 5); 100002 absent from the reviewed record. |
+| 16 Oct, 12:31:32.819 | Controlled deletion of the same file. Built-in Rule 553 (Level 7); 100002 absent. |
+| 26 Oct, 21:38:27.910 | `sentinel-v02-mod-test.txt` modified; Rule 100002 (Level 8); 0 → 23 bytes. |
+| 26 Oct, 21:38:48.473 | Same file modified again; Rule 100002 (Level 8); 23 → 61 bytes. |
+| 31 Oct, ~18:51:56 | Screenshot (set A): Rules 100004 and 100003 (Level 8) under the Snap application configuration path. Individual timestamps and order not established. |
+| 31 Oct | Manager-side syscheck configuration screenshot committed. |
+| 31 Oct, 22:56:46.988 | JSON (set B): Rule 100003 (creation, Level 8), `sentinel-v03-controlled-test.txt`. |
+| 31 Oct, 23:27:05.164 | JSON (set B): Rule 100004 (deletion, Level 8), same file. |
+| 2 Nov (exact times not recorded) | Controlled lifecycle on `sentinel-v03-final-test.txt`: creation ("added", 100003), modification ("modified", 100002), deletion ("deleted", 100004), each Level 8. `wazuh-analysisd -t` reported exit code 0. |
+| 18 Nov, 12:57:06.508 | Controlled lifecycle on `fim-sprint-test.txt`: creation, Rule 100003 (Level 8). |
+| 18 Nov, 12:59:29.407 | Modification, Rule 100002 (Level 8). |
+| 18 Nov, 13:04:23.506 | Deletion, Rule 100004 (Level 8). |
 
-The 11 Oct window is approximate. No modification-test timestamp is recorded for 31 Oct. All five dates were separate sessions. No exact timestamps are recorded for the 2 Nov events, and none are inferred here; the order shown for 2 Nov follows the lifecycle sequence stated for the test and the table of events, and individual alert times and the time of the -t run are not established.
+The 11 Oct window is approximate. No exact timestamps are recorded for 2 Nov, and none are inferred. The order shown follows the stated lifecycle sequence.
 
 ---
 
-## Technical Findings
+## 6. Technical Findings
 
-### Finding 1 — Rule 100002 detected the tested modification scenario
+### Finding 1: Rule 100002 detected the tested modification scenario
 
-Result: Confirmed for the 11 and 26 October tests (and see Finding 7 for 2 November).
+Confirmed for 11 and 26 Oct (and in the lifecycle sessions, Findings 6 and 7).
 
 | Field (11 Oct) | Value |
 |---|---|
-| Rule ID / Level | 100002 / 8 |
+| Rule ID / level | 100002 / 8 |
 | Event type | modified |
-| File | /home/sentinel-admin/sentinel-fim-validation.txt |
-| Decoder / location | syscheck_integrity_changed / syscheck |
+| File | `/home/sentinel-admin/sentinel-fim-validation.txt` |
+| Decoder / location | `syscheck_integrity_changed` / `syscheck` |
 
-The event included file-integrity metadata, including size and hash information. The 26 Oct alerts came from consecutive modifications of one file; they do not extend the result to other paths, file types or event types.
+The event included file-integrity metadata (size, hash). The 26 Oct alerts came from consecutive modifications of one file and do not extend the result to other paths, file types or event types.
 
-### Finding 2 — 16 October creation and deletion: Rule 100002 absent from reviewed records (historical)
+### Finding 2: 16 October creation and deletion (historical)
 
-Result: Limited to the reviewed records; absence of 100002 is consistent with its parent-rule design; 16 Oct deployment/loading status of the custom rules unknown.
-
-| Test (16 Oct) | Rule shown | 100002 |
+| Test | Rule shown | 100002 |
 |---|---|---|
 | Creation (11:40:06.007) | 554 (Level 5) | Absent |
 | Deletion (12:31:32.819) | 553 (Level 7) | Absent |
 
-The reviewed 16 Oct creation and deletion records show built-in Rules 554 (Level 5) and 553 (Level 7); Rule 100002 was absent from both reviewed records. Rule 100002 is defined with parent Rule 550 (modification; see Finding 6), whereas these creation and deletion events matched Rules 554 and 553. Its absence from those records is therefore consistent with its parent-rule design and is not necessarily a detection failure. Whether the 100002 definition was actually deployed and loaded on 16 Oct remains unknown. The 16 Oct deployment/loading status of Rules 100003 and 100004 also remains unknown; the reviewed records do not show it, and this document does not claim they were absent or not loaded. No root cause is asserted for any discrepancy. The rules have not been changed. These were historical observations, not custom-rule validations, and 100002 is not claimed to handle creation or deletion. The later observations (31 Oct) and the 2 Nov results (Finding 7) do not resolve this discrepancy.
+100002 is defined with parent Rule 550 (modification), whereas these events matched 554 and 553. Its absence from those records is therefore consistent with its parent-rule design and is not necessarily a detection failure. **Unknown:** whether Rules 100002, 100003 and 100004 were deployed and loaded on 16 Oct. No root cause is asserted. These are historical observations, not custom-rule validations, and 100002 is not claimed to handle creation or deletion. Later sessions do not resolve the 16 Oct loading status.
 
-### Finding 3 — Rules 100003 and 100004 observed on 31 October
+### Finding 3: Rules 100003 and 100004 on 31 October (two separate sets)
 
-Result: Single terminal screenshot plus separately committed alert JSON records; trigger origin and scope limited.
+**Set A: screenshot.** Creation (100003) and deletion (100004), Level 8, ~18:51:56, under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/`. This is an application configuration directory, not a dedicated test file. Whether the events were deliberate or ordinary application activity is not established, so they are observations, not controlled tests. Each rule is evidenced by a single event.
 
-| Field (screenshot) | 100003 | 100004 |
-|---|---|---|
-| Event | Creation | Deletion |
-| Alert level | 8 | 8 |
-| Approx. time | ~18:51:56 IST | ~18:51:56 IST |
-| Path | Under /home/sentinel-admin/snap/firmware-updater/262/.config/bus/ | Same |
+**Set B: raw JSON.** Rule 100003 (creation, `2026-10-31T22:56:46.988+0530`) and Rule 100004 (deletion, `2026-10-31T23:27:05.164+0530`), Level 8, for `sentinel-v03-controlled-test.txt`. Both records contain inode `2622181` and matching file hashes, which supports the interpretation that they concern the same file. Creation and deletion only; no modification record, so not a lifecycle test.
 
-- The paths are in an application configuration directory, not a dedicated test file. The screenshot does not show whether the events were deliberate or ordinary application activity, so they are observations, not controlled tests.
-- As of 31 Oct, each rule was evidenced by a single event in the screenshot; no other paths, file types or repetitions were shown there.
-- Separately, two committed Wazuh alert JSON records dated 31 Oct show Rule 100003 (creation, Level 8, 2026-10-31T22:56:46.988+0530) and Rule 100004 (deletion, Level 8, 2026-10-31T23:27:05.164+0530) for /home/sentinel-admin/sentinel-v03-controlled-test.txt. These are Wazuh alert records, not original Syscheck input logs. They differ in path and time from the screenshot observation, and the relationship between the two is not established here. They are 31 Oct records, not 2 Nov records. Their checksums have not been independently recomputed for this document.
-- This does not convert the 16 Oct observations into validations. Why 100003/100004 appeared on 31 Oct is unresolved, and whether they were deployed and loaded on 16 Oct is unknown.
+The two sets differ in path and time, and their relationship is not established. Why 100003/100004 appeared on 31 Oct is unresolved.
 
-### Finding 4 — Additional home-directory FIM events
+### Finding 4: Additional home-directory FIM events
 
-On 11 Oct the dashboard showed 19 matching events, including the controlled event; others involved GNOME Tracker cache, desktop configuration and application state, consistent with ordinary desktop activity. Responsible processes were not established. The 31 Oct screenshot paths are likewise under an application configuration path; their origin is unconfirmed.
+On 11 Oct the dashboard showed 19 matching events, including the controlled event; others involved GNOME Tracker cache, desktop configuration and application state, consistent with ordinary desktop activity. Responsible processes were not established. The 18 Nov noise observation is in Section 7.
 
-### Finding 5 — Manager-side FIM configuration; endpoint configuration unverified
+### Finding 5: Manager-side configuration is not endpoint configuration
 
-The committed screenshot [evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-manager-syscheck-configuration.png) shows /var/ossec/etc/ossec.conf on SENTINEL-WAZUH with `<disabled>no</disabled>`, `<scan_on_start>yes</scan_on_start>`, `<alert_new_files>yes</alert_new_files>` and `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`.
+The manager screenshot (E15) shows `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH with `<disabled>no</disabled>`, `<scan_on_start>yes</scan_on_start>`, `<alert_new_files>yes</alert_new_files>` and `<directories>/etc,/usr/bin,/bin,/usr/sbin</directories>`. It lists no `/home` and says nothing about the endpoint's effective configuration. Endpoint configuration is addressed in Section 7.
 
-- This is manager-side evidence. It does not establish the effective FIM configuration on SENTINEL-LINUX01.
-- The listed directories do not include /home. That does not prove the endpoint is not monitoring /home; its configuration may be local or centrally managed and has not been inspected in this document.
-- The /home alerts in Findings 1–3 and 7 show such events from Agent 002 reached the manager, which is consistent with /home being monitored on the endpoint; the mechanism is unidentified.
-- An endpoint screenshot, [v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png), is also committed. Its contents were not reviewed for this document update and are not relied on here, so the endpoint's effective configuration remains unverified in this document.
-- The manager screenshot filename contains "e14", which appears inconsistent with the endpoint screenshot's "e14" label. This is flagged for later evidence-index reconciliation; the file has not been renamed.
+### Finding 6: Custom rule definitions
 
-### Finding 6 — Reviewed custom rule definitions; detection scope is broad and requires tuning
+Reviewed CASE-001 rule definitions (historical). This table is not a representation of the current post-v0.8 `detections/local_rules.xml`.
 
-The current custom rule definitions have been reviewed:
-
-| Rule | Event | Parent rule | file condition | Level | Group |
+| Rule | Event | Parent rule | file condition | Level | Group (as reviewed) |
 |---|---|---|---|---|---|
-| 100002 | Modification | 550 | ^/home/ | 8 | sentinel_fim |
-| 100003 | Creation | 554 | ^/home/ | 8 | sentinel_fim |
-| 100004 | Deletion | 553 | ^/home/ | 8 | sentinel_fim |
+| 100002 | Modification | 550 | `^/home/` | 8 | `sentinel_fim` |
+| 100003 | Creation | 554 | `^/home/` | 8 | `sentinel_fim` |
+| 100004 | Deletion | 553 | `^/home/` | 8 | `sentinel_fim` |
 
-- Each rule chains from the built-in rule for its event type and adds a file condition anchored to paths beginning /home/.
-- On 2 Nov, sudo /var/ossec/bin/wazuh-analysisd -t returned exit code 0. This is configuration/analysis validation only: it indicates the configuration was accepted. It does not test matching behavior or show that any detection scenario works.
-- The ^/home/ condition covers any path beginning /home/, so ordinary desktop and application activity (Finding 4) may also generate Level 8 alerts. Noise has not been quantified.
-- The definitions show which built-in rules each custom rule depends on. They do not establish whether 100002, 100003 and 100004 were present and loaded on 16 Oct. The absence of 100002 from the reviewed 16 Oct creation/deletion records is consistent with its parent-rule design (Rule 550); whether its definition was deployed and loaded on 16 Oct is unknown. Why 100003/100004 appeared on 31 Oct remains unresolved; no root cause is asserted.
-- The active deployed copy of the rules on the manager has not been compared against the reviewed definitions in this document.
+- Each rule chains from the built-in rule for its event type and adds a path condition anchored at `/home/`.
+- `wazuh-analysisd -t` returning exit code 0 (2 Nov and 18 Nov) validates configuration/analysis syntax only. It does not test matching behavior or show that any detection works.
+- The `^/home/` condition covers any path under `/home/`, so ordinary desktop and application activity may also generate Level 8 alerts. Noise has not been quantified.
+- The 18 Nov raw alert records list `sshd` alongside `sentinel_fim` in their rule group metadata (Section 7.3). That is the historical state and does not reflect the group isolation made later in v0.8 (Section 10).
+- The current [`detections/local_rules.xml`](../detections/local_rules.xml) is a later implementation. It has the top-level group `local,syscheck,sentinel_fim`; Rules 100002, 100003 and 100004 at Level 8 with anchored `/home/` matching and rule-specific groups (`fim_modify,sentinel_fim`, `fim_create,sentinel_fim`, `fim_delete,sentinel_fim`); and negative PCRE2 conditions excluding selected Tracker3 and Nautilus database activity. Those exclusions are v0.8 tuning. They are not part of the CASE-001 rule definitions or the 18 Nov closeout.
+- These definitions show rule dependencies. They do not establish what was loaded on 16 Oct, and neither they nor the current file establish what was loaded during any historical test. The active deployed definitions have not been compared against them in this document.
 
-### Finding 7 — Controlled creation, modification and deletion lifecycle on 2 November
+### Finding 7: 2 November controlled lifecycle
 
-Result: Confirmed for one dedicated test file in one controlled session; limited scope.
+Confirmed for one dedicated file in one controlled session.
 
-| Field (2 Nov) | Creation | Modification | Deletion |
+| Field | Creation | Modification | Deletion |
 |---|---|---|---|
 | Event type | added | modified | deleted |
 | Custom rule | 100003 | 100002 | 100004 |
-| Parent rule (Finding 6) | 554 | 550 | 553 |
-| Alert level | 8 | 8 | 8 |
-| File | /home/sentinel-admin/sentinel-v03-final-test.txt | Same | Same |
+| Parent rule | 554 | 550 | 553 |
+| Level | 8 | 8 | 8 |
+| File | `/home/sentinel-admin/sentinel-v03-final-test.txt` | Same | Same |
 
-- Terminal evidence shows the three lifecycle events, each matched by its corresponding custom rule, for the same dedicated test-file path, which falls under /home/ and so within the ^/home/ condition of all three rules.
-- This is the first controlled single-file lifecycle in which 100003, 100002 and 100004 are all shown firing for creation, modification and deletion respectively. It is distinct from the 16 Oct historical records (built-in 554/553, 100002 absent) and from the 31 Oct observations (application configuration path, trigger origin not established).
-- wazuh-analysisd -t returned exit code 0; see Finding 6 for what that does and does not show.
-- The wazuh-logtest FIM replay limitation is a limitation of that replay method for exercising FIM events. It is not recorded as a detection failure, and it does not affect the live-event results above.
-- The result does not show repeatability, other paths, file types or sizes, detection or false-positive/false-negative rates, or the 16 Oct deployment/loading status of the custom rules (100002's absence from the reviewed 16 Oct creation/deletion records is consistent with its parent-rule design). No raw JSON alert records for 2 Nov are committed.
+The evidence is a terminal screenshot; no raw JSON for 2 Nov is committed. The `wazuh-logtest` FIM replay limitation is a limitation of that replay method, not a detection failure, and does not affect the live-event results. The result is distinct from the 16 Oct and 31 Oct sets and from the 18 Nov session.
 
 ---
 
-## Operational Events — Manager Incident and Restart Test (reported)
+## 7. 18 November 2026: Resolution and Validation (Closeout)
 
-> Operational recovery only; not detection evidence. Reported observations; raw logs not supplied or independently reviewed. No timestamps recorded.
+Recorded in the closeout section as "CLOSED / RESOLVED". Items below are listed in the closeout's order; times other than the alert timestamps are not recorded.
 
-### Manager startup timeout
+### 7.1 Endpoint configuration verification
 
-- Manager startup timed out (about 45 seconds per earlier session notes; to be confirmed).
-- /var/ossec/var/start-script-lock was a directory containing a PID file for PID 1440, then associated with the Wazuh Indexer Java process (per earlier notes; to be confirmed).
-- No active Manager processes were found; the lock directory was removed, systemctl daemon-reload was run, and the Manager started. Later checks showed Manager and Dashboard active, API and agent ports listening, and Agent 002 Active.
+The closeout records inspection of the active `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01 (10.10.10.40, Agent ID 002) and confirms `<directories realtime="yes">/home</directories>` (real-time monitoring via the Linux inotify subsystem). The committed endpoint screenshot (E14) shows the local configuration. This addresses the earlier gap in Finding 5, but does not establish which configuration was loaded on 16 Oct.
 
-Root cause: not established. "Stale" only reflects that no Manager process was found; successful startup after removal does not prove the lock caused the failure. The lock directory should not be deleted without fresh diagnostics.
+### 7.2 Rule standardization and MITRE ATT&CK mapping
 
-### Restart-persistence test
+Anchored matching did not first appear on 18 Nov: [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md) records that Rule 100002 already used an anchored `^/home/` pattern in v0.2. The closeout records that a regex discrepancy in `/var/ossec/etc/rules/local_rules.xml` was reconciled and that all three custom FIM rules were standardized to the anchored prefix `^/home/`. The exact earlier regex, and which rule or rules it affected, are not documented in the material used for this document. MITRE ATT&CK tags were embedded in the rule definitions:
 
-One graceful shutdown and restart of both VMs (SENTINEL-WAZUH first, then SENTINEL-LINUX01) was reported successful: wazuh-manager and wazuh-dashboard active; listeners on 0.0.0.0:55000 (API), 1514 (agent communication) and 1515 (enrollment); Agent 002 Disconnected, then Active. A single cycle; it does not demonstrate resilience under other failures or boot orders.
+| Rule | Event | Technique | Tactic as recorded |
+|---|---|---|---|
+| 100003 | Creation | `T1105` | Command and Control (Ingress Tool Transfer) |
+| 100002 | Modification | `T1565.001` | Impact (Stored Data Manipulation) |
+| 100004 | Deletion | `T1070.004` | Defense Evasion (File Deletion) |
+
+The tags classify each rule's intended detection purpose. A FIM alert is not evidence that the technique occurred. XML syntax was validated with `wazuh-analysisd -t` (exit code 0) and `wazuh-manager` was reloaded. That check validates syntax only, and the loaded definitions have not been independently compared with the on-disk files here.
+
+### 7.3 Controlled lifecycle session
+
+One controlled session on `/home/sentinel-admin/fim-sprint-test.txt`, evidenced by [fim-lifecycle-evidence.json](../evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json) (three Wazuh alert records).
+
+| Event | Rule | Level | Timestamp |
+|---|---|---|---|
+| Creation | 100003 | 8 | `2026-11-18T12:57:06.508+0530` |
+| Modification | 100002 | 8 | `2026-11-18T12:59:29.407+0530` |
+| Deletion | 100004 | 8 | `2026-11-18T13:04:23.506+0530` |
+
+- All records identify Agent `002`, `sentinel-linux01`, `10.10.10.40`, with real-time Syscheck events. Their rule group metadata lists `sshd` alongside `sentinel_fim`.
+- Inode `2622203` appears in all three records. The modification record contains before-and-after hashes, and its final SHA-256 matches the SHA-256 in the deletion record.
+- The matching inode and hash transitions support the interpretation that the three records concern the same file across the creation, modification and deletion sequence.
+- **Evidence artifact checksum:** `d3765e7240462b21d82b7ae8e7f772beeb8c57420f80d3e306024fb9ed32b2b6` is the SHA-256 of `fim-lifecycle-evidence.json`, as recorded in `SHA256SUMS`. The manifest covers all three raw JSON files.
+- **Monitored-file hash:** `05372b0d1a06363b07732b34d36860f96d9f191517465764e7c6f450c67180ac` is the final SHA-256 of the monitored test file, as represented in the FIM modification and deletion records. It is a property of `fim-sprint-test.txt`, not of the evidence file, and is a different value from the artifact checksum.
+- Neither value was independently recomputed for this document.
+- Together with 2 Nov, this makes two single-file controlled sessions. It is not a regression suite and does not establish repeatability across other paths, file types, sizes or repeated runs. The closeout's wording "full lifecycle repeatability confirmed" is therefore not carried forward.
+
+### 7.4 Observed benign noise
+
+During testing, activity under `/home/sentinel-admin/.cache/tracker3/files/.../tracker#FileSystem.db-wal` triggered Rule 100002 at Level 8 (`firedtimes: 12`). The closeout attributes this to the GNOME `tracker3` indexing service; the attribution rests on the path, and process attribution is not independently shown here. This is consistent with Finding 4 and indicates that unscoped `/home` monitoring captures application cache activity. Noise was not quantified. Later tuning is summarized in Section 10.
 
 ---
 
-## Assessment and Disposition
+## 8. Operational Events: Manager Incident and Restart Test (reported)
 
-Evidence reconciliation for the reviewed CASE-001 scope is closed: the 11 and 26 Oct modification results are recorded, the 16 Oct results are corrected to the reviewed records, the 31 Oct alerts are recorded as observations of unestablished origin, and the 2 Nov controlled lifecycle validation is recorded as a separate result.
+> Operational recovery only; not detection evidence. Reported observations; raw logs not supplied or reviewed. No timestamps recorded.
 
-Still open: broader investigation, detection-engineering work and SENTINEL v0.3 work (in progress); endpoint FIM configuration verification; comparison of the active deployed rules with the reviewed definitions; whether Rules 100002, 100003 and 100004 were deployed and loaded on 16 Oct; why 100003/100004 appeared on 31 Oct; reconciliation of the 31 Oct alert JSON records with the 31 Oct screenshot observation; repeatable lifecycle testing; noise and false-positive/false-negative assessment. Follow-up actions are future work, not prerequisites for the limited closure.
+**Manager startup timeout.** Startup timed out (about 45 seconds per earlier session notes; to be confirmed). `/var/ossec/var/start-script-lock` was a directory containing a PID file for PID 1440, then associated with the Wazuh Indexer Java process (per earlier notes; to be confirmed). No active Manager processes were found; the lock directory was removed, `systemctl daemon-reload` was run, and the Manager started. Later checks showed Manager and Dashboard active, API and agent ports listening, and Agent 002 Active. Root cause not established: successful startup after removal does not prove the lock caused the failure. The lock directory should not be deleted without fresh diagnostics.
 
-Rule 100002 detected the tested modification scenario at Level 8 on 11 and 26 Oct. On 2 Nov, in a dedicated controlled session on sentinel-v03-final-test.txt, 100003 (creation), 100002 (modification) and 100004 (deletion) each fired at Level 8 for the same file, and wazuh-analysisd -t returned exit code 0 (configuration syntax/analysis validation only). 100003 and 100004 were also observed once each at Level 8 on 31 Oct under an application configuration path, with trigger origin not established, and separate 31 Oct alert JSON records show the same two rules for sentinel-v03-controlled-test.txt. The 16 Oct records showed built-in 554 (Level 5) and 553 (Level 7); Rule 100002 was absent from those records, which is consistent with its parent-rule design (Rule 550, modification) and not necessarily a detection failure; the 16 Oct deployment/loading status of 100002, 100003 and 100004 is unknown. Case severity Low is the administrative classification for this scope and is distinct from these alert levels. No malicious indicators were identified in the reviewed events; this is limited to the events examined, a FIM alert alone does not indicate malicious activity, and this is not a comprehensive forensic assessment. No containment, eradication or recovery is claimed or was required.
+**Restart-persistence test.** One graceful shutdown and restart of both VMs (SENTINEL-WAZUH first, then SENTINEL-LINUX01) was reported successful: `wazuh-manager` and `wazuh-dashboard` active; listeners on 0.0.0.0:55000 (API), 1514 (agent communication) and 1515 (enrollment); Agent 002 Disconnected, then Active. A single cycle; it does not demonstrate resilience under other failures or boot orders.
 
 ---
 
-## Limitations
+## 9. Assessment, Disposition and Limitations
 
-- No detection rates, false-positive/false-negative results, repeatability, or complete FIM coverage are claimed.
-- Observations span separate sessions. The 2 Nov lifecycle is one controlled session on one file; it is not a completed regression suite.
-- The 31 Oct 100003/100004 screenshot observations have unestablished trigger origin. The committed 31 Oct alert JSON records are a separate evidence set from the 2 Nov evidence, differ in path and time from the screenshot observation, and their relationship to it is not established.
-- The 31 Oct JSON files are Wazuh alert records, not original Syscheck input logs. The SHA256SUMS manifest exists, but checksums have not been independently recomputed for this document.
-- The 2 Nov results rest on a terminal screenshot; no raw JSON alert records for 2 Nov are committed.
-- wazuh-analysisd -t exit code 0 validates configuration/analysis only; it is not evidence that all detection scenarios work.
-- The wazuh-logtest FIM replay limitation constrains offline replay of FIM events; it is a tooling limitation, not a detection failure.
-- Rule 100002's absence from the reviewed 16 Oct creation/deletion records is consistent with its parent-rule design (Rule 550) and is not necessarily a detection failure. Unresolved or unknown: whether the 100002 definition was deployed and loaded on 16 Oct; whether Rules 100003 and 100004 were deployed and loaded on 16 Oct; and why 100003/100004 appeared on 31 Oct. The 2 Nov test does not establish the 16 Oct loading status.
-- The committed manager-side configuration screenshot shows manager configuration only and does not establish endpoint configuration. The endpoint configuration screenshot's contents were not reviewed for this document. The "e14" label in the manager screenshot filename appears inconsistent with the endpoint screenshot's "e14" label and is flagged for evidence-index reconciliation; the file has not been renamed.
-- The original 11 Oct alert log is unavailable.
-- Background home-directory events were not attributed to processes.
-- All three rules use the broad ^/home/ condition; noise has not been quantified.
-- The active deployed rules have not been compared with the reviewed definitions in this document.
+### Assessment
+
+- Rule 100002 detected the tested modification scenario at Level 8 on 11 and 26 Oct.
+- In two separate controlled sessions (2 Nov, screenshot; 18 Nov, raw JSON), Rules 100003, 100002 and 100004 each fired at Level 8 for creation, modification and deletion of one dedicated file.
+- 100003 and 100004 were also observed on 31 Oct in two evidence sets of unestablished relationship.
+- Endpoint real-time `/home` monitoring was verified at closeout. Rules were standardized to `^/home/` and tagged with MITRE ATT&CK techniques.
+- Benign background activity under `/home` also produces Level 8 alerts.
+- The Low classification is administrative and distinct from these alert levels.
+- No malicious indicators were identified in the reviewed events. This is limited to the events examined and is not a comprehensive forensic assessment. No containment, eradication or recovery was claimed or required.
+
+### Disposition
+
+CASE-001 is closed per the 18 Nov closeout. The items in Section 11 are post-closeout follow-up work, not conditions of closure.
+
+### Limitations
+
+These apply to the CASE-001 evidence. The later sessions in Section 10 are not part of it.
+
+- No detection rates, false-positive/false-negative rates, repeatability across paths, file types or sizes, or complete FIM coverage are claimed. The 2 Nov and 18 Nov sessions are each one controlled session on one file.
+- Evidence types differ: 11 Oct and 31 Oct (A) are screenshot-based, 16 Oct rests on reviewed records, and 2 Nov is a screenshot with no raw JSON committed. Only 31 Oct (B) and 18 Nov have raw alert JSON. The original 11 Oct log is unavailable.
+- 31 Oct (A) and (B) have no established relationship, and the trigger origin of (A) is unknown.
+- Checksums were not recomputed for this document.
+- 16 Oct: whether Rules 100002, 100003 and 100004 were deployed and loaded is unknown, and why 100003/100004 appeared on 31 Oct is unresolved. Later results do not retroactively establish earlier configuration.
+- `wazuh-analysisd -t` exit code 0 validates configuration/analysis only.
+- The active loaded rule definitions have not been compared with the reviewed definitions. The regex in place before the 18 Nov standardization is not documented here.
+- Manager-side configuration evidence does not establish endpoint configuration.
+- Background `/home` events were not attributed to processes beyond path-based inference.
 - Operational events are reported only; the startup-timeout root cause is unconfirmed.
 
 ---
 
-## Follow-Up Actions
+## 10. Post-Closeout Developments (outside CASE-001 evidence)
 
-Future work; none of the items below has been completed unless stated under "Tested to date".
+Developments documented in the repository after the 18 November closeout, per its current detection documentation as reported to this draft. They are repository-documented milestones, not CASE-001 evidence. They do not alter its findings and were not independently reviewed here.
 
-Tested to date (limited): a single controlled creation, modification and deletion lifecycle on /home/sentinel-admin/sentinel-v03-final-test.txt (2 Nov), and one wazuh-analysisd -t run with exit code 0.
+| Date / version | Development | Relationship to CASE-001 |
+|---|---|---|
+| 20 Nov (v0.6) | Separate controlled FIM lifecycle session: Rules 100003 (creation), 100002 (modification), 100004 (deletion), each Level 8. The repository reports 3 of 3 selected lifecycle events detected and 0 of 3 `/tmp` negative-control operations alerted. | Separate from the 18 Nov session. A small-sample result: 3/3 and 0/3 are not statistically meaningful detection or false-positive rates, and not a regression suite or coverage assessment. |
+| 21 Nov (v0.8) | FIM tuning (details below). A live Agent 002 probe verified creation, modification and deletion detection. | Implements part of the noise tuning recommended at closeout. Does not eliminate false positives. |
+| v0.9 (date not supplied) | Sysmon JSON replay ingestion and evidence ([v0.9 evidence README](../evidence/v0.9/readme.md)). | Separate development; not part of CASE-001. |
+| v0.9.1 (date not supplied) | Follow-up work addressing field/timestamp separation in the Python triage integration, as described in the [v0.9 evidence README](../evidence/v0.9/readme.md). | Separate from v0.9; not part of CASE-001. |
 
-Remaining:
+**v0.8 tuning, as reported:**
 
-- Verify the effective FIM configuration on SENTINEL-LINUX01, including review of the committed endpoint screenshot ([v0.3-e14-endpoint-syscheck-configuration.png](../evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png)).
-- Compare the active deployed copy of the custom rules with the reviewed definitions, and establish which rules were loaded on each test date.
+- FIM rules were separated from SSH-related group inheritance, and a dedicated FIM group was established. The current [`detections/local_rules.xml`](../detections/local_rules.xml) uses `local,syscheck,sentinel_fim`. The `sentinel_fim` label already appeared in earlier alert metadata and was not first introduced in v0.8.
+- Anchored `^/home/` matching retained.
+- Selected Tracker3 and Nautilus database activity excluded (implemented as negative PCRE2 conditions in the current file).
+- Hidden dot-directory monitoring preserved.
+- Residual desktop noise under `/home/sentinel-admin/.config/dconf/user` remains. Broader noise-suppression retesting is pending.
+
+The linked `detections/local_rules.xml` is the post-v0.8 implementation, not a historical v0.3 snapshot, and does not show what was loaded during the CASE-001 tests. Related repository documentation:
+
+- **v0.6:** [metrics/v0.6-purple-team-measurement.md](../metrics/v0.6-purple-team-measurement.md)
+- **v0.8:** no dedicated document is linked; see the detection documentation, [docs/05-detection-engineering.md](../docs/05-detection-engineering.md) and [detections/readme.md](../detections/readme.md)
+- **v0.9 and v0.9.1:** [evidence/v0.9/readme.md](../evidence/v0.9/readme.md)
+
+---
+
+## 11. Post-Closeout Follow-Up Work
+
+**Implemented after closeout (v0.8):** FIM group isolation; selected Tracker3 and Nautilus exclusions; a live Agent 002 probe; hidden-directory monitoring verification. Noise reduction is therefore partly done, not unstarted.
+
+**Outstanding:**
+
+- Broader noise-suppression retest, and investigation of the residual `dconf` noise.
+- Compare the active deployed rules with the reviewed definitions, and establish historical rule and configuration state where recoverable (including 16 Oct, 31 Oct, and the regex before standardization).
+- Wider path, file-type and size testing, and development of a regression suite.
+- Measurement and documentation of false-positive and false-negative rates.
+- Independently recompute the `SHA256SUMS` checksums.
 - Review built-in Rules 550, 553 and 554.
-- Export raw JSON alert records for 16 Oct, 26 Oct and 2 Nov where available, and keep them distinct from the committed 31 Oct alert JSON set.
-- Independently verify the 31 Oct SHA256SUMS manifest against the committed JSON files.
-- Repeat the lifecycle test to assess repeatability, and extend it to other paths, file types and sizes using dedicated test files; develop it into a repeatable regression suite.
-- Establish whether the Rule 100002 definition was deployed and loaded on 16 Oct. Its absence from the reviewed creation/deletion records is consistent with its parent-rule design (Rule 550) and is not itself treated as a detection failure.
-- Establish whether Rules 100003 and 100004 were deployed and loaded on 16 Oct.
-- Establish why Rules 100003 and 100004 appeared on 31 Oct.
-- Reconcile the 31 Oct alert JSON records (sentinel-v03-controlled-test.txt; 22:56:46.988 and 23:27:05.164 +0530) with the 31 Oct screenshot observation (application configuration path; ~18:51:56), and establish the origin of the 31 Oct events, if possible.
-- Reconcile the "e14" label in the evidence index for the manager and endpoint syscheck configuration screenshots; do not rename files without a coordinated update.
-- Evaluate path matching and noise reduction (including the broad ^/home/ condition) without breaking existing detections.
-- Document false-positive and false-negative results once measured.
+- Export raw JSON alert records for 16 Oct, 26 Oct and 2 Nov where available.
+- Where recoverable, establish why Rules 100003 and 100004 appeared on 31 Oct, and whether the two 31 Oct sets are related.
 - Capture diagnostics before any change if the Manager startup failure recurs.
-- Update detection-engineering documentation and changelog after validation.
+- **Reconcile `CHANGELOG.md` and [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md)** with the authoritative 18 Nov closure and the post-closeout milestones. Both still contain older wording saying CASE-001 remains open overall and describing the v0.3 milestone or related work as open. They are not yet synchronized; this is a separate documentation task not performed here. Also check other repository documents for the E14/E15 filenames and the closed status.
 
 ---
 
-## Conclusion
-
-CASE-001 documents validation of custom rule 100002 for the tested modification scenario (11 and 26 October 2026), the separate observation of 100003 (creation) and 100004 (deletion) at Level 8 on 31 October 2026 under an application configuration path with trigger origin not established (with separately committed 31 October alert JSON records for sentinel-v03-controlled-test.txt whose relationship to that observation is not established), and a dedicated controlled lifecycle validation on 2 November 2026 in which 100003 (creation), 100002 (modification) and 100004 (deletion) each fired at Level 8 for /home/sentinel-admin/sentinel-v03-final-test.txt. The reviewed definitions show the three rules chained from built-in Rules 554, 550 and 553 with a ^/home/ file condition at Level 8 in group sentinel_fim. A wazuh-analysisd -t run on 2 November returned exit code 0, which validates configuration/analysis only. The 16 October records showed built-in Rules 554 and 553 with 100002 absent from the reviewed records, preserved as a historical observation; that absence is consistent with 100002's parent-rule design (Rule 550, modification) and not necessarily a detection failure, and the 16 October deployment/loading status of 100002, 100003 and 100004 is unknown. The committed manager-side configuration screenshot does not establish the endpoint's effective FIM configuration. No raw JSON alert records for 2 November are committed, and no repeatability, coverage, or false-positive/false-negative claims are made. Next steps are endpoint configuration verification, comparison of deployed and reviewed rules, repeatable multi-path lifecycle tests and false-positive/false-negative assessment, without disturbing working detections. The broader investigation and SENTINEL v0.3 work remain open.
-
----
-
-CASE-001 — evidence first, uncertainty preserved.
-
----
-
-## Resolution & Sprint Closeout (18 November 2026)
-
-### Status: CLOSED / RESOLVED
-
-### 1. Endpoint Configuration Verification
-- Inspected active `/var/ossec/etc/ossec.conf` on `SENTINEL-LINUX01` (10.10.10.40, Agent ID 002).
-- Confirmed `<directories realtime="yes">/home</directories>` is active, utilizing the Linux kernel inotify subsystem for real-time telemetry generation.
-
-### 2. Rule Standardization & MITRE ATT&CK Mapping
-- Reconciled regex discrepancy in `/var/ossec/etc/rules/local_rules.xml`. Standardized all custom FIM rules to anchored prefix matching: `^/home/`.
-- Embedded formal MITRE ATT&CK taxonomy tags directly into rule definitions:
-  - **Rule 100003 (Creation):** `T1105` (Command and Control / Ingress Tool Transfer)
-  - **Rule 100002 (Modification):** `T1565.001` (Impact / Stored Data Manipulation)
-  - **Rule 100004 (Deletion):** `T1070.004` (Defense Evasion / File Deletion)
-- Validated XML syntax via `wazuh-analysisd -t` (exit code 0) and reloaded `wazuh-manager`.
-
-### 3. Repeatability Lifecycle Execution & Telemetry Evidence
-- Conducted controlled test run on endpoint `/home/sentinel-admin/fim-sprint-test.txt`.
-- Successfully validated that all three custom rules fired sequentially at Level 8 in real time.
-- Preserved cryptographic continuity: Inode `2622203` remained constant; modification hash matched subsequent deletion hash.
-- Exported raw JSON telemetry: `evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json`.
-- Cryptographic Checksum:
-  - SHA-256: `d3765e7240462b21d82b7ae8e7f772beeb8c57420f80d3e306024fb9ed32b2b6`
-  - Committed to `evidence/v0.3/raw-alerts/SHA256SUMS`.
-
-### 4. Noise & False-Positive Discovery
-- **Empirical Observation:** During testing, GNOME background indexing service (`tracker3`) modified `/home/sentinel-admin/.cache/tracker3/files/.../tracker#FileSystem.db-wal`, triggering Rule 100002 at Level 8 (`firedtimes: 12`).
-- **Engineering Finding:** Confirmed that un-scoped monitoring of `/home` captures benign user-space application cache churn.
-- **Tuning Recommendation for v0.4:** Scope high-severity FIM to critical system/user artifacts (e.g., `.bashrc`, `.ssh/authorized_keys`, `/etc/`) or implement `<ignore>` directives for user `.cache/` directories.
-
-### 5. Final Assessment
-With endpoint FIM verified, rule logic standardized and mapped to MITRE ATT&CK, full lifecycle repeatability confirmed with committed raw JSON evidence, and false-positive noise documented, the investigative and detection engineering objectives of **CASE-001** and **SENTINEL v0.3** are formally complete.
+CASE-001: evidence first, uncertainty preserved.
