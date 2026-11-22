@@ -13,8 +13,8 @@ Alert levels shown are Wazuh rule levels. They are not assessments of case sever
 | [`sentinel-v03-creation-alert.json`](sentinel-v03-creation-alert.json) | Creation | `100003` | 8 | `2026-10-31T22:56:46.988+0530` |
 | [`sentinel-v03-deletion-alert.json`](sentinel-v03-deletion-alert.json) | Deletion | `100004` | 8 | `2026-10-31T23:27:05.164+0530` |
 | [`fim-lifecycle-evidence.json`](fim-lifecycle-evidence.json) | Creation | `100003` | 8 | `2026-11-18T12:57:06.508+0530` |
-| | Modification | `100002` | 8 | `2026-11-18T12:59:29.407+0530` |
-| | Deletion | `100004` | 8 | `2026-11-18T13:04:23.506+0530` |
+| [`fim-lifecycle-evidence.json`](fim-lifecycle-evidence.json) | Modification | `100002` | 8 | `2026-11-18T12:59:29.407+0530` |
+| [`fim-lifecycle-evidence.json`](fim-lifecycle-evidence.json) | Deletion | `100004` | 8 | `2026-11-18T13:04:23.506+0530` |
 
 ## October 31: Creation and Deletion
 
