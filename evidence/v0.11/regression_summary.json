@@ -1,0 +1,42 @@
+{
+  "cutoff_timestamp": "2026-11-22T23:14:00+0530",
+  "pre_cutoff_rule_counts": {
+    "100003": 64,
+    "550": 31,
+    "5501": 26,
+    "5502": 25,
+    "554": 24,
+    "5402": 24,
+    "100002": 20,
+    "100004": 14,
+    "553": 11,
+    "503": 2,
+    "502": 1,
+    "19010": 1,
+    "19004": 1
+  },
+  "post_cutoff_rule_counts": {
+    "550": 17,
+    "5402": 6,
+    "5502": 6,
+    "5501": 6,
+    "100003": 1,
+    "100002": 1,
+    "100004": 1
+  },
+  "pre_cutoff_excluded_l8_paths": {
+    "/home/sentinel-admin/.local/share/gnome-shell/.goutputstream-21OOZ3": 2,
+    "/home/sentinel-admin/.config/tiling-assistant/.goutputstream-6NZNZ3": 2,
+    "/home/sentinel-admin/.config/dconf/user": 2,
+    "/home/sentinel-admin/.config/dconf/user.L606Y3": 2,
+    "/home/sentinel-admin/.local/share/gnome-shell/application_state": 1,
+    "/home/sentinel-admin/.config/tiling-assistant/tiledSessionRestore.json": 1
+  },
+  "post_cutoff_excluded_l8_paths": {},
+  "post_cutoff_parent_550_553_554_excluded_paths": {
+    "/home/sentinel-admin/.cache/tracker3/files/http%3A%2F%2Ftracker.api.gnome.org%2Fontology%2Fv3%2Ftracker%23Documents.db-wal": 5,
+    "/home/sentinel-admin/.cache/tracker3/files/http%3A%2F%2Ftracker.api.gnome.org%2Fontology%2Fv3%2Ftracker%23FileSystem.db-wal": 5,
+    "/home/sentinel-admin/.cache/tracker3/files/last-crawl.txt": 4,
+    "/home/sentinel-admin/.cache/tracker3/files/meta.db-wal": 3
+  }
+}
