@@ -7,32 +7,37 @@ Enterprise SOC platforms already exist, and SENTINEL isn't meant to replace Wazu
 A detection firing once doesn't make it reliable. Understanding it means investigating why it fires, testing where it can fail, and examining what the evidence actually establishes.
 
 ---
-
 ## Lab architecture
 
-```text
-                  Isolated VirtualBox Network
-                         10.10.10.0/24
+```mermaid
+flowchart TB
+    subgraph NET["Isolated VirtualBox network · 10.10.10.0/24"]
+        direction TB
+        KALI["<b>SENTINEL-KALI</b><br/>Kali Linux<br/>10.10.10.20<br/>Role: controlled SSH testing"]
+        LINUX["<b>SENTINEL-LINUX01</b><br/>Ubuntu 24.04<br/>10.10.10.40<br/>Role: monitored endpoint<br/>Wazuh Agent 002"]
+        WAZUH["<b>SENTINEL-WAZUH</b><br/>Ubuntu 24.04<br/>10.10.10.10<br/>Role: Wazuh manager<br/>Wazuh 4.14.8"]
+        KALI -->|"controlled SSH testing"| LINUX
+        LINUX -->|"Wazuh Agent communication"| WAZUH
+    end
 
-  SENTINEL-KALI                     SENTINEL-LINUX01
-  10.10.10.20  ── SSH testing ───►  10.10.10.40
-                                    Ubuntu 24.04
-                                    Wazuh Agent 002
-                                         │
-                                         │ Agent communication
-                                         ▼
-                                    SENTINEL-WAZUH
-                                    10.10.10.10
-                                    Ubuntu 24.04
-                                    Wazuh 4.14.8
+    subgraph REPLAY["Offline Sysmon replay · no live Windows endpoint"]
+        direction TB
+        EVTX(["Pre-recorded Windows<br/>.evtx files"])
+        NDJSON(["NDJSON"])
+        LOGC(["Agent 002 logcollector<br/>(on SENTINEL-LINUX01)"])
+        EVTX -->|"Python conversion"| NDJSON
+        NDJSON -->|"ingested via"| LOGC
+    end
 
-  Offline Sysmon .evtx
-          │
-          ▼
-  Python conversion → NDJSON → Agent 002 logcollector
+    classDef vm fill:#e8f1fb,stroke:#2f6db5,stroke-width:2px,color:#0b2540
+    classDef data fill:#fdf3e1,stroke:#b7791f,stroke-width:2px,color:#3d2a05
+    class KALI,LINUX,WAZUH vm
+    class EVTX,NDJSON,LOGC data
+    style NET fill:none,stroke:#2f6db5,stroke-width:2px
+    style REPLAY fill:none,stroke:#b7791f,stroke-width:2px,stroke-dasharray:6 4
 ```
 
-Windows Sysmon telemetry is replayed offline: pre-recorded `.evtx` captures are converted to NDJSON with Python and ingested through Agent 002's `logcollector`.
+SENTINEL-KALI performs controlled SSH testing against SENTINEL-LINUX01, and the endpoint reports to SENTINEL-WAZUH through Wazuh Agent 002; Kali does not communicate with the manager. Windows Sysmon telemetry is replayed offline: pre-recorded `.evtx` captures are converted to NDJSON with Python and ingested through Agent 002's `logcollector`. No live Windows endpoint is part of this architecture.
 
 ---
 
