@@ -26,7 +26,7 @@ On 19 November 2026, pre-recorded Windows Sysmon `.evtx` captures were replayed 
 
 | Outcome | Result |
 |---|---|
-| Benign noise suppressed | 3 benign `services.exe → svchost.exe` process-creation events matched Level 0 rule `100101`; **0 alerts** reached `alerts.json` |
+| Benign noise suppressed | 3 benign `services.exe → svchost.exe` process-creation events matched the general Level 0 Sysmon Event ID 1 base rule `100101` (not a dedicated `services.exe → svchost.exe` rule); **0 alerts** reached `alerts.json` |
 | Attack detections | **7 of 7** rules fired (`100110`, `100111`, `100112`, `100120`, `100130`, `100131`, `100140`), Levels 8–14 |
 | Evidence integrity | 7 raw alert records extracted to `sysmon_alerts_raw.json`, SHA-256 recorded in §7 |
 | Baseline integrity | `local_rules.xml` (`100001–100004`, including FIM Rule `100002` and the CASE-001 ruleset) not modified |
@@ -93,17 +93,17 @@ Before replay, the ruleset was loaded and checked with `wazuh-logtest`.
 
 ## 5. Noise Suppression — Level 0 Base Rules (`100100–100104`)
 
-Base rules establish the Sysmon event structure and suppress known-benign activity so it never reaches `alerts.json`.
+Base rules establish the Sysmon event structure. Events that match only a Level 0 base rule do not produce an alert, so they never reach `alerts.json`.
 
 | Rule ID | Level | Role |
 |---|---|---|
 | 100100 | 0 | Structural base rule |
-| 100101 | 0 | Benign `services.exe → svchost.exe` process creation (Sysmon EID 1) |
+| 100101 | 0 | General Sysmon Event ID 1 (process creation) structural/base rule. It has no dedicated `services.exe → svchost.exe` condition |
 | 100102 | 0 | Structural base rule |
 | 100103 | 0 | Structural base rule |
 | 100104 | 0 | Structural base rule |
 
-**Result:** the 3 benign `services.exe → svchost.exe` events were classified under Rule `100101` (Level 0). No false-positive alerts were emitted.
+**Result:** the 3 observed benign `services.exe → svchost.exe` process-creation events happened to match the general Level 0 base rule `100101`. They were suppressed at Level 0 and did not appear as alerts in `alerts.json`. Rule `100101` is not a dedicated benign-process detection or filtering rule, and the result does not show that the ruleset specifically recognizes the `services.exe → svchost.exe` relationship. No false-positive alerts were emitted.
 
 ---
 
