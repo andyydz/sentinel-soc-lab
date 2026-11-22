@@ -8,8 +8,9 @@ The evidence supports the specific results described below. It does not establis
 
 ## Status
 
-- The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete. This is a milestone status, not a statement about the overall status of CASE-001.
-- **CASE-001 overall status requires confirmation.** Earlier sections of `CASE-001.md` describe evidence reconciliation for the reviewed scope as closed, with the broader investigation open. Its later section "Resolution & Sprint Closeout (18 November 2026)" describes CASE-001 as closed/resolved, with its investigative and detection-engineering objectives formally complete. These statements conflict, and this README does not choose between them.
+- The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete, per the 18 November 2026 closeout.
+- **CASE-001 was closed on 18 November 2026 for its defined investigation scope**, as recorded in `CASE-001.md` ("Resolution & Sprint Closeout (18 November 2026)"). That closeout is authoritative and supersedes any earlier "open" or "in progress" wording.
+- This closure does not mean that all broader FIM validation or detection-engineering work is complete. That work is separate from the case closure (see Remaining Work).
 - Two separate controlled creation, modification and deletion lifecycle sessions are recorded: November 2 (terminal screenshot) and November 18 (raw alert JSON). Each is a single session on one dedicated file. Together they are not a regression suite.
 - October 31 has two separate evidence sets (a screenshot and two raw alert JSON files). Their relationship has not been established.
 - Endpoint (E14) and manager (E15) Syscheck configuration screenshots are indexed. Both show local configuration only. The E15 filename has not been verified (see the path verification note under the Evidence Index).
@@ -340,7 +341,7 @@ Confirmed:
 
 ## Remaining Work
 
-These are evidence-level gaps recorded in this index. Whether they remain tracked as open work depends on the CASE-001 status, which requires confirmation (see Status).
+These are evidence-level gaps and broader follow-up or future validation work recorded in this index. They are separate from, and do not invalidate, the CASE-001 closure of 18 November 2026 for its defined investigation scope.
 
 - Verify the loaded (in-memory) definition of Rule `100002`, and review the on-disk and loaded definitions of Rules `100003` and `100004` and built-in Rules `550`, `553`, `554`. Confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16.
 - Investigate the differences between the October 16 and October 31 observations; no explanation is established.
@@ -354,7 +355,7 @@ These are evidence-level gaps recorded in this index. Whether they remain tracke
 
 ## Scope Statement
 
-These screenshots and records document specific detection observations and investigation checkpoints. They are not evidence that every detection scenario has been tested, that FIM coverage is complete, or that the SENTINEL SOC workflow is finished. The November 2 and November 18 results are each a single controlled lifecycle session on one dedicated file, not a regression suite or a detection rate. The October 31 raw records document creation and deletion only. The November 3 check verified the on-disk Rule `100002` definition and service state only. A FIM alert alone does not indicate malicious activity, and no malicious indicators were identified in the reviewed events. The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete. The overall status of CASE-001 requires confirmation (see Status); this README makes no claim about it.
+These screenshots and records document specific detection observations and investigation checkpoints. They are not evidence that every detection scenario has been tested, that FIM coverage is complete, or that the SENTINEL SOC workflow is finished. The November 2 and November 18 results are each a single controlled lifecycle session on one dedicated file, not a regression suite or a detection rate. The October 31 raw records document creation and deletion only. The November 3 check verified the on-disk Rule `100002` definition and service state only. A FIM alert alone does not indicate malicious activity, and no malicious indicators were identified in the reviewed events. The SENTINEL v0.3 phase milestone and its documentation and evidence deliverables are complete, and CASE-001 was closed on 18 November 2026 for its defined investigation scope. That completed scope is distinct from the broader ongoing SENTINEL engineering and validation work (including loaded-configuration verification, repeatable regression testing, and false-positive/false-negative testing), which remains outstanding and is not a condition of the CASE-001 closure.
 
 ---
 
