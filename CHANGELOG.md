@@ -1,3 +1,12 @@
+## [v0.10] - 2026-11-22
+
+### Added
+- Documented live Linux FIM (`100003`, `100002`, `100004` on `/home/sentinel-admin/.fim_probe_test.txt`) triage integration with `python-soc-automation` `v1.0` (commit `9696707`), distinct from `v0.9` Sysmon JSON replay.
+- Recorded archived evidence (`fim_probe_alerts.json`, `fim_probe_report.md`, and `SHA256SUMS` in `~/soc-evidence/v0.10-fim-probe/`) and cleanup of temporary `/tmp` probe files.
+
+### Notes
+- Open FIM noise-tuning items (`dconf`, Tracker3, Nautilus) remain open and separate from `v0.10`.
+
 # Changelog
 
 SENTINEL is a virtual SOC lab built around one lifecycle: **SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST**. Its guiding question is: *does your detection still work when the attacker changes tactics?*
