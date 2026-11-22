@@ -2,7 +2,7 @@
 
 > Does your detection still work when the attacker changes tactics?
 
-This document defines SENTINEL's detection engineering process — how detections are designed, implemented, tested, and validated against real telemetry — and tracks the current state of detections actually built in the lab, through milestone v0.9.1.
+This document defines SENTINEL's detection engineering process — how detections are designed, implemented, tested, and validated against real telemetry — and tracks the current state of detections actually built in the lab, through milestone v0.9.1 (alongside v0.10 Linux FIM triage validation).
 
 A detection is not considered working because a rule exists. It is considered working only once it has been tested against controlled activity in the lab and the result — pass, fail, or unresolved — has been documented.
 
@@ -262,7 +262,7 @@ For the EVTX replay, 3 captures were converted into 12 NDJSON records (24 lines 
 
 ### 5.6 Python-assisted triage boundary
 
-[`python-soc-automation`](https://github.com/andyydz/python-soc-automation) is a separate project. It processes Wazuh alert JSON and provides Python-assisted severity triage. The v0.9 workflow used `--triage --min-level 8`. The integration includes fallback extraction of Sysmon fields (`targetFilename`, `image`, `targetImage`) when `syscheck.path` is absent. The project reported 169 passing pytest tests at the v0.9 milestone. That count describes the Python tool's own tests, not validation of the Wazuh detections.
+[`python-soc-automation`](https://github.com/andyydz/python-soc-automation) is a separate project. It processes Wazuh alert JSON and provides Python-assisted severity triage. The v0.9 workflow used `--triage --min-level 8`. The integration includes fallback extraction of Sysmon fields (`targetFilename`, `image`, `targetImage`) when `syscheck.path` is absent. The project now passes 195 pytest tests across its triage, schema 1.2, and CLI flag regression suite. That count describes the Python tool's own tests, not validation of the Wazuh detections.
 
 Boundaries:
 - It is an external tool, not a native Wazuh detection rule or feature.

@@ -41,15 +41,16 @@ This file is a project-level summary: milestones, architecture decisions, what t
 | v0.8 FIM Tuning | Complete, merged on `main` | FIM group isolation, selected noise exclusions, Agent `002` probe; broader retest pending |
 | v0.9 Sysmon JSON Replay and Triage | Complete, merged on `main` | Manager-side JSON replay ingestion; Python-assisted triage integration |
 | v0.9.1 | Follow-up | Field and timestamp handling separated in the Python triage integration |
+| v0.10 | Validation | Live Linux FIM probe (`100003`, `100002`, `100004`) and `python-soc-automation` triage validation |
 
-v0.6, v0.8, v0.9 and v0.9.1 were developed after CASE-001 closed and are not CASE-001 evidence.
+v0.6, v0.8, v0.9, v0.9.1, and v0.10 were developed after CASE-001 closed and are not CASE-001 evidence.
 
 ---
 
 ## v0.9.1 and v0.9 — Sysmon JSON Replay and Python Triage
 
 - **v0.9:** replay JSON events were ingested by a manager-side logcollector. Alerts fired for Rules `100110`, `100130` and `100140` ([evidence](evidence/v0.9/readme.md)). This does not mean every Sysmon rule was independently validated. Replayed telemetry only, not a live endpoint.
-- **Python triage:** the separate companion project [`python-soc-automation`](https://github.com/andyydz/python-soc-automation) parses Wazuh alert JSON and performs severity-based triage (v0.9 used `--triage --min-level 8`). Its 169 passing pytest tests cover the Python tool, not Wazuh detection coverage. It does not perform containment, eradication or recovery and is not a SOAR platform.
+- **Python triage:** the separate companion project [`python-soc-automation`](https://github.com/andyydz/python-soc-automation) parses Wazuh alert JSON and performs severity-based triage (v0.9 used `--triage --min-level 8`). Its 195 passing pytest tests cover the Python tool, not Wazuh detection coverage. It does not perform containment, eradication or recovery and is not a SOAR platform.
 - **v0.9.1:** follow-up separating field and timestamp handling in the triage integration.
 
 ## v0.8 — FIM Group Isolation and Noise Tuning

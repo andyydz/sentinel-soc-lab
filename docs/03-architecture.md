@@ -10,7 +10,7 @@ Wazuh is the central monitoring and detection platform inside a broader validati
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
 ```
 
-This document is current through milestone **v0.9.1**. It separates what is **implemented and validated** from what is **observed but not fully validated**, **pending retest**, or **future work**.
+This document is current through milestone **v0.9.1** (with **v0.10** live Linux FIM triage validation recorded separately). It separates what is **implemented and validated** from what is **observed but not fully validated**, **pending retest**, or **future work**.
 
 **Status legend:** **Completed** (the documented milestone scope was finished) · **Implemented and merged** (capability is on `main`; further validation may remain) · **Validated** (tested for a documented scenario) · **Observed** (seen, but not fully validated or explained) · **Pending retest** · **Future work** (not built).
 
