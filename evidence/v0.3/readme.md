@@ -13,7 +13,7 @@ The evidence supports the specific results described below. It does not establis
 - This closure does not mean that all broader FIM validation or detection-engineering work is complete. That work is separate from the case closure (see Remaining Work).
 - Two separate controlled creation, modification and deletion lifecycle sessions are recorded: November 2 (terminal screenshot) and November 18 (raw alert JSON). Each is a single session on one dedicated file. Together they are not a regression suite.
 - October 31 has two separate evidence sets (a screenshot and two raw alert JSON files). Their relationship has not been established.
-- Endpoint (E14) and manager (E15) Syscheck configuration screenshots are indexed. Both show local configuration only. The E15 filename has not been verified (see the path verification note under the Evidence Index).
+- Endpoint (E14) and manager (E15) Syscheck configuration screenshots (`v0.3-e14-endpoint-syscheck-configuration.png` and `v0.3-e15-manager-syscheck-configuration.png`) are present in `screenshots/` and show local configuration only.
 - A read-only check on November 3, 2026 confirmed the on-disk Rule `100002` definition and that `wazuh-analysisd` was running. It does not verify the in-memory rule or the configuration loaded on October 16.
 - No containment, eradication, or recovery exercise has been completed.
 
@@ -70,7 +70,7 @@ Each row is a separate set. Rows must not be merged into one test or session.
 | E12 | [`v0.3-fim-rule-100002-investigation-github.png`](screenshots/v0.3-fim-rule-100002-investigation-github.png) | Supporting (investigation) | How the report appears on GitHub; not proof of detection | Documentation |
 | E13 | [`v0.3-fim-lifecycle-custom-detections.png`](screenshots/v0.3-fim-lifecycle-custom-detections.png) | Direct (detection, screenshot) | Terminal screenshot of Rules `100003` and `100004` alerts, Oct 31 (application configuration path) | `100003` creation; `100004` deletion |
 | E14 | [`v0.3-e14-endpoint-syscheck-configuration.png`](screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Direct (endpoint configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01 (endpoint), Syscheck settings | Endpoint Syscheck configuration, including `/home` real-time monitoring |
-| E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings. **Filename/path unverified; see note below.** | Manager-side configuration only; not endpoint evidence |
+| E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings | Manager-side configuration only; not endpoint evidence |
 | E16 | [`v0.3-fim-full-lifecycle-custom-rules.png`](screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Direct (detection, screenshot) | Terminal screenshot of Rules `100003`, `100002` and `100004` alerts for the dedicated test file, one Nov 2 session | `100003` creation; `100002` modification; `100004` deletion, Nov 2 |
 | E17 | [`raw-alerts/sentinel-v03-creation-alert.json`](raw-alerts/sentinel-v03-creation-alert.json) | Direct (raw alert JSON) | Rule `100003`, Level 8, `2026-10-31T22:56:46.988+0530`, `/home/sentinel-admin/sentinel-v03-controlled-test.txt` | `100003` creation, Oct 31 (B) |
 | E18 | [`raw-alerts/sentinel-v03-deletion-alert.json`](raw-alerts/sentinel-v03-deletion-alert.json) | Direct (raw alert JSON) | Rule `100004`, Level 8, `2026-10-31T23:27:05.164+0530`, same file | `100004` deletion, Oct 31 (B) |
@@ -79,7 +79,6 @@ Each row is a separate set. Rows must not be merged into one test or session.
 
 > **Filename note:** The deletion screenshots (E08, E09) keep their existing `detection` filenames. Descriptive text uses "deletion". No operational-recovery screenshots are indexed in this directory.
 
-> **Path verification note (E14/E15):** the E15 manager screenshot is indexed here as `v0.3-e15-manager-syscheck-configuration.png`. `CASE-001.md` references `v0.3-e14-manager-syscheck-configuration.png` for the manager screenshot. Which filename exists in the repository, and whether the evidence ID is E14 or E15 for that file, have not been confirmed. No filename or ID has been changed here, and the E15 link should be treated as unverified until checked.
 
 ---
 

@@ -28,8 +28,8 @@ All timestamps in this document are IST (`+0530`).
 - **Investigation `CASE-001`** (`investigations/CASE-001.md`) has started. Real FIM events, including Rule 550 and Rule 100002 event details, have been filtered and reviewed as a first investigation exercise. **Current assessment:**
   - CASE-001's modification-validation objective is closed for the scenarios tested. This is not the same as completing the investigation.
   - CASE-001 evidence reconciliation is closed for the reviewed scope.
-  - **CASE-001 remains open overall.** Broader event review, timeline reconstruction, root-cause analysis, attribution, final conclusions, false-positive analysis, and detection tuning remain outstanding.
-  - SENTINEL v0.3 is not complete.
+  - **CASE-001 is closed for its reviewed scope** per the 18 November 2026 closeout in `investigations/CASE-001.md` (superseding earlier "open / in progress" wording). Broader post-closeout tuning, full response exercises, and additional telemetry/regression coverage remain separate follow-up work.
+  - SENTINEL v0.3 milestone deliverables are complete per the 18 November 2026 closeout.
 
 **Reviewed source records from 16 October 2026** (controlled creation and deletion of `/home/sentinel-admin/sentinel-audit-test.txt`), reviewed from `/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json`. This is a Wazuh runtime log; it is not claimed to be committed to the repository, and no repository path is claimed for it.
 - **Creation:** built-in Rule 554 ("File added to the system") at `2026-10-16T11:40:06.007+0530`. Custom Rule 100002 is absent from the reviewed record.
@@ -69,7 +69,7 @@ flowchart LR
 | Phase | Objective | Status in SENTINEL |
 |---|---|---|
 | **Preparation** | Infrastructure, telemetry, and documented procedures are in place before an incident occurs | Partially complete — the Wazuh environment and FIM telemetry are available and Rule 100002 is confirmed to fire for the documented controlled modification scenarios; broader telemetry and repeatable validation remain outstanding (`docs/05-detection-engineering.md`) |
-| **Detection & Analysis** | An alert or anomaly is triaged and investigated to determine scope and whether it's a real incident | In progress — CASE-001 is the first exercise of this phase; its modification-validation objective and reviewed-scope evidence reconciliation are closed, but the overall investigation remains open |
+| **Detection & Analysis** | An alert or anomaly is triaged and investigated to determine scope and whether it's a real incident | Exercised — CASE-001 is closed for its reviewed scope per the 18 November 2026 closeout; broader follow-up validation remains separate |
 | **Containment** | Limit the spread or impact of confirmed malicious activity | Documented only — none has been exercised in the lab |
 | **Eradication** | Remove the cause (persistence, malicious files, bad config) | Documented only — none has been exercised in the lab |
 | **Recovery** | Restore normal operation and confirm monitoring/detection work again | Documented only — none has been exercised in the lab |

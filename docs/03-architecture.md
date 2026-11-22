@@ -217,7 +217,7 @@ These checks come from the current detection inventory. The controlled probe lif
 
 | Case | Scope | Status |
 |---|---|---|
-| [CASE-001](../investigations/CASE-001.md) | FIM investigation: controlled validation and review of related home-directory events | Evidence reconciliation **closed for the reviewed scope**; the **overall case remains open** |
+| [CASE-001](../investigations/CASE-001.md) | FIM investigation: controlled validation and review of related home-directory events | **Closed** for the reviewed scope per the 18 November 2026 closeout (`investigations/CASE-001.md`) |
 | [CASE-002](../investigations/CASE-002.md) | Sysmon replay investigation | Completed |
 | [CASE-003](../investigations/CASE-003.md) | Controlled SSH brute-force investigation, with Python-assisted severity triage, manual analyst review, response-related verification checks and a documented containment procedure | Completed and verified for the controlled scenario |
 | [CASE-004](../investigations/CASE-004.md) | Mutation, evasion and reliability investigation | Completed and verified |
@@ -262,7 +262,7 @@ This purple-team feedback loop has been exercised through measurement, mutation 
 |---|---|---|
 | v0.1 | Foundation | **Completed** |
 | v0.2 | Detection Engineering & Linux Telemetry | **Completed** (18 Nov 2026; documentation and evidence reconciled retroactively after some v0.3 work). Controlled file-modification scenarios validated; broader coverage and false-positive/false-negative analysis remain open |
-| v0.3 | SOC Investigation | **Completed** as a phase milestone; CASE-001 overall remains open |
+| v0.3 | SOC Investigation | **Completed** (CASE-001 closed for reviewed scope on 18 Nov 2026) |
 | v0.4 | Sysmon EVTX replay and cross-platform detection | **Completed** (19 Nov 2026); replay-based |
 | v0.5 | SSH brute-force detection and triage | **Completed** |
 | v0.6 | Controlled purple-team measurement and testing | **Completed** (controlled baseline) |
