@@ -1,50 +1,50 @@
-# SENTINEL v0.3 – Raw Alert Evidence
+# SENTINEL v0.3: Raw Alert Evidence
 
 ## Overview
 
-This directory contains two raw Wazuh alert JSON records collected on October 31, 2026, documenting file creation and deletion events detected by the SENTINEL custom File Integrity Monitoring (FIM) rules.
+This directory contains three raw Wazuh alert JSON files forming two separate FIM evidence sets from SENTINEL-LINUX01. All records identify Agent `002` (`sentinel-linux01`, `10.10.10.40`) and real-time Syscheck events.
+
+Alert levels shown are Wazuh rule levels. They are not assessments of case severity or impact. For how these records fit into the wider evidence, see the [v0.3 Evidence Index](../readme.md).
 
 ## Evidence Files
 
-| File | Event | Rule ID | Level | Timestamp (IST) |
+| File | Event | Rule | Level | Timestamp |
 |---|---|---|---|---|
-| `sentinel-v03-creation-alert.json` | File created | 100003 | 8 | 2026-10-31 22:56:46.988 |
-| `sentinel-v03-deletion-alert.json` | File deleted | 100004 | 8 | 2026-10-31 23:27:05.164 |
+| [`sentinel-v03-creation-alert.json`](sentinel-v03-creation-alert.json) | Creation | `100003` | 8 | `2026-10-31T22:56:46.988+0530` |
+| [`sentinel-v03-deletion-alert.json`](sentinel-v03-deletion-alert.json) | Deletion | `100004` | 8 | `2026-10-31T23:27:05.164+0530` |
+| [`fim-lifecycle-evidence.json`](fim-lifecycle-evidence.json) | Creation | `100003` | 8 | `2026-11-18T12:57:06.508+0530` |
+| | Modification | `100002` | 8 | `2026-11-18T12:59:29.407+0530` |
+| | Deletion | `100004` | 8 | `2026-11-18T13:04:23.506+0530` |
 
-Both alerts reference:
+## October 31: Creation and Deletion
 
-- Endpoint: `sentinel-linux01`
-- Agent ID: `002`
-- Agent IP: `10.10.10.40`
-- Monitored file: `/home/sentinel-admin/sentinel-v03-controlled-test.txt`
-- Detection mode: Realtime
+- **File:** `/home/sentinel-admin/sentinel-v03-controlled-test.txt`
+- **Records:** two alerts (creation, deletion), each in its own JSON file.
+- **Continuity:** both records contain inode `2622181` and matching file hashes. This supports the interpretation that they concern the same file.
+- **Scope:** creation and deletion only. There is no modification record, so this is not a lifecycle test.
+- **Relationship to screenshots:** separate from the October 31 screenshot observation documented in the [Evidence Index](../readme.md). Their relationship has not been established.
 
-The records show the creation and subsequent deletion observations for the same monitored file. They document these two events only and should not be interpreted as a complete lifecycle validation.
+## November 18: One Controlled Lifecycle Session
+
+- **File:** `/home/sentinel-admin/fim-sprint-test.txt`
+- **Records:** three alerts (creation, modification, deletion) in one JSON file.
+- **Continuity:** all three records contain inode `2622203`. The modification record contains before-and-after hashes, and its final SHA-256 matches the SHA-256 in the deletion record. The matching inode and hash transitions support the interpretation that the three records concern the same file across the creation, modification and deletion sequence.
+- **Scope:** one controlled session on one dedicated file. It is not a regression suite or a measure of detection coverage.
 
 ## Integrity Manifest
 
-`SHA256SUMS` contains SHA-256 checksums for both JSON alert files. It provides a way to check whether the stored files match the versions represented by the manifest.
-
-To verify the files, run the following command from the repository root:
+[`SHA256SUMS`](SHA256SUMS) has three entries, one for each JSON file in this directory. It lists bare filenames, so run the check from inside this directory:
 
 ```bash
-sha256sum -c evidence/v0.3/raw-alerts/SHA256SUMS
+cd evidence/v0.3/raw-alerts
+sha256sum -c SHA256SUMS
 ```
 
-A successful result should report `OK` for each listed file. No verification result is claimed here.
+A successful run reports `OK` for each of the three files. This README does not claim that the checksums have been independently recomputed or verified.
 
-## Evidence Scope and Limitations
+## Limitations
 
-These JSON records document the October 31 creation and deletion observations. They are separate from the November 2 controlled lifecycle validation, which used:
-
-`/home/sentinel-admin/sentinel-v03-final-test.txt`
-
-The November 2 validation is documented separately through screenshot evidence in `evidence/v0.3/screenshots/`. These October 31 JSON records do not establish the results of that later test.
-
-## Related Evidence
-
-- [SENTINEL v0.3 Evidence Index](../readme.md)
-- [October 31 Creation Alert](sentinel-v03-creation-alert.json)
-- [October 31 Deletion Alert](sentinel-v03-deletion-alert.json)
-- [SHA-256 Checksum Manifest](SHA256SUMS)
-- [November 2 Lifecycle Validation Screenshot](../screenshots/v0.3-fim-full-lifecycle-custom-rules.png)
+- The October 31 and November 18 sets involve different files and dates and must not be read as one test.
+- These records do not establish complete FIM coverage, repeatability, detection rates, or behavior on other paths, file types or sizes.
+- They do not establish process attribution, root cause, or malicious activity.
+- The November 2 lifecycle session is documented separately by screenshot in the Evidence Index. These records do not establish its results.
