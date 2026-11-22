@@ -20,7 +20,7 @@
 | Evidence reconciliation, reviewed scope | **Closed.** |
 | SENTINEL v0.3 milestone | **Complete**, per the 18 November 2026 closeout. |
 | Post-closeout follow-up work (engineering, validation and historical evidence recovery) | **Partly implemented after closeout; remainder open.** Not a prerequisite for closure (Sections 10 and 11). |
-| Post-closeout developments (v0.6, v0.8, v0.9) | Documented separately. **Not part of CASE-001 evidence** (Section 10). |
+| Post-closeout developments (v0.6, v0.8, v0.9, v0.9.1) | Documented separately. **Not part of CASE-001 evidence** (Section 10). |
 
 > The 18 November closeout is authoritative and supersedes the earlier "open / in progress" wording. Closure applies to the reviewed CASE-001 scope. It does not mean that subsequent detection engineering or tuning is complete.
 >
@@ -330,7 +330,7 @@ The linked `detections/local_rules.xml` is the post-v0.8 implementation, not a h
 - Export raw JSON alert records for 16 Oct, 26 Oct and 2 Nov where available.
 - Where recoverable, establish why Rules 100003 and 100004 appeared on 31 Oct, and whether the two 31 Oct sets are related.
 - Capture diagnostics before any change if the Manager startup failure recurs.
-- **Reconcile `CHANGELOG.md` and [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md)** with the authoritative 18 Nov closure and the post-closeout milestones. Both still contain older wording saying CASE-001 remains open overall and describing the v0.3 milestone or related work as open. They are not yet synchronized; this is a separate documentation task not performed here. Also check other repository documents for the E14/E15 filenames and the closed status.
+- **Repository-wide documentation synchronization:** The `CHANGELOG.md` and [`docs/05-detection-engineering.md`](../docs/05-detection-engineering.md) have been reconciled with the authoritative 18 November closure. Remaining documentation updates are tracked separately. Verify that the other investigation, evidence and project-level documents consistently reflect CASE-001's closed status and the correct E14/E15 evidence filenames.
 
 ---
 
