@@ -134,7 +134,7 @@ Kali (10.10.10.20) --controlled SSH testing--> Linux01 (10.10.10.40)
 Linux01 --Wazuh Agent 002 communication--> Wazuh manager (10.10.10.10)
 ```
 
-Kali does not communicate directly with the Wazuh manager.
+SENTINEL-KALI has network connectivity to the Wazuh manager over SENTINEL-LAB, but it does not send its own logs or telemetry to the manager. During controlled SSH testing, the resulting sshd authentication logs are collected on SENTINEL-LINUX01 by Wazuh Agent 002 and forwarded to the manager.
 
 ### Offline Sysmon replay pipeline
 
