@@ -13,9 +13,9 @@ The evidence supports the specific results described below. It does not establis
 - This closure does not mean that all broader FIM validation or detection-engineering work is complete. That work is separate from the case closure (see Remaining Work).
 - Two separate controlled creation, modification and deletion lifecycle sessions are recorded: November 2 (terminal screenshot) and November 18 (raw alert JSON). Each is a single session on one dedicated file. Together they are not a regression suite.
 - October 31 has two separate evidence sets (a screenshot and two raw alert JSON files). Their relationship has not been established.
-- Endpoint (E14) and manager (E15) Syscheck configuration screenshots are indexed. Both show local configuration only. The E15 filename has not been verified (see the path verification note under the Evidence Index).
+- Endpoint (E14) and manager (E15) Syscheck configuration screenshots are indexed. Both show local configuration only. E14 is endpoint configuration evidence; E15 is manager configuration evidence.
 - A read-only check on November 3, 2026 confirmed the on-disk Rule `100002` definition and that `wazuh-analysisd` was running. It does not verify the in-memory rule or the configuration loaded on October 16.
-- No containment, eradication, or recovery exercise has been completed.
+- No containment, eradication, or recovery exercise was completed as part of CASE-001.
 
 ## How to Read This Evidence
 
@@ -23,7 +23,7 @@ The evidence supports the specific results described below. It does not establis
 - **Supporting evidence:** context that does not independently establish a detection result.
 - **Screenshots are not raw alert exports.** They show only what is visibly captured.
 - **Raw alert JSON** is committed under [`raw-alerts/`](raw-alerts/) for October 31 (controlled-test file) and November 18 only. For all other dates, raw alert JSON or source records are not committed in this directory: October 11 (not recovered), October 31 screenshot set, and November 2. The October 16 source records were reviewed but are not claimed to be committed.
-- The absence of Rule `100002` from the October 16 records is an **observation**, not a confirmed detection failure. Its cause is unresolved.
+- Rule `100002` is the modification rule (parent Rule `550`). The October 16 records show built-in Rule `554` for creation and Rule `553` for deletion. The absence of `100002` from those creation and deletion records is consistent with the rule's design and is **not** treated as a detection failure. The unresolved historical question is whether custom Rules `100003` and `100004` were deployed and loaded on October 16; their deployment and loaded status on that date remain unconfirmed.
 - Later validations do not establish which rules or configuration were loaded during earlier tests.
 
 ### Severity terms
@@ -43,7 +43,7 @@ Each row is a separate set. Rows must not be merged into one test or session.
 | Date (2026) | Rule(s) observed | File | Evidence type | Raw JSON committed | Nature |
 |---|---|---|---|---|---|
 | Oct 11 | `100002` (L8) | Not stated in this index | Screenshots (E04, E05) | No (not recovered) | Modification test |
-| Oct 16 | Built-in `554` (L5), `553` (L7); `100002` absent | `/home/sentinel-admin/sentinel-audit-test.txt` | Screenshots + reviewed source records (E06–E09) | Not claimed | Built-in alerts; not custom-rule validations |
+| Oct 16 | Built-in `554` (L5), `553` (L7); `100002` not present (modification rule) | `/home/sentinel-admin/sentinel-audit-test.txt` | Screenshots + reviewed source records (E06–E09) | Not claimed | Built-in alerts; not custom-rule validations |
 | Oct 26 | `100002` (L8) ×2 | `/home/sentinel-admin/sentinel-v02-mod-test.txt` | Terminal screenshot (E10) | Not indexed here | Two alerts from consecutive modifications of one file |
 | Oct 31 (A) | `100003`, `100004` (L8) | Under `/home/sentinel-admin/snap/firmware-updater/262/.config/bus/` | Terminal screenshot (E13) | No | Observation; trigger not established |
 | Oct 31 (B) | `100003`, `100004` (L8) | `/home/sentinel-admin/sentinel-v03-controlled-test.txt` | Raw alert JSON (E17, E18) | Yes | Creation and deletion only |
@@ -70,7 +70,7 @@ Each row is a separate set. Rows must not be merged into one test or session.
 | E12 | [`v0.3-fim-rule-100002-investigation-github.png`](screenshots/v0.3-fim-rule-100002-investigation-github.png) | Supporting (investigation) | How the report appears on GitHub; not proof of detection | Documentation |
 | E13 | [`v0.3-fim-lifecycle-custom-detections.png`](screenshots/v0.3-fim-lifecycle-custom-detections.png) | Direct (detection, screenshot) | Terminal screenshot of Rules `100003` and `100004` alerts, Oct 31 (application configuration path) | `100003` creation; `100004` deletion |
 | E14 | [`v0.3-e14-endpoint-syscheck-configuration.png`](screenshots/v0.3-e14-endpoint-syscheck-configuration.png) | Direct (endpoint configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-LINUX01 (endpoint), Syscheck settings | Endpoint Syscheck configuration, including `/home` real-time monitoring |
-| E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings. **Filename/path unverified; see note below.** | Manager-side configuration only; not endpoint evidence |
+| E15 | [`v0.3-e15-manager-syscheck-configuration.png`](screenshots/v0.3-e15-manager-syscheck-configuration.png) | Direct (manager configuration) | Local `/var/ossec/etc/ossec.conf` on SENTINEL-WAZUH (manager), Syscheck settings | Manager-side configuration only; not endpoint evidence |
 | E16 | [`v0.3-fim-full-lifecycle-custom-rules.png`](screenshots/v0.3-fim-full-lifecycle-custom-rules.png) | Direct (detection, screenshot) | Terminal screenshot of Rules `100003`, `100002` and `100004` alerts for the dedicated test file, one Nov 2 session | `100003` creation; `100002` modification; `100004` deletion, Nov 2 |
 | E17 | [`raw-alerts/sentinel-v03-creation-alert.json`](raw-alerts/sentinel-v03-creation-alert.json) | Direct (raw alert JSON) | Rule `100003`, Level 8, `2026-10-31T22:56:46.988+0530`, `/home/sentinel-admin/sentinel-v03-controlled-test.txt` | `100003` creation, Oct 31 (B) |
 | E18 | [`raw-alerts/sentinel-v03-deletion-alert.json`](raw-alerts/sentinel-v03-deletion-alert.json) | Direct (raw alert JSON) | Rule `100004`, Level 8, `2026-10-31T23:27:05.164+0530`, same file | `100004` deletion, Oct 31 (B) |
@@ -79,7 +79,7 @@ Each row is a separate set. Rows must not be merged into one test or session.
 
 > **Filename note:** The deletion screenshots (E08, E09) keep their existing `detection` filenames. Descriptive text uses "deletion". No operational-recovery screenshots are indexed in this directory.
 
-> **Path verification note (E14/E15):** the E15 manager screenshot is indexed here as `v0.3-e15-manager-syscheck-configuration.png`. `CASE-001.md` references `v0.3-e14-manager-syscheck-configuration.png` for the manager screenshot. Which filename exists in the repository, and whether the evidence ID is E14 or E15 for that file, have not been confirmed. No filename or ID has been changed here, and the E15 link should be treated as unverified until checked.
+> **Path note (E14/E15):** E14 is endpoint configuration evidence at `screenshots/v0.3-e14-endpoint-syscheck-configuration.png`. E15 is manager configuration evidence at `screenshots/v0.3-e15-manager-syscheck-configuration.png`. Both paths are existing, confirmed paths, and the evidence IDs are unchanged. E15 does not establish endpoint `/home` monitoring.
 
 ---
 
@@ -133,7 +133,7 @@ Each row is a separate set. Rows must not be merged into one test or session.
 
 The screenshots are visual references for the alerts and paths. The absence of Rule `100002` rests on review of the source records, not on the screenshots alone.
 
-> **Observation, not a conclusion:** the reason for `100002` being absent is unresolved, including whether and how it was deployed or loaded at that time. No root cause, detection failure or malicious activity is established. These results apply to the reviewed records only, are historical, and are not custom-rule validations. Later sessions (Sections 5–7) and the November 3 on-disk check (Section 9) do not explain them.
+> **Interpretation:** Rule `100002` is the modification rule, with parent Rule `550`. Its absence from these creation and deletion records is consistent with the rule's design and is not treated as a detection failure or an unexplained problem. The unresolved historical question is whether custom Rules `100003` and `100004` were deployed and loaded on October 16; their deployment and loaded status on that date remain unconfirmed. No root cause, detection failure or malicious activity is established. These results apply to the reviewed records only, are historical, and are not custom-rule validations. Later sessions (Sections 5–7) and the November 3 on-disk check (Section 9) do not resolve the October 16 loaded-configuration question.
 
 ---
 
@@ -182,7 +182,7 @@ The two sets below involve different files and different timestamps. Their relat
 ### Scope of both October 31 sets
 
 - Neither converts the October 16 built-in-rule observations into custom-rule validations, and `100002` is not claimed to handle creation or deletion.
-- Why `100003`/`100004` were observed on October 31 when `554`/`553` appeared on October 16 is unresolved; no explanation is established.
+- Why `100003`/`100004` were observed on October 31 when `554`/`553` appeared on October 16 is unresolved; no explanation is established. Whether `100003` and `100004` were deployed and loaded on October 16 remains unconfirmed.
 
 ---
 
@@ -237,7 +237,7 @@ Evidence file: [`raw-alerts/fim-lifecycle-evidence.json`](raw-alerts/fim-lifecyc
 
 ## 8. FIM Configuration Evidence (E14, E15)
 
-The two configuration screenshots come from different hosts and serve different purposes. Neither substitutes for the other. **Endpoint `/home` monitoring is attributed only to E14.** Manager-side settings (E15) are not evidence of endpoint coverage. Both show local configuration files as captured; neither establishes which configuration was loaded during the historical October 16 tests.
+The two configuration screenshots come from different hosts and serve different purposes. E14 is endpoint configuration evidence; E15 is manager configuration evidence. Neither substitutes for the other. **Endpoint `/home` monitoring is attributed only to E14.** Manager-side settings (E15) are not evidence of endpoint coverage. Both show local configuration files as captured; neither establishes which configuration was loaded during the historical October 16 tests.
 
 ### Endpoint configuration: SENTINEL-LINUX01 (E14)
 
@@ -261,11 +261,9 @@ Verified from the visible settings:
 - Startup scanning is enabled.
 - Scheduled scan frequency is 43,200 seconds (12 hours).
 
-Limits: this is the endpoint's *local* configuration as visible in the screenshot. It does not establish which configuration was loaded during the October 16 tests, whether centrally pushed settings apply, or why `100002` was absent on October 16.
+Limits: this is the endpoint's *local* configuration as visible in the screenshot. It does not establish which configuration was loaded during the October 16 tests, whether centrally pushed settings apply, or whether custom Rules `100003` and `100004` were deployed and loaded on October 16.
 
 ### Manager configuration: SENTINEL-WAZUH (E15)
-
-> Filename unverified: `CASE-001.md` references a differently named file (`v0.3-e14-manager-syscheck-configuration.png`). See the path verification note under the Evidence Index. The image below may not render if the indexed path does not exist.
 
 ![E15: Manager Syscheck configuration, SENTINEL-WAZUH](screenshots/v0.3-e15-manager-syscheck-configuration.png)
 
@@ -279,7 +277,7 @@ The screenshot shows the manager's local `/var/ossec/etc/ossec.conf` with these 
 Limits:
 
 - This is **manager-side** evidence only. It lists no `/home` directory and must **not** be read as evidence for or against `/home` monitoring on the endpoint.
-- It does not establish which configuration was loaded during the October 16 tests or why `100002` was absent on October 16.
+- It does not establish which configuration was loaded during the October 16 tests, or whether custom Rules `100003` and `100004` were deployed and loaded on October 16.
 
 ---
 
@@ -313,7 +311,7 @@ Confirmed:
 
 - The exact rule definition **loaded in memory** by the analysis engine. The chronology above is consistent with, but does not prove, the engine having loaded this definition.
 - Which rule definition and Syscheck configuration were loaded during the October 16 tests.
-- Why Rule `100002` was absent from the reviewed October 16 records. The `<if_sid>550</if_sid>` dependency is not established as the cause.
+- Whether custom Rules `100003` and `100004` were deployed and loaded on October 16. Their status on that date remains unconfirmed. (Rule `100002` is a modification rule with parent Rule `550`, so its absence from the October 16 creation and deletion records is consistent with its design.)
 - The definitions of Rules `100003` and `100004`, which are not covered by any screenshot in this directory.
 
 ---
@@ -343,13 +341,13 @@ Confirmed:
 
 These are evidence-level gaps and broader follow-up or future validation work recorded in this index. They are separate from, and do not invalidate, the CASE-001 closure of 18 November 2026 for its defined investigation scope.
 
-- Verify the loaded (in-memory) definition of Rule `100002`, and review the on-disk and loaded definitions of Rules `100003` and `100004` and built-in Rules `550`, `553`, `554`. Confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16.
+- Verify the loaded (in-memory) definition of Rule `100002`, and review the on-disk and loaded definitions of Rules `100003` and `100004` and built-in Rules `550`, `553`, `554`. Confirm which rule version and which Syscheck configuration (endpoint and manager) were loaded on October 16, including whether custom Rules `100003` and `100004` were deployed and loaded on that date.
 - Investigate the differences between the October 16 and October 31 observations; no explanation is established.
 - Establish whether the two October 31 evidence sets are related, and the trigger for each.
 - Export raw alert records for October 16, October 26 and November 2 where available, and for the October 31 screenshot set (E13) if recoverable.
 - Develop a repeatable test procedure across multiple files, paths and repetitions, building on the November 2 and November 18 sessions.
 - Develop false-positive and false-negative test cases; review noisy FIM events.
-- No containment, eradication, or recovery exercise has been completed.
+- No containment, eradication, or recovery exercise was completed as part of CASE-001.
 
 ---
 
