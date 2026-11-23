@@ -24,20 +24,19 @@ flowchart TB
         direction TB
         EVTX(["Pre-recorded Windows<br/>.evtx files"])
         NDJSON(["NDJSON"])
-        LOGC(["Agent 002 logcollector<br/>(on SENTINEL-LINUX01)"])
         EVTX -->|"Python conversion"| NDJSON
-        NDJSON -->|"ingested via"| LOGC
+        NDJSON -->|"read by Agent 002 logcollector"| LINUX
     end
 
     classDef vm fill:#e8f1fb,stroke:#2f6db5,stroke-width:2px,color:#0b2540
     classDef data fill:#fdf3e1,stroke:#b7791f,stroke-width:2px,color:#3d2a05
     class KALI,LINUX,WAZUH vm
-    class EVTX,NDJSON,LOGC data
+    class EVTX,NDJSON data
     style NET fill:none,stroke:#2f6db5,stroke-width:2px
     style REPLAY fill:none,stroke:#b7791f,stroke-width:2px,stroke-dasharray:6 4
 ```
 
-SENTINEL-KALI performs controlled SSH testing against SENTINEL-LINUX01, and the endpoint reports to SENTINEL-WAZUH through Wazuh Agent 002; Kali does not communicate with the manager. Windows Sysmon telemetry is replayed offline: pre-recorded `.evtx` captures are converted to NDJSON with Python and ingested through Agent 002's `logcollector`. No live Windows endpoint is part of this architecture.
+SENTINEL-KALI performs controlled SSH testing against SENTINEL-LINUX01. SENTINEL-LINUX01 forwards telemetry to SENTINEL-WAZUH through Wazuh Agent 002; Kali does not forward telemetry directly to the manager. Windows Sysmon telemetry is replayed offline: pre-recorded `.evtx` captures are converted to NDJSON with Python and ingested through Agent 002's `logcollector`. No live Windows endpoint is part of this architecture.
 
 ---
 
@@ -55,11 +54,11 @@ SENTINEL-KALI performs controlled SSH testing against SENTINEL-LINUX01, and the 
 
 | Scope | Result |
 |---|---|
-| Controlled endpoint | Custom FIM creation, modification and deletion rules validated through controlled single-file lifecycle tests |
-| Controlled endpoint | SSH test with 21 failed attempts and zero successful logins |
-| Offline replay | Seven selected custom Sysmon detections fired on the tested samples |
+| Controlled endpoint | Custom FIM creation, modification and deletion rules validated through controlled single-file lifecycle tests ([CASE-001](investigations/CASE-001.md), [18 Nov raw lifecycle JSON](evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json), [2 Nov lifecycle screenshot](evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png)). Separate [v0.11 alert records](evidence/v0.11/v011_fim_alerts.json) are also committed as evidence; the v0.11 milestone status is pending reconciliation |
+| Controlled endpoint | SSH test with 21 failed attempts and zero successful logins ([CASE-003](investigations/CASE-003.md), [SSH evidence index](evidence/v0.5/readme.md)) |
+| Offline replay | Seven selected custom Sysmon detections fired on the tested samples ([CASE-002](investigations/CASE-002.md), [raw Sysmon alerts](evidence/sysmon-replay/sysmon_alerts_raw.json)) |
 | Offline replay | Three benign `services.exe → svchost.exe` events matched general Level 0 base rule `100101` and produced no alerts |
-| Offline replay | A command-line mutation bypassed keyword-based rule `100112`, exposing a detection gap |
+| Offline replay | A command-line mutation bypassed keyword-based rule `100112` for the tested variation, exposing a detection gap ([CASE-004](investigations/CASE-004.md)) |
 
 ---
 
@@ -67,7 +66,7 @@ SENTINEL-KALI performs controlled SSH testing against SENTINEL-LINUX01, and the 
 
 - Linux-first lab; no live Windows endpoint, Active Directory environment, or live Sysmon driver testing. Windows telemetry comes from replayed `.evtx` captures.
 - Testing is controlled and sample-bound. No enterprise-scale detection, false-positive, or false-negative rates have been established.
-- Selected noise exclusions have been tested, but broader FIM noise retesting remains pending. No complete containment, eradication, or recovery exercise has been evidenced.
+- Selected FIM noise exclusions are implemented but have not been independently validated through targeted tests. Broader noise-suppression retesting remains pending, and residual desktop noise remains. No complete containment, eradication, or recovery exercise has been evidenced.
 - Some investigation results are supported by screenshots rather than committed raw records; see the [evidence guide](evidence/readme.md).
 
 ---
