@@ -38,10 +38,16 @@ evidence/
 ├── v0.5/
 ├── v0.6/
 ├── v0.7/
-└── v0.9/
+├── v0.9/
+└── v0.11/
 ```
 
-Each project version gets its own evidence directory, kept separate so the project's evolution can be reconstructed later.
+Evidence is organized by project version where a committed version directory exists, kept separate so the project's evolution can be reconstructed later. Some distinctions matter:
+
+- Sysmon replay evidence is stored under `sysmon-replay/`, not under an `evidence/v0.4/` directory.
+- There is no `evidence/v0.8/` directory.
+- There is no `evidence/v0.10/` directory. The v0.10 evidence archive is stored externally at `~/soc-evidence/v0.10-fim-probe/` and is not committed repository evidence.
+- `evidence/v0.11/` exists and contains committed artifacts; its milestone status remains pending reconciliation.
 
 ---
 
@@ -49,18 +55,21 @@ Each project version gets its own evidence directory, kept separate so the proje
 
 | Directory / Scope | Focus & Status |
 |---|---|
-| `v0.1/` | Foundation and infrastructure evidence (Wazuh manager/agent baseline and connectivity) |
-| `v0.2/` | Linux telemetry and initial detection engineering evidence |
-| `v0.3/` | FIM lifecycle validation and `CASE-001` investigation evidence |
-| `sysmon-replay/` | Replayed Windows Sysmon JSON/EVTX ingestion and detection alerts (`CASE-002`) |
-| `v0.5/` | SSH brute-force incident response and triage evidence (`CASE-003`) |
-| `v0.6/` | Purple-team measurement and controlled test evidence |
-| `v0.7/` | Attack DNA and mutation testing evidence (`CASE-004`) |
-| `v0.9/` | Sysmon JSON replay ingestion & triage integration artifacts (replay-based; live Windows agent out-of-scope) |
+| `v0.1/` | Infrastructure foundation and Wazuh manager/agent verification |
+| `v0.2/` | Linux telemetry, initial FIM activity, and security configuration assessment evidence |
+| `v0.3/` | FIM lifecycle evidence and `CASE-001` investigation |
+| `sysmon-replay/` | Offline Windows Sysmon replay evidence for `CASE-002` |
+| `v0.5/` | SSH brute-force testing and `CASE-003` evidence |
+| `v0.6/` | Controlled purple-team measurement evidence |
+| `v0.7/` | Mutation-style testing and `CASE-004` evidence |
+| `v0.9/` | Sysmon JSON replay and Python triage integration evidence (replay-based; live Windows agent out-of-scope) |
+| `v0.11/` | Committed FIM alert records, triage report, and regression-summary artifacts. The v0.11 milestone status remains pending reconciliation |
 
-Evidence scope boundaries are documented alongside each milestone in `README.md`, `CHANGELOG.md`, and the corresponding `CASE-001` through `CASE-004` records.
+The v0.10 evidence is held separately in the external archive at `~/soc-evidence/v0.10-fim-probe/`; it is not a committed `evidence/v0.10/` directory.
 
-The repository currently contains actual v0.1 infrastructure evidence, which may include the Wazuh Agent running, the Dashboard showing the agent as active, and final infrastructure verification artifacts. No attack, detection, investigation, response, or mutation evidence exists yet — none is claimed here.
+Evidence scope boundaries are documented alongside each milestone in the root [README.md](../README.md), [CHANGELOG.md](../CHANGELOG.md), and the corresponding [CASE-001](../investigations/CASE-001.md) through [CASE-004](../investigations/CASE-004.md) records.
+
+The repository now contains infrastructure, telemetry, detection, investigation, measurement, and limited mutation-style evidence across multiple project phases. The existence of evidence does not automatically mean that every test or response capability is fully validated, and no complete containment, eradication, or recovery exercise is claimed as evidenced.
 
 ---
 
@@ -76,7 +85,7 @@ The repository currently contains actual v0.1 infrastructure evidence, which may
 | Testing Evidence | Test execution and results |
 | Metrics Evidence | Measured values |
 | Failure Evidence | Failed tests, broken configurations, or unexpected behavior |
-| Mutation Evidence | *(Future)* Original vs. mutated attack behavior |
+| Mutation Evidence | *(Limited)* Original vs. mutated attack behavior. Limited mutation-style evidence exists (v0.7, `CASE-004`); a comprehensive mutation framework is future work |
 
 ---
 
@@ -102,11 +111,13 @@ Prefer lowercase, descriptive names with consistent identifiers where useful. Av
 
 ## 9. Evidence README Files
 
-| | Top-level `evidence/README.md` (this file) | `evidence/v0.x/README.md` |
+| | Top-level `evidence/readme.md` (this file) | `evidence/v0.x/readme.md` |
 |---|---|---|
 | Explains | Evidence philosophy, directory structure, categories, naming, integrity, security, traceability, version organization | What was implemented in that version, what evidence was captured, what each artifact demonstrates, known limitations, verification status |
 
-This file does not duplicate the detailed, artifact-by-artifact descriptions that belong in each version's own README.
+Version-specific evidence indexes use lowercase `readme.md`, for example [v0.1/readme.md](v0.1/readme.md), [v0.2/readme.md](v0.2/readme.md), [v0.3/readme.md](v0.3/readme.md), [v0.5/readme.md](v0.5/readme.md), [v0.6/readme.md](v0.6/readme.md) and [v0.9/readme.md](v0.9/readme.md).
+
+This file does not duplicate the detailed, artifact-by-artifact descriptions that belong in each version's own index.
 
 ---
 
@@ -137,7 +148,7 @@ Future evidence may include command output, service status, logs, Wazuh events, 
 
 ## 13. Test Evidence
 
-Connects to `docs/07-testing-and-matrices.md`. A test should eventually produce evidence supporting what was tested, expected behavior, actual behavior, detection result, investigation result, response result, and final status:
+Connects to [docs/07-testing-and-metrics.md](../docs/07-testing-and-metrics.md). A test should eventually produce evidence supporting what was tested, expected behavior, actual behavior, detection result, investigation result, response result, and final status:
 
 ```
 TEST-XXX → Execution → Evidence → Result → Matrix Update
@@ -149,19 +160,21 @@ No fictional test IDs are used.
 
 ## 14. Detection Evidence
 
-Detection evidence should support actual detection claims: a Wazuh alert, a relevant event/log, the detection configuration, the test execution, a screenshot, a before/after result, a false-positive test, a false-negative test, or a retest result. It should eventually reference the relevant Detection ID where practical. Connects to `detections/`, `docs/05-detection-engineering.md`, and `docs/07-testing-and-matrices.md`.
+Detection evidence should support actual detection claims: a Wazuh alert, a relevant event/log, the detection configuration, the test execution, a screenshot, a before/after result, a false-positive test, a false-negative test, or a retest result. It should eventually reference the relevant Detection ID where practical. Connects to `detections/`, [docs/05-detection-engineering.md](../docs/05-detection-engineering.md), and [docs/07-testing-and-metrics.md](../docs/07-testing-and-metrics.md).
 
 ---
 
 ## 15. Investigation Evidence
 
-Future investigation evidence may include alert details, a timeline, relevant logs, IOCs, process information, network information, analyst notes, and investigation conclusions. Connects to `investigations/` and `docs/06-incident-response.md`. No investigation evidence currently exists.
+Investigation records and supporting evidence exist for [CASE-001](../investigations/CASE-001.md), [CASE-002](../investigations/CASE-002.md), [CASE-003](../investigations/CASE-003.md) and [CASE-004](../investigations/CASE-004.md). The types of artifact vary: some findings rely on screenshots, some on raw JSON/log records, and not every investigation has every possible evidence type. The existence of an investigation record does not mean it includes a complete incident-response record.
+
+Investigation evidence may include alert details, a timeline, relevant logs, IOCs, process information, network information, analyst notes, and investigation conclusions. Connects to `investigations/` and [docs/06-incident-response.md](../docs/06-incident-response.md).
 
 ---
 
 ## 16. Metric Evidence
 
-Every metric should be traceable to underlying evidence — for example, Detection Time is derived from the timestamp of the activity plus the timestamp of the detection. A metric is never recorded without being able to explain its source. Connects to `metrics/` and `docs/07-testing-and-matrices.md`. No fabricated metrics are stored.
+Every metric should be traceable to underlying evidence — for example, Detection Time is derived from the timestamp of the activity plus the timestamp of the detection. A metric is never recorded without being able to explain its source. Connects to `metrics/` and [docs/07-testing-and-metrics.md](../docs/07-testing-and-metrics.md). No fabricated metrics are stored.
 
 ---
 
@@ -219,7 +232,11 @@ Examples: detection before vs. after tuning, telemetry before vs. after a config
 
 ## 23. Attack Mutation Evidence
 
-**Status: FUTURE — v0.6.** Future evidence may compare an original attack against a mutated attack, recording the attack objective, the behavioral difference, the telemetry difference, the detection result, the investigation result, and the response result — to evaluate detection resilience. No mutation evidence exists today.
+**Status: LIMITED — v0.7 / [CASE-004](../investigations/CASE-004.md); broader work is FUTURE.**
+
+Limited mutation-style testing has already been performed and documented. A tested Sysmon command-line variation (`comsvcs.dll, #24`) bypassed keyword-specific Rule `100112` and matched the Level 0 base Rule `100101` instead. This is a documented detection gap for the tested variation only. It is not a comprehensive, repeatable attack-mutation framework or a broad detection-resilience assessment.
+
+Further evidence is future work. It may compare an original attack against a mutated attack more broadly, recording the attack objective, the behavioral difference, the telemetry difference, the detection result, the investigation result, and the response result — to evaluate detection resilience.
 
 ---
 
@@ -287,28 +304,45 @@ Scenario → Detection → Test → Evidence → Investigation → Metrics → L
 
 ```
 evidence/
-├── README.md
-└── v0.1/
-    ├── README.md
-    ├── dashboard-agent-active.png
-    ├── final-verification.png
-    └── wazuh-agent-running.png
+├── readme.md
+├── sysmon-replay/
+├── v0.1/
+├── v0.2/
+├── v0.3/
+├── v0.5/
+├── v0.6/
+├── v0.7/
+├── v0.9/
+└── v0.11/
 ```
 
-If the actual repository contains additional verified files beyond this list, they are preserved as-is rather than removed or reinterpreted here. This v0.1 evidence represents infrastructure verification only. Future version directories are populated as those versions are actually implemented.
+The v0.1 directory includes infrastructure verification screenshots such as `dashboard-agent-active.png`, `final-verification.png` and `wazuh-agent-running.png`. The v0.2 directory's screenshot subdirectory is named `screenschots` as committed; it is not renamed here.
+
+There is no `evidence/v0.8/` or `evidence/v0.10/` directory. The v0.10 archive is stored externally at `~/soc-evidence/v0.10-fim-probe/`. `evidence/v0.11/` contains committed artifacts, but its milestone status remains pending reconciliation.
+
+If the actual repository contains additional verified files beyond those described here, they are preserved as-is rather than removed or reinterpreted. New version directories are populated only as that work is actually implemented.
 
 ---
 
 ## 29. Version Roadmap
 
-| Version | Expected Evidence |
-|---|---|
-| v0.1 | Infrastructure foundation |
-| v0.2 | *(Planned)* Linux telemetry and detection testing |
-| v0.3 | *(Planned)* Investigation and case evidence |
-| v0.4 | *(Planned)* Incident response evidence |
-| v0.5 | *(Planned)* Measurement and purple-team evidence |
-| v0.6 | *(Planned)* Attack mutation and detection-resilience evidence |
+Current evidence status by version:
+
+| Version / Scope | Evidence Scope | Status Notes |
+|---|---|---|
+| v0.1 | Infrastructure foundation; Wazuh manager/agent verification | Committed in `v0.1/` |
+| v0.2 | Linux telemetry, initial FIM activity, security configuration assessment | Committed in `v0.2/` |
+| v0.3 | FIM lifecycle evidence; `CASE-001` investigation | Committed in `v0.3/` |
+| v0.4 (replay) | Offline Windows Sysmon replay evidence (`CASE-002`) | Committed in `sysmon-replay/`, not `evidence/v0.4/`; replayed telemetry, not a live Windows endpoint |
+| v0.5 | SSH brute-force testing; `CASE-003` evidence | Committed in `v0.5/` |
+| v0.6 | Controlled purple-team measurement | Committed in `v0.6/`; small controlled samples |
+| v0.7 | Mutation-style testing; `CASE-004` evidence | Committed in `v0.7/`; limited, not a comprehensive mutation framework |
+| v0.8 | — | No committed `evidence/v0.8/` directory |
+| v0.9 | Sysmon JSON replay; Python triage integration | Committed in `v0.9/`; replay-based |
+| v0.10 | Evidence archive | Externally archived at `~/soc-evidence/v0.10-fim-probe/`; no committed `evidence/v0.10/` directory |
+| v0.11 | FIM alert records, triage report, regression-summary artifacts | Committed in `v0.11/`; milestone status pending reconciliation |
+
+Existing evidence is not automatically proof of a complete regression suite, comprehensive coverage, or a fully validated capability. Further evidence remains dependent on actual testing, and future work is not presented as completed.
 
 ---
 
@@ -335,8 +369,6 @@ Evidence is what turns SENTINEL's documented methodology into something a review
 
 ## 32. Final Status
 
-**Current phase:** v0.1 — Foundation. Real infrastructure evidence exists under `v0.1/`. No evidence exists yet under `v0.2/` through `v0.6/`.
+SENTINEL has progressed well beyond its initial infrastructure phase. Multiple evidence sets exist across the committed version directories and the `sysmon-replay/` directory. The v0.10 evidence is externally archived at `~/soc-evidence/v0.10-fim-probe/`. The v0.11 artifacts are committed under `v0.11/`, but the milestone is pending reconciliation and is not labeled completed or validated. Further evidence and validation remain dependent on actual testing.
 
-**Next expected evidence:** v0.2 telemetry and initial detection-test artifacts, once that phase of work begins.
-
-This file describes SENTINEL's overall evidence strategy. It does not duplicate the detailed, per-artifact descriptions that belong in each version's own `README.md`, and it does not claim any evidence exists beyond what is actually present in the repository.
+This file describes SENTINEL's overall evidence strategy. It does not duplicate the detailed, per-artifact descriptions that belong in each version's own `readme.md`, and it does not claim any evidence exists beyond what is actually present in the repository.
