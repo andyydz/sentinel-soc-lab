@@ -36,8 +36,10 @@ For the full testing methodology, see [`docs/07-testing-and-metrics.md`](../docs
 Source: [`v0.6-purple-team-measurement.md`](v0.6-purple-team-measurement.md). These are small controlled test results, not statistically meaningful rates or a broad effectiveness claim. No aggregate percentages are calculated here, and results from different tests are not merged into one rate.
 
 - **FIM:** 3/3 selected lifecycle events detected; the `/tmp` negative control produced 0/3 alerts.
-- **Sysmon replay:** 7/7 selected covered detections fired; 3 benign events generated no alerts (they matched the Level 0 base rule); 2 Event ID 7 ImageLoad events remained uncovered.
-- **SSH:** baseline and threshold-escalation behavior were observed. The first threshold escalation occurred early because the 60-second sliding window carried four failures from the earlier C1 test into C2.
+- **Sysmon replay:**
+  - **Committed evidence:** seven alert records were observed, one for each of seven custom rule IDs (`100110`, `100111`, `100112`, `100120`, `100130`, `100131` and `100140`). This is not a verified 7/7 coverage measurement: the replay input (`sysmon-replay.ndjson`) is not included in the committed v0.6 evidence bundle, so the replay denominator is not independently verified.
+  - **Operator-recorded, not independently verifiable from the committed bundle:** three benign `svchost.exe` events produced no alert (they matched the Level 0 base rule), and two Event ID 7 ImageLoad events remained uncovered. These observations cannot be reconstructed from the seven committed alert records.
+- **SSH:** baseline and threshold-escalation behavior were observed. The first threshold escalation occurred early because the 60-second sliding window still held four earlier C1 Rule `100200` matches when C2 began. Rule `100201` counts matching Rule `100200` events from the same source IP, and those records include different SSH event types, so this does not establish six distinct failed-password attempts.
 - **Timing:** cross-VM clock skew made raw detection-time deltas negative, so reliable detection latency was not established.
 - **Response:** no automated containment or response time was measured.
 
