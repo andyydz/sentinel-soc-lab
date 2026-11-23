@@ -20,7 +20,7 @@
 | Evidence reconciliation, reviewed scope | **Closed.** |
 | SENTINEL v0.3 milestone | **Complete**, per the 18 November 2026 closeout. |
 | Post-closeout follow-up work (engineering, validation and historical evidence recovery) | **Partly implemented after closeout; remainder open.** Not a prerequisite for closure (Sections 10 and 11). |
-| Post-closeout developments (v0.6, v0.8, v0.9, v0.9.1) | Documented separately. **Not part of CASE-001 evidence** (Section 10). |
+| Post-closeout developments (v0.6, v0.8, v0.9, v0.9.1, v0.10, v0.11) | Documented separately. **Not part of CASE-001 evidence** (Section 10). |
 
 > The 18 November closeout is authoritative and supersedes the earlier "open / in progress" wording. Closure applies to the reviewed CASE-001 scope. It does not mean that subsequent detection engineering or tuning is complete.
 >
@@ -38,7 +38,7 @@ Wazuh FIM detections on SENTINEL-LINUX01 were reviewed across separate sessions 
 - **2 November:** one controlled lifecycle session (screenshot): 100003, 100002, 100004 at Level 8 on one dedicated file.
 - **18 November:** one separate controlled lifecycle session (raw JSON): the same three rules at Level 8 on a different dedicated file, plus endpoint configuration verification, rule standardization with MITRE ATT&CK tags, and observed benign FIM noise.
 
-- **After closeout:** later FIM sessions and tuning (v0.6, v0.8) and Sysmon and triage work (v0.9) are summarized in Section 10. They are not CASE-001 evidence.
+- **After closeout:** later FIM sessions and tuning (v0.6, v0.8), Sysmon and triage work (v0.9, v0.9.1), a live FIM probe with Python-assisted triage whose evidence archive is external to the repository (v0.10), and committed v0.11 artifacts that remain pending reconciliation are summarized in Section 10. They are separate developments and are not CASE-001 evidence.
 
 No malicious indicators were identified in the reviewed events. A FIM alert alone does not indicate malicious activity. The results do not establish detection rates, false-positive/false-negative rates, complete FIM coverage, or repeatability across paths, file types and sizes. See Limitations (Section 9).
 
@@ -290,7 +290,7 @@ These apply to the CASE-001 evidence. The later sessions in Section 10 are not p
 
 ## 10. Post-Closeout Developments (outside CASE-001 evidence)
 
-Developments documented in the repository after the 18 November closeout, per its current detection documentation as reported to this draft. They are repository-documented milestones, not CASE-001 evidence. They do not alter its findings and were not independently reviewed here.
+Developments documented after the 18 November closeout, per the repository's current detection documentation, CHANGELOG and evidence records, as reported to this draft. They are post-closeout milestones, not CASE-001 evidence. They do not alter its findings, do not reopen the case, and were not independently reviewed here.
 
 | Date / version | Development | Relationship to CASE-001 |
 |---|---|---|
@@ -298,6 +298,8 @@ Developments documented in the repository after the 18 November closeout, per it
 | 21 Nov (v0.8) | FIM tuning (details below). A live Agent 002 probe verified creation, modification and deletion detection. | Implements part of the noise tuning recommended at closeout. Does not eliminate false positives. |
 | v0.9 (date not supplied) | Sysmon JSON replay ingestion and evidence ([v0.9 evidence README](../evidence/v0.9/readme.md)). | Separate development; not part of CASE-001. |
 | v0.9.1 (date not supplied) | Follow-up work addressing field/timestamp separation in the Python triage integration, as described in the [v0.9 evidence README](../evidence/v0.9/readme.md). | Separate from v0.9; not part of CASE-001. |
+| 22 Nov (v0.10) | Separate live Linux FIM probe using custom Rules `100003`, `100002` and `100004` on `/home/sentinel-admin/.fim_probe_test.txt`, with Python-assisted triage using `python-soc-automation` v1.0. The archived evidence is at `~/soc-evidence/v0.10-fim-probe/`, outside this GitHub repository; it is not committed here. | Separate from CASE-001 and from the v0.6 and v0.8 sessions. Because the archive is external, its contents cannot be reviewed from this repository. Not CASE-001 evidence. |
+| v0.11 (date not supplied) | Committed artifacts: [`evidence/v0.11/v011_fim_alerts.json`](../evidence/v0.11/v011_fim_alerts.json), [`evidence/v0.11/triage_report.md`](../evidence/v0.11/triage_report.md) and [`evidence/v0.11/regression_summary.json`](../evidence/v0.11/regression_summary.json). The alert file contains 10 records, including three Level 8 custom FIM events (creation `100003`, modification `100002`, deletion `100004`) for `/home/sentinel-admin/v011_fim_probe.txt`. The remaining seven records concern desktop/configuration paths and are not confirmed benign noise. In the triage report, the process, target-process and event-time enrichment fields are `None`. | Separate from CASE-001. The v0.11 milestone remains pending reconciliation. These artifacts do not establish a completed regression suite or comprehensive FIM coverage. Not CASE-001 evidence. |
 
 **v0.8 tuning, as reported:**
 
@@ -312,6 +314,7 @@ The linked `detections/local_rules.xml` is the post-v0.8 implementation, not a h
 - **v0.6:** [metrics/v0.6-purple-team-measurement.md](../metrics/v0.6-purple-team-measurement.md)
 - **v0.8:** no dedicated document is linked; see the detection documentation, [docs/05-detection-engineering.md](../docs/05-detection-engineering.md) and [detections/readme.md](../detections/readme.md)
 - **v0.9 and v0.9.1:** [evidence/v0.9/readme.md](../evidence/v0.9/readme.md)
+- **v0.10 and v0.11:** the v0.10 evidence archive is external and not linked; the committed v0.11 artifacts are linked in the table above.
 
 ---
 
