@@ -1,237 +1,149 @@
 # SENTINEL — Project Overview
 
-SENTINEL is a virtual cybersecurity SOC laboratory built inside an isolated environment to model a small enterprise network — a place where attacks can be simulated, telemetry collected, detections engineered, incidents investigated, responses tested, and defensive controls continuously validated. It is not a Wazuh installation, an attacker VM, or a tool collection; it is a framework for proving that a detection actually works, and for finding out when it stops working.
+SENTINEL is an evidence-driven SOC detection, investigation and response lab built on an isolated virtual network. It is used to simulate controlled attacks, collect telemetry, engineer detections, investigate alerts, measure results and retest after changes. It is a validation framework for detections, not a tool collection and not a production system.
 
 ---
 
-## 1. Project Purpose
+## 1. Purpose and Core Question
 
-Most home security labs stop once a SIEM is installed and a single alert fires. That proves a tool works — it doesn't prove a *detection* works, and it says nothing about whether that detection survives an attacker who behaves even slightly differently next time.
-
-SENTINEL exists to close that gap. Its purpose is to build a small, controlled enterprise-like environment where the full defensive lifecycle — from attack simulation through measurable detection improvement — can be practiced and documented end to end, rather than stopping at "an alert appeared."
-
-## 2. Core Question
+Many home labs stop when a SIEM alert fires once. That shows a tool works; it does not show a *detection* works, or that it survives an attacker who changes behavior slightly.
 
 > **Does your detection still work when the attacker changes tactics?**
 
-This question matters because most detections are written and tested against one specific version of an attack. A rule tuned to catch one exact command line, encoding, or tool often breaks the moment an attacker changes any of those details while keeping the same objective. SENTINEL treats that gap — between "detected once" and "detected reliably" — as the central engineering problem worth solving, and is designed so every future detection is eventually tested against a mutated form of the attack it was built for.
+SENTINEL treats the gap between "detected once" and "detected reliably" as its central engineering problem, and records gaps as findings rather than hiding them.
 
-## 3. Project Concept
+## 2. Project Concept
 
-SENTINEL models a miniature enterprise: a monitoring/SOC platform, an attacker system, and one or more target endpoints, all connected on a private, isolated lab network. Everything relevant to the project — the attacks, the telemetry, the alerts, the investigations — happens inside this boundary. The lab is deliberately small so that every component's purpose is understood, rather than accumulating tools for their own sake.
+A deliberately small enterprise-style environment: a monitoring platform, an attacker system and a Linux target endpoint on a private network. All simulation stays inside that boundary.
 
-## 4. Security Lifecycle
+## 3. Security Lifecycle
 
 ```
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
 ```
 
-| Stage | What it means |
+| Stage | Meaning |
 |---|---|
-| **Simulate** | Execute a controlled attack or adversary behavior inside the lab |
-| **Detect** | Telemetry is collected and a detection either fires or doesn't |
-| **Investigate** | The resulting alert is analyzed: timeline, evidence, IOCs, technique mapping |
-| **Respond** | A containment or remediation action is taken (human-in-the-loop) |
-| **Measure** | Detection and response performance is recorded as data |
-| **Improve** | Detections or telemetry are tuned based on what measurement showed |
-| **Retest** | The same — or a mutated — attack is run again to confirm the fix holds |
+| Simulate | Run a controlled attack or behavior inside the lab |
+| Detect | Telemetry is collected; a detection fires or does not |
+| Investigate | Analyze the alert: timeline, evidence, technique mapping |
+| Respond | Triage and response documentation (human-in-the-loop) |
+| Measure | Record detection performance as data |
+| Improve | Tune detections or telemetry based on findings |
+| Retest | Re-run the same or a mutated behavior to check the fix |
 
-## 5. Current Architecture
+## 4. Current Architecture
 
-The current lab is Linux-based. There is no Windows endpoint in the environment at this stage.
+The live lab is Linux-based and runs on an isolated VirtualBox network, `10.10.10.0/24`.
 
 ```
-                    INTERNET
-                       |
-                      NAT
-                       |
-              +----------------+
-              | SENTINEL-WAZUH |
-              | 10.10.10.10    |
-              | Wazuh SOC      |
-              +----------------+
-                       |
-                SENTINEL-LAB
-                10.10.10.0/24
-                       |
-              +--------+--------+
-              |                 |
-       +-------------+   +-------------+
-       | SENTINEL-   |   | SENTINEL-   |
-       | KALI        |   | LINUX01     |
-       | 10.10.10.20 |   | 10.10.10.40 |
-       | Attacker    |   | Target      |
-       +-------------+   +-------------+
+        Isolated VirtualBox network 10.10.10.0/24
+
+  +-------------+   controlled SSH testing   +------------------+
+  | SENTINEL-   | -------------------------> | SENTINEL-LINUX01 |
+  | KALI        |                            | 10.10.10.40      |
+  | 10.10.10.20 |                            | Wazuh Agent 002  |
+  +-------------+                            +------------------+
+                                                      |
+                                           Wazuh Agent communication
+                                                      v
+                                             +----------------+
+                                             | SENTINEL-WAZUH |
+                                             | 10.10.10.10    |
+                                             +----------------+
 ```
 
-## 6. Current Infrastructure
+Kali does not communicate directly with the Wazuh manager in the documented architecture. The lab traffic paths shown above (controlled SSH testing and Wazuh Agent communication) use the isolated lab network only. This overview does not document NAT adapter details; if a separate NAT adapter is configured in VirtualBox, it is separate from the isolated lab traffic path and is not part of the documented lab traffic flow.
 
-| Component | Role | OS / Technology | Lab IP | Status |
-|---|---|---|---|---|
-| SENTINEL-WAZUH | SOC / monitoring / detection platform | Wazuh (all-in-one) | 10.10.10.10 | ✅ Deployed |
-| SENTINEL-KALI | Attacker / adversary simulation system | Kali Linux | 10.10.10.20 | ✅ Deployed |
-| SENTINEL-LINUX01 | Linux endpoint / target | Ubuntu 24.04.5 LTS, Wazuh Agent 4.14.8 | 10.10.10.40 | ✅ Deployed, agent active |
+### Offline Sysmon pipeline (separate from the live topology)
 
-SENTINEL-LINUX01's Wazuh Agent (ID `001`) is registered, appears in the Wazuh Dashboard, and is running as an enabled, automatically-starting service. The Wazuh package repository was disabled after installation to avoid unintended package upgrades.
+```
+Pre-recorded Windows EVTX → Python EVTX conversion → NDJSON → logcollector → Wazuh detection
+```
 
-> **Note:** Other project documentation (`investigations/CASE-001.md`) records this agent as ID `002`. This discrepancy has not been resolved through live verification, so neither ID is presented here as newly verified. It should be checked separately against the Wazuh Dashboard or manager.
+Recorded Sysmon telemetry is replayed through the Linux01 agent's logcollector. This is offline replay, **not** live Windows monitoring. There is no live Windows endpoint and no Active Directory deployment.
 
-## 7. Technology Stack
+## 5. Infrastructure and Technology Stack
 
-Status labels: ✅ deployed or in use as a tool · 🔄 concept or capability in partial use · ⏳ planned, not yet implemented.
-
-| Category | Technology | Status |
+| Component | Role | Details |
 |---|---|---|
-| SIEM / Security monitoring | Wazuh (server, indexer, dashboard) | ✅ Deployed |
-| Endpoint telemetry | Wazuh Agent 4.14.8 | ✅ Deployed on Linux01 |
-| File integrity monitoring | Wazuh FIM (syscheck) | 🔄 In use — exercised in one controlled modification test |
-| Custom detection rules | Wazuh custom rule `100002` | 🔄 In use — validated for the tested file modification only |
-| Attacker environment | Kali Linux | ✅ Deployed |
-| Operating systems | Ubuntu 24.04.5 LTS, Kali Linux | ✅ Deployed |
-| Virtualization | Oracle VirtualBox | ✅ In use |
-| Networking | Isolated internal lab network (SENTINEL-LAB, 10.10.10.0/24) + NAT | ✅ In use |
-| Detection framework | MITRE ATT&CK mapping | ⏳ Planned — comprehensive mapping not yet implemented |
-| Automation / engineering | Python | ⏳ Planned — not yet implemented |
-| Documentation | Git / GitHub | ✅ In use |
+| SENTINEL-WAZUH | SIEM / detection platform | Ubuntu 24.04, `10.10.10.10`, Wazuh 4.14.8 |
+| SENTINEL-KALI | Attacker / simulation | Kali Linux, `10.10.10.20` |
+| SENTINEL-LINUX01 | Monitored Linux endpoint | Ubuntu 24.04, `10.10.10.40`, Wazuh Agent ID `002` |
 
-Sysmon is **not** currently deployed anywhere in the lab.
+Supporting technology: Oracle VirtualBox (isolated networking), Wazuh FIM (syscheck), Wazuh log analysis for SSH and replayed Sysmon data, a Python EVTX-to-NDJSON converter, and Git/GitHub for documentation.
 
-## 8. Development Roadmap
+The baseline was checked for VirtualBox isolated networking, Agent ID `002` against the active endpoint, v0.11 FIM regression and exclusion behavior, and EVTX-to-NDJSON converter output against the intended Sysmon rule structure.
 
-| Version | Focus | Main Objective | Status |
-|---|---|---|---|
-| v0.1 | Foundation | Isolated lab network, Wazuh deployment, Kali attacker VM, Linux endpoint, agent connectivity | ✅ COMPLETED |
-| v0.2 | Detection Engineering | Linux/auth/SSH telemetry, File Integrity Monitoring, detection development and tuning | 🔄 IN PROGRESS — controlled FIM modification test demonstrated; further testing and tuning outstanding |
-| v0.3 | SOC Investigation | Alert investigation, evidence collection, timelines, IOCs, MITRE ATT&CK mapping, threat hunting, case management | 🔄 IN PROGRESS — CASE-001 documented and closed for its controlled validation objective |
-| v0.4 | Incident Response | Controlled response actions, containment, recovery, incident reporting | ⏳ PLANNED |
-| v0.5 | Purple-Team Measurement | Detection rate, missed detections, false positives, timing metrics, before/after comparison | ⏳ PLANNED |
-| v0.6 | Attack DNA & Mutation | Attack-chain representation, controlled attacker behavior modification, resilience retesting | ⏳ PLANNED |
+## 6. Development Roadmap
 
-**v0.2 progress.** A controlled modification of `/home/sentinel-admin/sentinel-fim-validation.txt` generated a Level 8 alert under custom Wazuh Rule `100002`. This demonstrates detection of the tested modification only. File creation and deletion validation, systematic false-positive and false-negative testing, and detection tuning remain outstanding. This does not indicate comprehensive detection coverage.
+Milestones follow [`CHANGELOG.md`](../CHANGELOG.md), which holds per-release detail.
 
-**v0.3 progress.** [`investigations/CASE-001.md`](../investigations/CASE-001.md) documents the controlled validation and a review of related FIM events. The case is closed for that validation objective only; the broader v0.3 investigation work remains in progress.
+| Version | Focus |
+|---|---|
+| v0.1 | Foundation |
+| v0.2 | Detection Engineering |
+| v0.3 | SOC Investigation |
+| v0.4 | Sysmon Replay Detection |
+| v0.5 | Incident Response and SSH Triage |
+| v0.6 | Purple-Team Measurement |
+| v0.7 | Attack DNA and Mutation |
+| v0.8 | FIM Tuning |
+| v0.9 | Sysmon JSON Replay and Python Triage |
+| v0.9.1 | Follow-up |
+| v0.10 | Live Linux FIM and Python Triage Validation |
 
-## 9. Differentiation
+The v0.11 FIM regression and exclusion behavior has been verified as part of the current implementation baseline. This overview does not describe it as a changelog release.
 
-Traditional home SOC:
+## 7. Detection Engineering and Mutation Testing
 
-```
-Attack → Alert → Screenshot
-```
+Detections are built, tested against controlled activity, and then challenged with modified behavior. Mutation testing has been performed and is documented in CASE-004. For example, Sysmon command-line mutation #24 bypassed the keyword-based Rule `100112` and matched only the general Level 0 base rule, so no custom alert fired. This exposed a detection gap. CASE-004 also records selected FIM, Sysmon and SSH threshold observations.
 
-SENTINEL's intended workflow:
+Mutation coverage is limited to the scenarios documented there. Additional mutation scenarios remain future work. Rule logic and implementation details are in [`docs/05-detection-engineering.md`](05-detection-engineering.md).
 
-```
-Attack → Detection → Investigation → Response → Measurement → Improvement → Retest
-```
+## 8. Investigations
 
-The difference isn't the tools — a home SOC and SENTINEL can both run Wazuh. The difference is what happens after the alert fires: whether the detection's performance is ever measured, and whether it's ever tested again after the attacker changes something. This isn't a claim that SENTINEL is better than other projects — it's a description of the additional stages this project is designed to build out over time.
+| Case | Scope |
+|---|---|
+| CASE-001 | FIM investigation, closed 18 November 2026 for its defined scope. Closure does not mean all FIM engineering or noise tuning is complete. |
+| CASE-002 | Validates selected detections against replayed Sysmon EVTX telemetry. |
+| CASE-003 | Controlled SSH testing, investigation and Python-assisted triage. |
+| CASE-004 | Selected mutation, evasion, FIM and SSH threshold testing. |
 
-## 10. Signature Engineering Concepts
+Each case is limited to its documented scope. Timelines and evidence are in the case files under [`investigations/`](../investigations/).
 
-These are **design goals for later project stages**, not current capabilities:
+## 9. Python SOC Automation Engine
 
-- **Attack DNA** — representing a full attack chain as a sequence of behaviors, rather than judging a single isolated alert.
-- **Attack Mutation** — changing how an attacker achieves an objective (tooling, encoding, timing) while keeping the objective the same, then retesting.
-- **Detection Resilience** — whether a detection keeps catching the underlying malicious behavior after mutation.
-- **Purple-Team Feedback Loop** — Attack → Detect → Investigate → Measure → Improve → Retest, run repeatedly.
-- **Failure-Driven Detection Engineering** — a missed detection or false positive is recorded and treated as engineering evidence, not hidden.
+A separate companion repository. It has been used for Wazuh alert parsing and severity-based triage, including documented Sysmon replay and Wazuh Linux FIM alert-triage workflows. It is not a SOAR platform, performs no automated containment, eradication or recovery, and is not continuously or fully integrated with the Wazuh detection pipeline.
 
-Attack DNA, Attack Mutation, Detection Resilience, and the Purple-Team Feedback Loop have not been implemented. Failure-driven detection engineering remains a design goal. The controlled FIM modification validation described in CASE-001 is an existing detection-validation activity, not attack mutation or detection-resilience testing.
+## 10. Measurement
 
-## 11. Evidence-Driven Development
+The v0.6 report ([`metrics/v0.6-purple-team-measurement.md`](../metrics/v0.6-purple-team-measurement.md)) records:
 
-Each meaningful phase of the project is intended to produce evidence rather than just a claim of completion:
+- **FIM:** 3/3 selected lifecycle events detected; 0/3 `/tmp` negative-control operations alerted.
+- **Sysmon replay:** 7/7 selected detections fired; 0/3 benign events alerted; two Event ID 7 ImageLoad events remained uncovered.
+- **SSH:** baseline and threshold escalation measured; sliding-window carry-over affected the first escalation in C2.
 
-```
-evidence/
-├── v0.1/
-├── v0.2/
-├── v0.3/
-├── v0.4/
-├── v0.5/
-└── v0.6/
-```
+These are small controlled samples. They are not statistically meaningful detection rates or enterprise false-positive rates. Response time has not been measured, and regression coverage is not comprehensive. Details: [`docs/07-testing-and-metrics.md`](07-testing-and-metrics.md).
 
-Screenshots, detection test results, alerts, investigation notes, metrics, and reports may be stored here as each phase produces them. No secrets, credentials, or sensitive raw telemetry are stored in this structure.
+## 11. Evidence and Limitations
 
-The version directories show the planned evidence organization. Actual evidence availability depends on completed work, and a listed directory does not mean its evidence set is complete.
+Evidence is stored per milestone where work produced it; availability varies and a milestone folder does not imply a complete evidence set. The repository is intended to exclude secrets, credentials and sensitive raw telemetry. Detection gaps, such as mutation #24, are documented as findings.
 
-## 12. Failure Logging
+Limitations:
 
-```
-failure-log/
-├── detection-failures.md
-├── false-positives.md
-├── mutation-failures.md
-└── infrastructure-issues.md
-```
+- No live Windows endpoint and no Active Directory.
+- Sysmon coverage is offline replay of selected recorded telemetry.
+- Detection coverage is selective, not comprehensive.
+- FIM noise has not been fully eliminated.
+- Lab only, not production-ready.
 
-A missed detection or a false positive says something useful about a detection's actual coverage — logging it, rather than omitting it, is what makes the project's later performance claims credible.
+Future expansion (not committed): additional mutation scenarios, coverage of the uncovered Event ID 7 cases, a live Windows endpoint, Active Directory, and deeper DFIR workflows.
 
-This structure describes the intended organization. It does not mean every category already contains validated findings.
+## 12. Current Status
 
-## 13. Documentation & Case-Based Learning
+In progress.
 
-Significant investigations—including controlled detection validations, suspicious-event investigations, and confirmed incidents—should produce structured case reports using this format:
-
-- Incident Summary
-- Severity
-- Affected Assets
-- Timeline
-- Initial Detection
-- Evidence
-- IOCs
-- MITRE ATT&CK Mapping
-- Investigation
-- Root Cause
-- Response
-- Detection Performance
-- Failure / False Positive Analysis
-- Improvements
-- Retest Results
-- Lessons Learned
-
-[`investigations/CASE-001.md`](../investigations/CASE-001.md) documents the controlled FIM modification validation and its supporting evidence. This case validates the tested modification only; it does not establish complete FIM coverage or a comprehensive forensic assessment. The list above is the intended template, and it does not mean every field has been fully validated in the lab.
-
-## 14. Metrics Philosophy
-
-Once detections exist, SENTINEL intends to measure them rather than just display alerts. Planned metrics include:
-
-- Attack executions
-- Successful detections
-- Missed detections
-- False positives
-- Detection rate
-- Detection time
-- Response time
-- Before/after detection performance
-
-Observed event counts are not the same as formal detection-performance metrics. For example, the CASE-001 review noted 19 matching FIM events in the reviewed period. That count includes the controlled validation event, and the remaining events were not fully attributed to individual processes. It is not a detection rate, a false-positive rate, or evidence of overall detection performance.
-
-No formal detection-performance metrics have been collected yet, and none are presented here. Formal measurement, before/after comparison, and comprehensive metrics remain future work, to be populated starting in v0.5.
-
-## 15. Future Expansion
-
-**The following are future possibilities only — none are currently part of the lab:**
-
-- Windows endpoint
-- Active Directory / Windows Server
-- Deception / honeypot capabilities
-- Deeper DFIR workflows
-- Threat intelligence integrations
-- A custom SENTINEL console
-- A Python/FastAPI automation layer
-
-These will only be added if and when they provide clear security or engineering value — they are not commitments on a timeline.
-
-## 16. Security & Lab Safety
-
-SENTINEL runs entirely inside an isolated laboratory network. All adversary simulation stays inside that boundary; nothing in this project targets external systems, the host machine, or a real LAN. No real credentials, personal information, API keys, tokens, private keys, or production data are used anywhere in the lab. VM disks, sensitive telemetry, credentials, and secrets are not committed to the repository.
-
-## 17. Project Status
-
-**Completed milestone:** v0.1 — Foundation
-**Current milestones:** v0.2 — Detection Engineering (in progress) and v0.3 — SOC Investigation (in progress)
-**Status:** IN PROGRESS — v0.2's controlled FIM modification test is demonstrated; broader validation and tuning remain outstanding. v0.3 includes CASE-001, closed for its controlled validation objective, while broader investigation work remains in progress.
-**Next planned milestone:** v0.4 — Incident Response
+- **Latest documented release history:** v0.10 (Live Linux FIM and Python Triage Validation), per [`CHANGELOG.md`](../CHANGELOG.md).
+- **Implementation-baseline checks (v0.11):** FIM regression and exclusion behavior verified. v0.11 is not represented as an official changelog release.
+- **Open work:** detection gaps and noise-tuning work remain open.
