@@ -1,12 +1,3 @@
-## [v0.10] - 2026-11-22
-
-### Added
-- Documented live Linux FIM (`100003`, `100002`, `100004` on `/home/sentinel-admin/.fim_probe_test.txt`) triage integration with `python-soc-automation` `v1.0` (commit `9696707`), distinct from `v0.9` Sysmon JSON replay.
-- Recorded archived evidence (`fim_probe_alerts.json`, `fim_probe_report.md`, and `SHA256SUMS` in `~/soc-evidence/v0.10-fim-probe/`) and cleanup of temporary `/tmp` probe files.
-
-### Notes
-- Open FIM noise-tuning items (`dconf`, Tracker3, Nautilus) remain open and separate from `v0.10`.
-
 # Changelog
 
 SENTINEL is a virtual SOC lab built around one lifecycle: **SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST**. Its guiding question is: *does your detection still work when the attacker changes tactics?*
@@ -19,10 +10,11 @@ This file is a project-level summary: milestones, architecture decisions, what t
 
 - **Built:** a Linux-first lab on an isolated network: Wazuh 4.14.8 (`SENTINEL-WAZUH`), a monitored endpoint with an active agent (`SENTINEL-LINUX01`), and a controlled attacker VM (`SENTINEL-KALI`). Detections cover Linux file integrity monitoring (FIM) on `/home`, SSH authentication, and replayed Windows Sysmon telemetry.
 - **CASE-001 is closed.** It was closed on **18 November 2026** for its reviewed scope, and the v0.3 documentation and evidence milestone is complete. Closure does not mean the whole project or all detection engineering is complete.
-- **FIM evidence:** custom Rule `100002` (modification, Level 8) was confirmed in controlled modification tests on 11 October (screenshot-supported only) and 26 October. Four documented controlled single-file lifecycle sessions (creation, modification, deletion) exist. The 2 and 18 November sessions belong to CASE-001. The 20 November (v0.6) and 21 November (v0.8) sessions are separate post-closeout developments. They are not a repeatable automated regression suite and do not establish comprehensive FIM coverage.
+- **FIM evidence:** custom Rule `100002` (modification, Level 8) was confirmed in controlled modification tests on 11 October (screenshot-supported only) and 26 October. Four documented controlled single-file lifecycle sessions (creation, modification, deletion) exist. The 2 and 18 November sessions belong to CASE-001. The 20 November (v0.6) and 21 November (v0.8) sessions are separate post-closeout developments. They are not a repeatable automated regression suite and do not establish comprehensive FIM coverage. The additional 22 November v0.10 and v0.11 probe sequences each have separate evidence. They are distinct from these four sessions and from each other, and are not merged into either. They also do not establish a repeatable automated regression suite or comprehensive FIM coverage.
 - **Observed, not validated:** two separate 31 October evidence sets for Rules `100003`/`100004`. Their relationship and trigger origin are not established.
 - **Unresolved (historical):** the 16 October creation and deletion records show built-in Rules `554` and `553`. Whether custom Rules `100003` and `100004` were deployed and loaded then is unknown. This is not a confirmed detection failure.
-- **Post-closeout work (v0.6, v0.8, v0.9, v0.9.1):** separate developments, not CASE-001 evidence. The broader noise-suppression retest is pending and residual `dconf` noise remains. This work is not a prerequisite for CASE-001 closure.
+- **Post-closeout work (v0.6, v0.8, v0.9, v0.9.1, v0.10, v0.11):** separate developments, not CASE-001 evidence. The v0.11 milestone status remains pending reconciliation (see the v0.11 bullet below). The broader noise-suppression retest is pending and residual `dconf` noise remains. This work is not a prerequisite for CASE-001 closure.
+- **v0.11 (pending reconciliation):** evidence artifacts are committed under `evidence/v0.11/`, but the milestone description and status are not yet reconciled. See the [v0.11 evidence-status note](#v011---evidence-status-pending-reconciliation) in the version history below.
 - **Not done:** live Windows or Active Directory telemetry, a repeatable automated regression suite, and false-positive/false-negative benchmarks. No detection rates are claimed.
 
 ---
@@ -45,7 +37,35 @@ This file is a project-level summary: milestones, architecture decisions, what t
 
 v0.6, v0.8, v0.9, v0.9.1, and v0.10 were developed after CASE-001 closed and are not CASE-001 evidence.
 
+v0.11 is intentionally not listed in the table above. Its evidence artifacts are committed ([`v011_fim_alerts.json`](evidence/v0.11/v011_fim_alerts.json), [`triage_report.md`](evidence/v0.11/triage_report.md), [`regression_summary.json`](evidence/v0.11/regression_summary.json)), but its milestone description and status remain pending reconciliation. It is not recorded as a completed milestone.
+
 ---
+
+## [v0.11] - Evidence status (pending reconciliation)
+
+v0.11 evidence artifacts are committed to the repository. The v0.11 milestone description and status remain **pending reconciliation**. This note records only what the committed artifacts establish; it does not give v0.11 a title, completion date, validation status or broader results.
+
+### Committed artifacts
+- [`evidence/v0.11/v011_fim_alerts.json`](evidence/v0.11/v011_fim_alerts.json): 10 Wazuh alert records across Rules `100002`, `100003` and `100004`.
+  - Three records document creation, modification and deletion of `/home/sentinel-admin/v011_fim_probe.txt`. Those three probe events matched their corresponding custom FIM rules at Level 8.
+  - The remaining seven records concern desktop/configuration paths, including `dconf` and `tiling-assistant`. The available report does not establish that these are confirmed benign noise, and it does not attribute them to a process.
+- [`evidence/v0.11/triage_report.md`](evidence/v0.11/triage_report.md): reports 10 filtered alerts and three unique rules. The process, target-process and event-time enrichment fields are `None`.
+- [`evidence/v0.11/regression_summary.json`](evidence/v0.11/regression_summary.json): contains pre-cutoff and post-cutoff rule counts, along with path counts. It does not independently establish test criteria, expected outcomes, pass/fail status or a completed regression suite.
+
+### Limits
+- The three-event probe is evidence of one controlled lifecycle on one file. It is not proof of a repeatable regression suite or of comprehensive FIM coverage.
+- The aggregate rule counts alone do not prove that a regression suite passed.
+- This evidence is repository-committed, unlike the v0.10 archive, which remains outside the repository at `~/soc-evidence/v0.10-fim-probe/`. The two are distinct.
+- Residual desktop-path FIM noise and the broader noise-suppression retest remain open.
+
+## [v0.10] - 2026-11-22
+
+### Added
+- Documented live Linux FIM (`100003`, `100002`, `100004` on `/home/sentinel-admin/.fim_probe_test.txt`) triage integration with `python-soc-automation` `v1.0` (commit `9696707`), distinct from `v0.9` Sysmon JSON replay.
+- Recorded archived evidence (`fim_probe_alerts.json`, `fim_probe_report.md`, and `SHA256SUMS` in `~/soc-evidence/v0.10-fim-probe/`) and cleanup of temporary `/tmp` probe files.
+
+### Notes
+- Open FIM noise-tuning items (`dconf`, Tracker3, Nautilus) remain open and separate from `v0.10`.
 
 ## v0.9.1 and v0.9 — Sysmon JSON Replay and Python Triage
 
@@ -191,6 +211,7 @@ Detailed indexes: [`evidence/v0.3/readme.md`](evidence/v0.3/readme.md), [`eviden
 - **18 November lifecycle:** [`evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json`](evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json) (three alert records). The `SHA256SUMS` manifest in the same directory covers the three raw JSON files; checksums were not independently recomputed for this documentation.
 - **E14 / E15 (Syscheck configuration screenshots):** `evidence/v0.3/screenshots/v0.3-e14-endpoint-syscheck-configuration.png` (endpoint: `/home` real-time, startup scan, 43,200-second frequency) and `evidence/v0.3/screenshots/v0.3-e15-manager-syscheck-configuration.png` (manager-side only; not evidence of endpoint `/home` monitoring). Neither establishes the configuration loaded on 16 October.
 - **E16 (2 November lifecycle):** `evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png`. Terminal screenshot, not a raw alert record.
+- **v0.11 (milestone status pending reconciliation):** [`evidence/v0.11/v011_fim_alerts.json`](evidence/v0.11/v011_fim_alerts.json), [`evidence/v0.11/triage_report.md`](evidence/v0.11/triage_report.md) and [`evidence/v0.11/regression_summary.json`](evidence/v0.11/regression_summary.json). Committed repository artifacts; see the v0.11 evidence-status note in the version history above for what they do and do not establish.
 - Not committed or not recovered: the 11 October original source alert log, the 3 November verification capture, raw alert JSON for the 2 November session and the 31 October screenshot observation, and operational artifacts from the Manager startup observation.
 
 ---
