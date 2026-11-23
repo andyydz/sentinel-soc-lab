@@ -2,7 +2,7 @@
 
 > **Does your detection still work when the attacker changes tactics?**
 
-SENTINEL is a private, isolated virtual cybersecurity SOC laboratory. It is built to simulate controlled activity, collect security telemetry, engineer and validate detections, investigate alerts, measure controlled test results, test attacker-behavior mutations and tune detections. Automated response is not implemented.
+SENTINEL is an isolated virtual cybersecurity SOC laboratory. The lab network is isolated; the GitHub repository that documents it is public. It is built to simulate controlled activity, collect security telemetry, engineer and validate detections, investigate alerts, measure controlled test results, test attacker-behavior mutations and tune detections. Automated response is not implemented.
 
 Wazuh is the central monitoring and detection platform inside a broader validation lifecycle:
 
@@ -10,7 +10,7 @@ Wazuh is the central monitoring and detection platform inside a broader validati
 SIMULATE → DETECT → INVESTIGATE → RESPOND → MEASURE → IMPROVE → RETEST
 ```
 
-This document is current through milestone **v0.9.1** (with **v0.10** live Linux FIM triage validation recorded separately). It separates what is **implemented and validated** from what is **observed but not fully validated**, **pending retest**, or **future work**.
+This document is current through the official changelog milestones up to **v0.10** (22 Nov 2026), which records a live Linux FIM probe with Python-assisted triage (see section 9). It separates what is **implemented and validated** from what is **observed but not fully validated**, **pending retest**, or **future work**.
 
 **Status legend:** **Completed** (the documented milestone scope was finished) · **Implemented and merged** (capability is on `main`; further validation may remain) · **Validated** (tested for a documented scenario) · **Observed** (seen, but not fully validated or explained) · **Pending retest** · **Future work** (not built).
 
@@ -49,26 +49,31 @@ Three VMs are operational. There is no live Windows endpoint or Active Directory
 
 ```mermaid
 flowchart TB
-    INET([INTERNET])
-    NAT{NAT}
-    INET --> NAT
-
     subgraph LAB["SENTINEL-LAB — 10.10.10.0/24 (VirtualBox internal network)"]
         WAZUH["SENTINEL-WAZUH<br/>Ubuntu 24.04<br/>10.10.10.10<br/>SOC / Wazuh"]
         KALI["SENTINEL-KALI<br/>Kali Linux 2026.2<br/>10.10.10.20<br/>Attacker platform"]
         LINUX["SENTINEL-LINUX01<br/>Ubuntu 24.04.5 LTS<br/>10.10.10.40<br/>Monitored endpoint"]
     end
 
-    NAT --> WAZUH
-    WAZUH --- KALI
-    WAZUH --- LINUX
-    KALI -->|"SSH test traffic"| LINUX
+    NAT{"NAT<br/>(outbound only)"}
+    INET([INTERNET])
+
+    KALI -->|"controlled SSH test traffic"| LINUX
+    LINUX -->|"Wazuh Agent 002 telemetry"| WAZUH
+    KALI -.-|"lab network connectivity only<br/>(no Kali logs sent to Wazuh)"| WAZUH
+    WAZUH -.->|"outbound: updates, packages"| NAT
+    NAT -.-> INET
 
     classDef operational fill:#1f3d2b,stroke:#4caf50,color:#fff;
     class WAZUH,KALI,LINUX operational
 ```
 
-NAT outbound connectivity is shown on the Wazuh manager only. The three VMs communicate through the isolated internal network.
+The diagram separates four things:
+
+- **NAT** is an interface on SENTINEL-WAZUH only, used for outbound Internet access, updates and package installation. It is not part of the isolated SENTINEL-LAB traffic path and is not used for test or attack traffic. SENTINEL-KALI and SENTINEL-LINUX01 use SENTINEL-LAB only.
+- **General connectivity:** the three VMs can communicate over the isolated internal network (connectivity, including Kali ↔ Wazuh, was verified at v0.1).
+- **Controlled SSH traffic:** SENTINEL-KALI to SENTINEL-LINUX01.
+- **Telemetry:** Wazuh Agent `002` on SENTINEL-LINUX01 sends telemetry to the Wazuh manager. SENTINEL-KALI does not send its SSH authentication logs directly to Wazuh.
 
 ---
 
@@ -80,7 +85,7 @@ NAT outbound connectivity is shown on the Wazuh manager only. The three VMs comm
 | OS | Ubuntu 24.04 | Kali Linux 2026.2 | Ubuntu 24.04.5 LTS |
 | Lab IP | `10.10.10.10` | `10.10.10.20` | `10.10.10.40` |
 | Network | SENTINEL-LAB + NAT (outbound) | SENTINEL-LAB | SENTINEL-LAB |
-| Software | Wazuh 4.14.8 all-in-one (manager + Dashboard) | Standard Kali toolset | Wazuh Agent 4.14.8, **Agent ID `002`**, Active, enabled at boot |
+| Software | Wazuh 4.14.8 all-in-one (Wazuh server/manager, Wazuh indexer, Wazuh dashboard) | Standard Kali toolset | Wazuh Agent 4.14.8, **Agent ID `002`**, Active, enabled at boot |
 | Status | Implemented | Implemented | Implemented |
 
 **Verified at v0.1:** Wazuh Dashboard accessible with authentication verified; SENTINEL-LAB interfaces configured; Wazuh ↔ Linux01 and Kali ↔ Wazuh connectivity verified; Linux01 agent registered and visible as Active in the Dashboard.
@@ -96,7 +101,7 @@ NAT outbound connectivity is shown on the Wazuh manager only. The three VMs comm
 ## 4. Network Architecture and Security Boundaries
 
 - **SENTINEL-LAB** (`10.10.10.0/24`): isolated VirtualBox internal network used for communication between the three VMs and for all authorized test activity.
-- **NAT:** used on the Wazuh manager for legitimate outbound Internet/package access only, never for test or attack traffic.
+- **NAT:** an interface on the Wazuh manager only, used for legitimate outbound Internet/package access only, never for test or attack traffic. It is not part of the SENTINEL-LAB traffic path. SENTINEL-KALI and SENTINEL-LINUX01 use SENTINEL-LAB only.
 
 | Host | Lab IP |
 |---|---|
@@ -126,7 +131,7 @@ flowchart LR
         EVJ["Converted Sysmon NDJSON<br/>(json localfile)"]
     end
 
-    KALI["SENTINEL-KALI<br/>10.10.10.20<br/>controlled SSH failures"] -.->|"SSH connection attempts"| SSHD
+    KALI["SENTINEL-KALI<br/>10.10.10.20<br/>controlled SSH failures"] -.->|"SSH traffic to Linux01<br/>(no Kali logs sent to manager)"| SSHD
     EVTX[".evtx captures<br/>(not committed)"] -->|"python-evtx<br/>scripts/evtx_to_wazuh.py"| EVJ
 
     subgraph MGR["SENTINEL-WAZUH"]
@@ -134,9 +139,9 @@ flowchart LR
         JLC["logcollector input<br/>/var/ossec/logs/<br/>sentinel-sysmon-replay.json"]
     end
 
-    FIM --> RULES
-    EVJ --> RULES
-    SSHD --> RULES
+    FIM -->|"Agent 002 telemetry"| RULES
+    EVJ -->|"Agent 002 telemetry"| RULES
+    SSHD -->|"Agent 002 telemetry"| RULES
     JLC --> RULES
     RULES --> ALERTS["Alerts<br/>Dashboard / alert JSON"]
     ALERTS -.-> TRIAGE["python-soc-automation<br/>(external tool)"]
@@ -176,6 +181,7 @@ flowchart LR
 | 26 Oct 2026 | Two consecutive modifications of `/home/sentinel-admin/sentinel-v02-mod-test.txt` | Two Rule `100002`, Level 8 alerts: `2026-10-26T21:38:27.910+0530` (0 → 23 bytes) and `2026-10-26T21:38:48.473+0530` (23 → 61 bytes). Evidence: [October 26 controlled-modification source alerts](../evidence/v0.2/screenschots/v0.2-oct26-controlled-modification-source-alerts-new.png). | Validated for this modification scenario |
 | 31 Oct 2026 | Custom Rules `100003` (creation) and `100004` (deletion), both Level 8, appeared in one terminal screenshot: [`v0.3-fim-lifecycle-custom-detections.png`](../evidence/v0.3/screenshots/v0.3-fim-lifecycle-custom-detections.png) | Raw alert records, process attribution and root cause are not established. | Observation only, not a validated controlled test |
 | 2 Nov 2026 | One controlled lifecycle session on a single dedicated file (`/home/sentinel-admin/sentinel-v03-final-test.txt`): created, modified, deleted | Matched custom Rules `100003`, `100002` and `100004`, each Level 8. Screenshot: [`v0.3-fim-full-lifecycle-custom-rules.png`](../evidence/v0.3/screenshots/v0.3-fim-full-lifecycle-custom-rules.png). Raw alert JSON is not committed. | Validated for this single session only |
+| 18 Nov 2026 | A separate controlled lifecycle session on a different single dedicated file (`/home/sentinel-admin/fim-sprint-test.txt`): created, modified, deleted | Matched custom Rules `100003` (creation), `100002` (modification) and `100004` (deletion), all Level 8. Evidence: [`fim-lifecycle-evidence.json`](../evidence/v0.3/raw-alerts/fim-lifecycle-evidence.json). Distinct from the 2 November session; the two are not merged or counted as one test. | Validated for this single session only |
 
 ### Replay, SSH and measurement results (v0.4–v0.6)
 
@@ -205,7 +211,7 @@ flowchart LR
 These checks come from the current detection inventory. The controlled probe lifecycle and group-isolation checks are verified; the broader post-tuning noise-suppression assessment is incomplete.
 
 ### Known limitations
-- The 26 October results are two alerts from consecutive modifications of one file. They are **not** two independent test cases or a regression suite. Likewise, the 2 November session is one session on one file, not a repeatability test or comprehensive regression suite.
+- The 26 October results are two alerts from consecutive modifications of one file. They are **not** two independent test cases or a regression suite. Likewise, the 2 November and 18 November sessions are each one session on one file, not a repeatability test or comprehensive regression suite, and the two sessions are not independent confirmation of each other's scope.
 - The 16 October records were reviewed from the Wazuh runtime log `/var/ossec/logs/alerts/2026/Oct/ossec-alerts-16.json`. That raw log is **not** claimed to be committed to GitHub.
 - **Unresolved:** why Rule `100002` was absent from the reviewed 16 October creation and deletion records. This is not established as a detection failure, and no root cause is asserted. The `<if_sid>550</if_sid>` parent is not claimed as the cause, and the rule version loaded during the historical tests is unconfirmed. The 31 October and 2 November observations do not explain it.
 - The v0.6 results are small controlled samples describing the v0.6 baseline. No general detection rate, production false-positive or false-negative rate, or coverage percentage is claimed, and not all possible metrics were measured. They are not post-v0.8 tuning results.
@@ -217,7 +223,7 @@ These checks come from the current detection inventory. The controlled probe lif
 
 | Case | Scope | Status |
 |---|---|---|
-| [CASE-001](../investigations/CASE-001.md) | FIM investigation: controlled validation and review of related home-directory events | Evidence reconciliation **closed for the reviewed scope**; the **overall case remains open** |
+| [CASE-001](../investigations/CASE-001.md) | FIM investigation: controlled validation and review of related home-directory events | CASE-001 investigation closed for its reviewed scope; broader FIM engineering and validation follow-up remains open |
 | [CASE-002](../investigations/CASE-002.md) | Sysmon replay investigation | Completed |
 | [CASE-003](../investigations/CASE-003.md) | Controlled SSH brute-force investigation, with Python-assisted severity triage, manual analyst review, response-related verification checks and a documented containment procedure | Completed and verified for the controlled scenario |
 | [CASE-004](../investigations/CASE-004.md) | Mutation, evasion and reliability investigation | Completed and verified |
@@ -270,7 +276,10 @@ This purple-team feedback loop has been exercised through measurement, mutation 
 | v0.8 | FIM group isolation, noise reduction and tuning | **Implemented and merged.** Path exclusions and group isolation manager-validated; controlled Agent `002` probe lifecycle and group-isolation checks verified on 21 Nov 2026; residual desktop noise observed; broader post-tuning noise-suppression retest **pending** |
 | v0.9 | Sysmon JSON replay ingestion and Python-assisted triage integration | **Implemented and merged**; replay-based |
 | v0.9.1 | Follow-up documentation, detection-inventory and metrics/status alignment | Documentation and alignment milestone; no new detection capability |
+| v0.10 | Live Linux FIM probe and Python-assisted triage validation (22 Nov 2026) | **Official changelog milestone.** Live Linux FIM probe on `/home/sentinel-admin/.fim_probe_test.txt` using Rules `100003`, `100002` and `100004`, with Python-assisted triage using `python-soc-automation` v1.0. Archived evidence: `~/soc-evidence/v0.10-fim-probe/`. Validated for this probe only |
 | v1.0 | Integrated SENTINEL | Future target (not built) |
+
+**Roadmap note.** The table lists the official changelog milestones through v0.10 (`## [v0.10] - 2026-11-22`), followed by the v1.0 future target, which is not built. The v0.10 probe is a separate test on a different file (`.fim_probe_test.txt`) from the 18 November CASE-001 lifecycle session (`fim-sprint-test.txt`); the two are not merged or counted as one test. The changelog identifies `~/soc-evidence/v0.10-fim-probe/` as archived evidence; it is not claimed to be committed to GitHub. v0.10 describes Python-assisted triage of Wazuh Linux FIM alerts and does not imply continuous production monitoring or automated response.
 
 **Evidence** is organized by phase under `evidence/` (v0.1, v0.2, v0.3, sysmon-replay, v0.5, v0.6, v0.7 and v0.9) and consists of real project artifacts only.
 
