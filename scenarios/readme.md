@@ -210,7 +210,7 @@ Do not execute a scenario if the safety boundary is unclear.
 
 Each execution records, where applicable: scenario ID, date/time, version, attacker system, target system, expected behavior, actual behavior, telemetry observed, detection result, investigation result, response result, evidence references, failures, metrics, and retest requirement. None of these values are invented — an execution record only reports what actually happened.
 
-Executed tests to date are recorded in the investigation cases [CASE-001](../investigations/CASE-001.md) through [CASE-004](../investigations/CASE-004.md), the [v0.6 measurement report](../metrics/v0.6-purple-team-measurement.md), and the relevant evidence documents. These records document actual testing, findings and limitations, but they are not formal scenario execution records. Formal execution records keyed to `SCN-001` and so on have not yet been established. A future SCN execution record should distinguish expected behavior from actual behavior and link to the relevant case or evidence where applicable, without duplicating entire investigation reports.
+Executed tests to date are recorded in the investigation cases [CASE-001](../investigations/CASE-001.md), [CASE-002](../investigations/CASE-002.md), [CASE-003](../investigations/CASE-003.md) and [CASE-004](../investigations/CASE-004.md), the [v0.6 measurement report](../metrics/v0.6-purple-team-measurement.md), and the relevant evidence documents. These records document actual testing, findings and limitations, but they are not formal scenario execution records. Formal execution records keyed to `SCN-001` and so on have not yet been established. A future SCN execution record should distinguish expected behavior from actual behavior and link to the relevant case or evidence where applicable, without duplicating entire investigation reports.
 
 ## Scenario results
 
@@ -234,11 +234,11 @@ Scenario definitions may evolve. When a scenario changes significantly: preserve
 ## Downstream connections
 
 - **Scenario → Detection**: scenario → expected telemetry → detection hypothesis → detection implementation → controlled execution → alert → validation → measurement.
-- **Scenario → Investigation**: scenario → alert → triage → evidence → timeline → IOC extraction → technique mapping → root cause → conclusion, feeding `investigations/`.
+- **Scenario → Investigation**: scenario → alert → triage → evidence → timeline → IOC extraction → technique mapping → root cause → conclusion, feeding [`investigations/`](../investigations/).
 - **Scenario → Response**: detection → investigation → response decision → controlled containment → validation → measurement (future work; no automated response exists, and destructive response instructions are not documented here).
-- **Scenario → Metrics**: every meaningful scenario is expected to eventually connect to detection success, detection time, missed detection, false positive, investigation time, response time, coverage, regression, or mutation-resilience metrics in `metrics/` — generated only from actual test results.
-- **Scenario → Failure Log**: a failed scenario follows STOP → CAPTURE → DOCUMENT → INVESTIGATE → FIX → RETEST and links to the corresponding record in `failure-log/` (e.g. a scenario failure, detection miss, or regression) using a real `FAIL-*` ID, never a fictional one.
-- **Scenario → Evidence**: relevant evidence is stored under the matching version directory in `evidence/` (e.g. `evidence/v0.2/`), and never includes passwords, API keys, tokens, private keys, real credentials, personal information, production data, VM disks, or unnecessary sensitive telemetry.
+- **Scenario → Metrics**: every meaningful scenario is expected to eventually connect to detection success, detection time, missed detection, false positive, investigation time, response time, coverage, regression, or mutation-resilience metrics in [`metrics/`](../metrics/) — generated only from actual test results.
+- **Scenario → Failure Log**: a failed scenario follows STOP → CAPTURE → DOCUMENT → INVESTIGATE → FIX → RETEST and links to the corresponding record in [`failure-log/`](../failure-log/) (e.g. a scenario failure, detection miss, or regression) using a real `FAIL-*` ID, never a fictional one.
+- **Scenario → Evidence**: relevant evidence is stored under the matching version directory in [`evidence/`](../evidence/) (e.g. `evidence/v0.2/`), and never includes passwords, API keys, tokens, private keys, real credentials, personal information, production data, VM disks, or unnecessary sensitive telemetry.
 - **Scenario → MITRE ATT&CK**: scenarios may be mapped to ATT&CK techniques where the mapping is technically justified and verified — mapping behavior, not tool names, and never added merely for presentation. A scenario may legitimately have no ATT&CK mapping.
 
 ## Relationship to other SENTINEL documentation
@@ -248,11 +248,11 @@ Scenario definitions may evolve. When a scenario changes significantly: preserve
 - **[`docs/06-incident-response.md`](../docs/06-incident-response.md)** — response methodology.
 - **[`docs/07-testing-and-metrics.md`](../docs/07-testing-and-metrics.md)** — the broader testing methodology.
 - **[`docs/08-lessons-and-failures.md`](../docs/08-lessons-and-failures.md)** — failure-driven engineering approach.
-- **`detections/`** — actual detection implementations.
-- **`investigations/`** — investigation records.
-- **`metrics/`** — measured results.
-- **`evidence/`** — supporting evidence.
-- **`failure-log/`** — meaningful failure records.
+- **[`detections/`](../detections/)** — actual detection implementations.
+- **[`investigations/`](../investigations/)** — investigation records.
+- **[`metrics/`](../metrics/)** — measured results.
+- **[`evidence/`](../evidence/)** — supporting evidence.
+- **[`failure-log/`](../failure-log/)** — meaningful failure records.
 - **[`CHANGELOG.md`](../CHANGELOG.md)** — major project-level milestones and architecture decisions.
 
 ## Portfolio value
@@ -272,9 +272,9 @@ Controlled security testing has occurred and is documented in the investigation,
 - **v0.7** — attack mutation, evasion and benign-noise testing: [CASE-004](../investigations/CASE-004.md), across FIM, Sysmon rule logic and SSH. This is bounded testing, not comprehensive detection-resilience coverage.
 - **v0.8 onward** — subsequent tuning, replay, triage and probe milestones:
   - v0.8: selected FIM tuning and a controlled live probe.
-  - v0.9 and v0.9.1: manager-side JSON replay and Python triage integration/documentation.
+  - v0.9 and v0.9.1: manager-side JSON replay and Python triage integration/documentation (v0.9 [evidence index](../evidence/v0.9/readme.md)).
   - v0.10: live Linux FIM probe and Python triage validation; its evidence archive is external to this repository.
-  - v0.11: committed FIM alert, triage and regression-summary artifacts, with milestone reconciliation still pending.
+  - v0.11: committed FIM alert ([`v011_fim_alerts.json`](../evidence/v0.11/v011_fim_alerts.json)), triage ([`triage_report.md`](../evidence/v0.11/triage_report.md)) and regression-summary ([`regression_summary.json`](../evidence/v0.11/regression_summary.json)) artifacts, with milestone reconciliation still pending.
 
 **Planned:** formal SCN-ID-based scenario definitions and execution records. No version numbers are assigned to them, and the scenario framework is not complete.
 
