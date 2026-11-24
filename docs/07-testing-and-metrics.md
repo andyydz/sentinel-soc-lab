@@ -201,5 +201,31 @@ This section records post-closeout validation of live Linux File Integrity Monit
 - **Linux `syscheck` Field Behavior:** `Process: None | Target Process: None | Event Time: None` in Markdown output reflects fields absent from Linux FIM alert payloads rather than a parser failure.
 
 ### Open Boundaries & Remaining Work
-- **FIM Noise & Exclusions:** Residual `dconf` noise and Tracker3/Nautilus exclusion testing remain open in `docs/05-detection-engineering.md` and are not marked resolved by this 3-event probe.
+- **FIM Noise & Exclusions:** Residual desktop/configuration-path noise and exclusion testing remain open. The v0.10 three-event probe does not establish that exclusions are effective or that broader noise has been resolved; see `docs/05-detection-engineering.md` for the current exclusion inventory and outstanding work.
 - **Workflow Scope:** Successful triage of three probe alerts validates this end-to-end run; it does not substitute for full FIM regression suites or broader telemetry validation.
+
+---
+
+## 8. Post-Closeout Evidence: v0.11 FIM and Triage (Pending Reconciliation)
+
+This section is a separate post-closeout evidence note. It is not part of the October FIM/CASE-001 evidence in Sections 2 and 3, is not counted in the Section 3 metrics, and does not change the v0.10 record in Section 7.
+
+**Status:** v0.11 artifacts are committed under `evidence/v0.11/`. This is not an official changelog release or a completed milestone, and its evidence is pending reconciliation. Committed evidence is not the same as validated behavior: the artifacts below record what was captured, and they do not establish that exclusions or rules passed validation.
+
+### Committed artifacts and what they contain
+
+- [`v011_fim_alerts.json`](../evidence/v0.11/v011_fim_alerts.json) contains 10 alert records across custom Rules `100002`, `100003` and `100004`.
+- **Controlled probe records (3):** three Level 8 records correspond to one controlled creation/modification/deletion lifecycle on `/home/sentinel-admin/v011_fim_probe.txt`, matching Rules `100003`, `100002` and `100004` respectively.
+- **Desktop/configuration-path records (7):** the other seven records concern desktop/configuration paths. Their origin and benign status have not been conclusively established, and they are not treated here as confirmed benign noise.
+  - Five of those seven paths match exclusions in the current on-disk `detections/local_rules.xml`.
+  - Two records concern `/home/sentinel-admin/.config/dconf/user.L606Y3`, which does not match the exact `.config/dconf/user` exclusion.
+  - This discrepancy does not establish that exclusions failed. The on-disk XML does not prove which configuration the Wazuh Manager had loaded when those historical events occurred.
+- [`triage_report.md`](../evidence/v0.11/triage_report.md) reports 10 filtered alerts and three unique rules. Its process, target-process and event-time enrichment fields are `None`.
+- [`regression_summary.json`](../evidence/v0.11/regression_summary.json) provides aggregate counts, but does not establish a completed regression suite, its full test criteria, or successful exclusion validation.
+
+### How to read this evidence
+
+- The three-event lifecycle is evidence of one controlled session on one file. It is not a repeatable regression suite and not comprehensive FIM coverage.
+- No claim is made that exclusions passed or that they failed. Reconciling the seven desktop/configuration records against the configuration the manager actually had loaded remains outstanding.
+- The v0.11 evidence does not reopen CASE-001, which was closed on 18 November 2026 for its defined reviewed scope.
+- Nothing here implies live Windows monitoring, a SOAR workflow, automated response, or production readiness.
