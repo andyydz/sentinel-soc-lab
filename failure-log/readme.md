@@ -197,4 +197,6 @@ It is recorded here as the project's first significant example of treating an in
 
 ## Current status of this directory
 
-At this stage of the project, `failure-log/` contains this operational README and the structure for future failure records. Detection failures, false positives, missed detections, investigation failures, response failures, regression failures, and mutation failures have not yet occurred or been recorded, since the corresponding testing phases (v0.2 and later) have not yet begun. Entries will be added here as real failures are encountered during those phases.
+At this stage of the project, `failure-log/` contains this operational README and the failure-recording methodology and structure. No formal `FAIL-*` records have been created in this directory yet, and no `FAIL-*` IDs have been assigned here.
+
+This does not mean that testing has not occurred or that no detection issues have been found. SENTINEL has already conducted controlled FIM testing, SSH authentication detection testing, Windows Sysmon replay testing, and attack mutation and evasion testing under CASE-004. It has also recorded FIM background-noise observations, FIM exclusion and noise-filtering work, and v0.11 evidence that is still pending reconciliation. Observations and limitations from that work are documented in the investigation reports and project documentation, not as formal records in this directory. Formal `FAIL-*` records will be added here when a failure meets the criteria in "What belongs here".
