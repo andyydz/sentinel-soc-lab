@@ -32,7 +32,7 @@ This section reflects the project state through v0.11. It describes what has bee
 | `100003` | Creation |
 | `100004` | Deletion |
 
-Their documented controlled tests are validation exercises. They do not establish complete FIM coverage, malicious activity, or a repeatable regression suite. Details are in `docs/05-detection-engineering.md`.
+Their documented controlled tests are validation exercises. They do not establish complete FIM coverage, malicious activity, or a repeatable regression suite. Details are in [`docs/05-detection-engineering.md`](05-detection-engineering.md).
 
 **SSH authentication.** A controlled SSH password-guessing simulation was run from Kali (`10.10.10.20`) against SENTINEL-LINUX01 and investigated as CASE-003:
 
@@ -51,7 +51,7 @@ Their documented controlled tests are validation exercises. They do not establis
 
 | Case | Scope | Status |
 |---|---|---|
-| `CASE-001` | Controlled Linux FIM investigation (Rule 550, Rule 100002 and related events) | **Closed on 18 November 2026 for its reviewed scope.** SENTINEL v0.3 is complete |
+| [`CASE-001`](../investigations/CASE-001.md) | Controlled Linux FIM investigation (Rule 550, Rule 100002 and related events) | **Closed on 18 November 2026 for its reviewed scope.** SENTINEL v0.3 is complete |
 | `CASE-002` | Windows Sysmon EVTX replay detection (v0.4) | Replay-based; see the case record |
 | `CASE-003` | Controlled SSH password-guessing simulation (v0.5) | See Section 1.1 and the case record |
 | `CASE-004` | Attack mutation and noise-filtering observations (v0.7) | See the case record |
@@ -129,7 +129,7 @@ flowchart LR
 
 | Phase | Objective | Status in SENTINEL |
 |---|---|---|
-| **Preparation** | Infrastructure, telemetry, and documented procedures are in place before an incident occurs | Partially complete. Wazuh, Linux FIM (Rules 100002–100004), SSH detection (Rules 100200/100201), and replayed Sysmon telemetry are available. Live Windows telemetry, repeatable regression testing, and residual FIM noise handling remain outstanding (`docs/05-detection-engineering.md`) |
+| **Preparation** | Infrastructure, telemetry, and documented procedures are in place before an incident occurs | Partially complete. Wazuh, Linux FIM (Rules 100002–100004), SSH detection (Rules 100200/100201), and replayed Sysmon telemetry are available. Live Windows telemetry, repeatable regression testing, and residual FIM noise handling remain outstanding ([`docs/05-detection-engineering.md`](05-detection-engineering.md)) |
 | **Detection & Analysis** | An alert or anomaly is triaged and investigated to determine scope and whether it is a real incident | **Exercised** through controlled investigations: CASE-001 (FIM, closed for its reviewed scope), CASE-003 (SSH detection, Python-assisted triage, manual investigation confirming zero successful logins), plus replay-based CASE-002 and CASE-004 work. All were controlled lab activity, not real incidents |
 | **Containment** | Limit the spread or impact of confirmed malicious activity | **Documented only.** A source-scoped manual procedure exists for CASE-003; it is not claimed to have been applied or left active. No containment exercise has been performed |
 | **Eradication** | Remove the cause (persistence, malicious files, bad config) | Documented only. None has been exercised in the lab |
@@ -150,7 +150,7 @@ Wazuh alerts and endpoint telemetry are the starting point for analysis, not a c
 - Replayed Windows Sysmon telemetry (EVTX and JSON). This is replay, not live monitoring.
 - Python-assisted triage output from the `python-soc-automation` companion project, which parses Wazuh alert JSON. Its enrichment is limited: in the v0.11 evidence, process, target-process, and event-time enrichment fields are `None`.
 
-Process execution and command context telemetry from a live endpoint is not configured; see `docs/05-detection-engineering.md` for current telemetry status.
+Process execution and command context telemetry from a live endpoint is not configured; see [`docs/05-detection-engineering.md`](05-detection-engineering.md) for current telemetry status.
 
 **Analysis questions a triage/investigation step should answer:**
 
@@ -170,7 +170,7 @@ Process execution and command context telemetry from a live endpoint is not conf
 - **v0.11:** the filtered evidence was committed to the repository (`evidence/v0.11/`); reconciliation is pending, and the seven desktop/configuration-path records are unresolved.
 - **Manager startup observation:** operational artifacts have not been confirmed as saved in the repository, and no evidence path is claimed.
 
-Evidence is organized by version under `evidence/` (for example `evidence/v0.2/`, `evidence/v0.3/`, `evidence/v0.11/`). Nothing sensitive (credentials, secrets, VM disks, large raw datasets) is committed alongside evidence.
+Evidence is organized by version under `evidence/` (for example [`evidence/v0.2/`](../evidence/v0.2/), [`evidence/v0.3/`](../evidence/v0.3/), `evidence/v0.11/`). Nothing sensitive (credentials, secrets, VM disks, large raw datasets) is committed alongside evidence.
 
 ---
 
@@ -199,7 +199,7 @@ Every case that reaches this phase should answer: what happened, how it was dete
 Incident → Lesson → Detection Improvement → Retest
 ````
 
-This connects incident response back to `docs/05-detection-engineering.md`: a gap found during investigation (missing telemetry, a rule that did not fire, noisy alerts, insufficient alert context) becomes a concrete engineering task, not just a note. Examples of this loop in the project so far include the creation/deletion coverage question that led to Rules 100003 and 100004, and the v0.7–v0.8 noise-filtering observations that led to FIM exclusions and group isolation.
+This connects incident response back to [`docs/05-detection-engineering.md`](05-detection-engineering.md): a gap found during investigation (missing telemetry, a rule that did not fire, noisy alerts, insufficient alert context) becomes a concrete engineering task, not just a note. Examples of this loop in the project so far include the creation/deletion coverage question that led to Rules 100003 and 100004, and the v0.7–v0.8 noise-filtering observations that led to FIM exclusions and group isolation.
 
 The reviewed 16 October records illustrate the distinction between reviewing evidence and drawing conclusions. In both, a built-in rule (554 for creation, 553 for deletion) appeared and custom Rule 100002 did not. That is a coverage question that is not established as a detection miss, and no root cause is asserted. Reviewing these records closed their evidence reconciliation; it did not establish why Rule 100002 was absent.
 
@@ -231,7 +231,7 @@ The following are outstanding, planned, and **not implemented or not yet exercis
 
 - Reconciling the v0.11 evidence, including the origin and benign status of the seven desktop/configuration-path records and the empty enrichment fields.
 - Verifying the manager's current active rule configuration, and determining whether the historical loaded configuration for earlier tests can be reconstructed where evidence permits; it may not be recoverable and then remains unconfirmed.
-- Verifying the `/home/` field-condition matching behavior and reviewing built-in Rules 550, 553, and 554 (see `docs/05-detection-engineering.md`).
+- Verifying the `/home/` field-condition matching behavior and reviewing built-in Rules 550, 553, and 554 (see [`docs/05-detection-engineering.md`](05-detection-engineering.md)).
 - Broader FIM noise-suppression retesting and a repeatable regression suite.
 - Broader SSH testing, including legitimate authentication activity, to examine false positives for Rules 100200 and 100201.
 - Further Sysmon replay mutation testing and, eventually, live Windows validation.
@@ -249,11 +249,13 @@ None of the above are claimed as current capability. They describe the direction
 
 | Document | Role |
 |---|---|
-| `docs/04-threat-model.md` | Identifies the threats this process responds to |
-| `docs/05-detection-engineering.md` | Detection methodology and current rule status (Rules 550, 100002–100004, 100200, 100201) |
-| `docs/07-testing-and-metrics.md` | How results are tested and measured |
-| `investigations/CASE-001.md` | FIM investigation, closed 18 November 2026 for its reviewed scope |
+| [`docs/04-threat-model.md`](04-threat-model.md) | Identifies the threats this process responds to |
+| [`docs/05-detection-engineering.md`](05-detection-engineering.md) | Detection methodology and current rule status (Rules 550, 100002–100004, 100200, 100201) |
+| [`docs/07-testing-and-metrics.md`](07-testing-and-metrics.md) | How results are tested and measured |
+| [`investigations/CASE-001.md`](../investigations/CASE-001.md) | FIM investigation, closed 18 November 2026 for its reviewed scope |
 | `investigations/CASE-002.md` | Windows Sysmon EVTX replay case |
 | `investigations/CASE-003.md` | SSH password-guessing simulation case |
 | `investigations/CASE-004.md` | Attack mutation and noise-filtering case |
-| `evidence/` | Evidence organized by version (`v0.2/`, `v0.3/`, `v0.11/`, and others) |
+| [`evidence/v0.2/`](../evidence/v0.2/) | Pipeline/infrastructure evidence, including the October 26 screenshot |
+| [`evidence/v0.3/`](../evidence/v0.3/) | CASE-001 evidence and supporting artifacts |
+| `evidence/v0.11/` | Evidence committed for the v0.11 live FIM probe |
