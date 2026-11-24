@@ -53,15 +53,23 @@ The live lab is Linux-based and runs on an isolated VirtualBox network, `10.10.1
                                              +----------------+
 ```
 
-Kali does not communicate directly with the Wazuh manager in the documented architecture. The lab traffic paths shown above (controlled SSH testing and Wazuh Agent communication) use the isolated lab network only. This overview does not document NAT adapter details; if a separate NAT adapter is configured in VirtualBox, it is separate from the isolated lab traffic path and is not part of the documented lab traffic flow.
+All three VMs have general connectivity over the isolated VirtualBox network `10.10.10.0/24`. The diagram shows the attack and telemetry paths that matter for detection, not every possible connection. Kali (`10.10.10.20`) generates controlled SSH traffic to Linux01 (`10.10.10.40`). Linux01's Wazuh Agent `002` forwards Linux01's SSH authentication telemetry to Wazuh (`10.10.10.10`). Kali does not forward its own SSH authentication logs to Wazuh.
+
+The Wazuh Manager also has a separate NAT interface for outbound updates and package access. NAT is not part of the isolated lab traffic path and is not part of the documented attack or telemetry flows.
 
 ### Offline Sysmon pipeline (separate from the live topology)
 
+Two offline replay paths are used:
+
 ```
-Pre-recorded Windows EVTX → Python EVTX conversion → NDJSON → logcollector → Wazuh detection
+EVTX replay:
+Pre-recorded Windows EVTX → Python EVTX-to-NDJSON conversion → replay through SENTINEL-LINUX01's Wazuh Agent/logcollector → Wazuh detection
+
+JSON replay:
+Replay JSON → manager-side Wazuh logcollector → Wazuh detection
 ```
 
-Recorded Sysmon telemetry is replayed through the Linux01 agent's logcollector. This is offline replay, **not** live Windows monitoring. There is no live Windows endpoint and no Active Directory deployment.
+Both are offline replay, **not** live Windows monitoring. There is no live Windows endpoint and no Active Directory deployment.
 
 ## 5. Infrastructure and Technology Stack
 
@@ -69,11 +77,11 @@ Recorded Sysmon telemetry is replayed through the Linux01 agent's logcollector. 
 |---|---|---|
 | SENTINEL-WAZUH | SIEM / detection platform | Ubuntu 24.04, `10.10.10.10`, Wazuh 4.14.8 |
 | SENTINEL-KALI | Attacker / simulation | Kali Linux, `10.10.10.20` |
-| SENTINEL-LINUX01 | Monitored Linux endpoint | Ubuntu 24.04, `10.10.10.40`, Wazuh Agent ID `002` |
+| SENTINEL-LINUX01 | Monitored Linux endpoint | Ubuntu 24.04.5 LTS, `10.10.10.40`, Wazuh Agent ID `002` |
 
 Supporting technology: Oracle VirtualBox (isolated networking), Wazuh FIM (syscheck), Wazuh log analysis for SSH and replayed Sysmon data, a Python EVTX-to-NDJSON converter, and Git/GitHub for documentation.
 
-The baseline was checked for VirtualBox isolated networking, Agent ID `002` against the active endpoint, v0.11 FIM regression and exclusion behavior, and EVTX-to-NDJSON converter output against the intended Sysmon rule structure.
+The baseline was checked for VirtualBox isolated networking, Agent ID `002` against the active endpoint, and EVTX-to-NDJSON converter output against the intended Sysmon rule structure.
 
 ## 6. Development Roadmap
 
@@ -93,7 +101,13 @@ Milestones follow [`CHANGELOG.md`](../CHANGELOG.md), which holds per-release det
 | v0.9.1 | Follow-up |
 | v0.10 | Live Linux FIM and Python Triage Validation |
 
-The v0.11 FIM regression and exclusion behavior has been verified as part of the current implementation baseline. This overview does not describe it as a changelog release.
+v0.11 is not an official changelog release and remains pending reconciliation. Its artifacts are committed under `evidence/v0.11/`:
+
+- [`v011_fim_alerts.json`](../evidence/v0.11/v011_fim_alerts.json) contains 10 alert records across custom Rules `100002`, `100003` and `100004`.
+- Three Level 8 records correspond to one controlled creation/modification/deletion lifecycle on `/home/sentinel-admin/v011_fim_probe.txt`.
+- The remaining seven records concern desktop/configuration paths and have not been conclusively established as benign.
+- The triage report, [`triage_report.md`](../evidence/v0.11/triage_report.md), has `None` for process, target-process and event-time enrichment fields.
+- The aggregate [`regression_summary.json`](../evidence/v0.11/regression_summary.json) does not establish a completed regression suite or prove that exclusions passed validation.
 
 ## 7. Detection Engineering and Mutation Testing
 
@@ -145,5 +159,5 @@ Future expansion (not committed): additional mutation scenarios, coverage of the
 In progress.
 
 - **Latest documented release history:** v0.10 (Live Linux FIM and Python Triage Validation), per [`CHANGELOG.md`](../CHANGELOG.md).
-- **Implementation-baseline checks (v0.11):** FIM regression and exclusion behavior verified. v0.11 is not represented as an official changelog release.
+- **v0.11 evidence (pending reconciliation):** v0.11 evidence artifacts are committed and include the three controlled probe events. Seven desktop/configuration records remain unresolved, and milestone reconciliation is pending. v0.11 is not an official changelog release and does not reopen CASE-001.
 - **Open work:** detection gaps and noise-tuning work remain open.
